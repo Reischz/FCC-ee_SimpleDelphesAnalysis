@@ -15,4 +15,13 @@ set run_card lpp2 0
 set run_card nevents 10000
 EOF
 
-./Run_Delphes.sh
+source /work/app/share_env/hepsw-gcc11p2-py3p9p9.sh
+
+rm -rf output01.root
+gzip -dc HiggsStrahlungwithDecay/Events/formal01/tag_1_pythia8_events.hepmc.gz \
+ > HiggsStrahlungwithDecay/Events/formal01/tag_1_pythia8_events.hepmc
+
+/work/app/delphes/src/Delphes-3.5.0/DelphesHepMC2 \
+ /work/app/delphes/src/Delphes-3.5.0/cards/delphes_card_IDEA.tcl \
+ output01.root HiggsStrahlungwithDecay/Events/formal01/tag_1_pythia8_events.hepmc
+
