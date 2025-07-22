@@ -1,5 +1,3 @@
-!#/bin/env root -l -b -q
-
 #include "TFile.h"
 #include "TTree.h"
 #include "Delphes.C"
