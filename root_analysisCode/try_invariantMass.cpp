@@ -8,7 +8,7 @@ void try_invariantMass()
 	TTree *tree = (TTree*) file->Get("Delphes");
 
 	Delphes *delphes_tree = new Delphes(tree);
-	TH1F *invmass = new TH1F("invmass", "Invariant Mass", 100, 0, 300);
+	TH1F *invmass = new TH1F("invmass", "Invariant Mass", 35, 50, 120);
 
 	for (Long64_t jentry=0; jentry<tree->GetEntries(); jentry++)
 	{
