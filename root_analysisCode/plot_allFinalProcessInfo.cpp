@@ -27,7 +27,10 @@ void plot_allFinalProcessInfo()
 	double maxY = std::max({Jet_PT_hist->GetMaximum(), Electron_Pt_hist->GetMaximum(), Muon_Pt_hist->GetMaximum()});
 	Jet_PT_hist->SetMaximum(maxY * 1.2); 
 
+
+	Jet_PT_hist->SetTitle("pT Distribution; pT (GeV); Events");
 	Jet_PT_hist->Draw();
+	Jet_PT_hist->SetTitle("Jet.pT; pT (GeV); Events");
 	Jet_PT_hist->SetStats(0);  // Disable default stats box
 	//Jet_PT_hist->SetFillColor(kBlue);
     Electron_Pt_hist->Draw("same");
