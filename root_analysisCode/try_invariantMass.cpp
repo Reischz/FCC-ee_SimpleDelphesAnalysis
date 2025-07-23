@@ -2,7 +2,7 @@
 #include "TTree.h"
 #include "Delphes.C"
 
-void plot_allFinalProcessInfo()
+void try_invariantMass()
 {
 	TFile *file = new TFile("output01.root");
 	TTree *tree = (TTree*) file->Get("Delphes");
