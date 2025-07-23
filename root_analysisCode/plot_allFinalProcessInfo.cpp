@@ -11,7 +11,7 @@ void plot_allFinalProcessInfo()
 	TH1D *Jet_PT_hist = new TH1D("Jet_PT_hist", "Jet.pT", 60, 0, 120);
     TH1D *Electron_Pt_hist = new TH1D("Electron_Pt_hist", "Electron.pT", 60, 0, 120);
 	TH1D *Muon_Pt_hist = new TH1D("Muon_Pt_hist", "Muon.pT", 60, 0, 120);
-	TH1D *Jet_size_hist = new TH1D("Jet_size_hist", "Jet@size", 5, -0.5, 4,5);
+	TH1F *Jet_size_hist = new TH1F("Jet_size_hist", "Jet@size", 5, -0.5, 4.5);
 
 	for (Long64_t jentry=0; jentry<tree->GetEntries(); jentry++)
 	{
