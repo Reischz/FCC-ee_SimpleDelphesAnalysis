@@ -27,7 +27,7 @@ void plot_allFinalProcessInfo()
 	double maxY = std::max({Jet_PT_hist->GetMaximum(), Electron_Pt_hist->GetMaximum(), Muon_Pt_hist->GetMaximum()});
 	Jet_PT_hist->SetMaximum(maxY * 1.2); 
 
-	
+
 	Jet_PT_hist->Draw();
 	Jet_PT_hist->SetStats(0);  // Disable default stats box
 	//Jet_PT_hist->SetFillColor(kBlue);
@@ -48,5 +48,5 @@ void plot_allFinalProcessInfo()
 	Jet_size_canvas->cd();
 	Jet_size_hist->Draw();
 	Jet_size_canvas->SaveAs("Jet_size.png");
-
+	gApplication->Terminate(0); // Exit ROOT with code 0
 }
