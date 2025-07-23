@@ -34,5 +34,5 @@ void try_invariantMass()
 	invmass_canvas->cd();
 	invmass->Draw();
 	invmass_canvas->SaveAs("invmass.png");
-	exit(0);
+	.q
 }
