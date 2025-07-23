@@ -26,12 +26,17 @@ void plot_allFinalProcessInfo()
 	pT_canvas->cd();
 	Jet_PT_hist->Draw();
 	Jet_PT_hist->SetStats(0);  // Disable default stats box
+	Jet_PT_hist->SetFillColor(kBlue);
     Electron_Pt_hist->Draw("same");
 	Electron_Pt_hist->SetLineColor(kRed);
+	Electron_Pt_hist->SetStats(0);  // Disable default stats box
+	Electron_Pt_hist->SetFillColor(kRed);
 	Muon_Pt_hist->SetStats(0);  // Disable default stats box
+	Muon_Pt_hist->SetFillColor(kGreen);
 	Muon_Pt_hist->Draw("same");
 	Muon_Pt_hist->SetLineColor(kGreen);
-	Jet_size_hist->SetStats(0);  // Disable default stats box
+	pT_canvas->BuildLegend();
+
 	pT_canvas->SaveAs("pT.png");
 
 	TCanvas *Jet_size_canvas = new TCanvas();
