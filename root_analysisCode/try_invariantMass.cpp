@@ -8,7 +8,7 @@ void plot_allFinalProcessInfo()
 	TTree *tree = (TTree*) file->Get("Delphes");
 
 	Delphes *delphes_tree = new Delphes(tree);
-	TH1D *invmass = new TH1D("invmass", "Invariant Mass", 60, 0, 120);
+	TH1F *invmass = new TH1F("invmass", "Invariant Mass", 100, 0, 300);
 
 	for (Long64_t jentry=0; jentry<tree->GetEntries(); jentry++)
 	{
