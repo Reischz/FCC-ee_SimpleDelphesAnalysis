@@ -37,7 +37,6 @@ void plot_allFinalProcessInfo()
 	Muon_Pt_hist->SetLineColor(kGreen);
 	pT_canvas->BuildLegend();
 	pT_canvas->SetTitle("pT Distributions");
-	pT_canvas->Update();
 
 	pT_canvas->SaveAs("pT.png");
 
