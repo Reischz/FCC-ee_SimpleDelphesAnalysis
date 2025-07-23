@@ -22,12 +22,11 @@ void plot_allFinalProcessInfo()
 		Jet_size_hist->Fill(delphes_tree->Jet_size);
 	}
 	
-	TCanvas *pT_canvas = new TCanvas();
+	TCanvas *pT_canvas = new TCanvas("c1", "Canvas Title");
 	pT_canvas->cd();
 	double maxY = std::max({Jet_PT_hist->GetMaximum(), Electron_Pt_hist->GetMaximum(), Muon_Pt_hist->GetMaximum()});
 	Jet_PT_hist->SetMaximum(maxY * 1.2); 
 
-	Jet_PT_hist->SetTitle("Jet pT Distribution; pT (GeV); Events");
 	Jet_PT_hist->Draw();
 	Jet_PT_hist->SetStats(0);  // Disable default stats box
 	//Jet_PT_hist->SetFillColor(kBlue);
