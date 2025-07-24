@@ -12,7 +12,7 @@ void try_invariantMass()
 
 	// try using btag to find higgs invariant mass
 	TH1F *higgsInvM = new TH1F("higgsInvM", "Higgs Invariant Mass", 90, 50, 240);
-	TH1F *higgsInvM2Jet = new TH1F("higgsInvM2Jet", "Higgs Invariant Mass w/ 2 Jets", 190, 50, 240); // IGNORE
+	TH1F *higgsInvM2Jet = new TH1F("higgsInvM2Jet", "Higgs Invariant Mass w/ 2 Jets", 75, 90, 240); // IGNORE
 
 	for (Long64_t jentry=0; jentry<tree->GetEntries(); jentry++)
 	{
