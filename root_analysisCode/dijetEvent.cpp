@@ -100,8 +100,7 @@ void dijetEvent()
 
 	TCanvas *hist2d_canvas = new TCanvas();
 	hist2d_canvas->cd();
-	//hist2d->Draw("COLZ");
-	hist2d->Draw();
+	hist2d->Draw("COLZ");
 	hist2d_canvas->SaveAs("hist2d.png");
 	
 	gApplication->Terminate(0); // Exit ROOT with code 0
