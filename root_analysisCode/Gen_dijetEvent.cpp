@@ -118,7 +118,5 @@ void Gen_dijetEvent()
 	hist2d->Draw("COLZ");
 	hist2d_canvas->SaveAs("GenJethist2d.png");
 	
-
-	std::cout << M_PI << std::endl; // Print the value of M_PI to verify it's defined correctly
 	gApplication->Terminate(0); // Exit ROOT with code 0
 }
