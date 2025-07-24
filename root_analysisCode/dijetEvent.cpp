@@ -59,7 +59,8 @@ void dijetEvent()
 				cos(deltaPhi(delphes_tree->Jet_Phi[btaggedJetIndex[0]], delphes_tree->Jet_Phi[btaggedJetIndex[1]]))));
 			if (delphes_tree->Jet_size == 2) 
 			{
-				DeltaR_value = sqrt(pow(delphes_tree->Jet_Eta[0] - delphes_tree->Jet_Eta[1], 2) + pow(deltaPhi(delphes_tree->Jet_Phi[0], delphes_tree->Jet_Phi[1]), 2));
+				DeltaR_value = sqrt(pow(delphes_tree->Jet_Eta[0] - delphes_tree->Jet_Eta[1], 2) + 
+				pow(deltaPhi(delphes_tree->Jet_Phi[0], delphes_tree->Jet_Phi[1]), 2));
 
 				higgsInvM2Jet_value = sqrt(2 * delphes_tree->Jet_PT[0] * delphes_tree->Jet_PT[1] *
 					(cosh(delphes_tree->Jet_Eta[0] - delphes_tree->Jet_Eta[1]) - 
