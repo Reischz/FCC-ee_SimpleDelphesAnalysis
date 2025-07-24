@@ -4,7 +4,7 @@
 #include <cmath>
 
 double deltaPhi(double phi1, double phi2) {
-	double deltaPhiValue = abs(phi1 - phi2);
+	double deltaPhiValue = (phi1 - phi2);
 	if (deltaPhiValue > M_PI) {
 		deltaPhiValue -= 2 * M_PI;
 	} else if (deltaPhiValue < -M_PI) {
