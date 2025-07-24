@@ -19,7 +19,7 @@ void dijetEvent()
 	TTree *tree = (TTree*) file->Get("Delphes");
 
 	Delphes *delphes_tree = new Delphes(tree);
-	TH2D *hist2d = new TH2D("hist2d", "two-dimensional histogram;#Delta R;Inv. Mass", 30, 2, 5, 210, 80, 300);
+	TH2D *hist2d = new TH2D("hist2d", "two-dimensional histogram;#Delta #Phi;Inv. Mass", 32, 0, 3.14, 210, 80, 300);
 
 	TH1F *invmass = new TH1F("invmass", "Invariant Mass", 70, 50, 120);
 
@@ -35,6 +35,7 @@ void dijetEvent()
 		double higgsInvM_value = 0;
 		double higgsInvM2Jet_value = 0;
 		double DeltaR_value = 0;
+		double DeltaPhi_value = 0;
 		 
 		// loop to find all Btagged jets
 		int btaggedJets = 0;
@@ -59,6 +60,7 @@ void dijetEvent()
 				cos(deltaPhi(delphes_tree->Jet_Phi[btaggedJetIndex[0]], delphes_tree->Jet_Phi[btaggedJetIndex[1]]))));
 			if (delphes_tree->Jet_size == 2) 
 			{
+				deltaPhi_value = deltaPhi(delphes_tree->Jet_Phi[0], delphes_tree->Jet_Phi[1]);
 				DeltaR_value = sqrt(pow(delphes_tree->Jet_Eta[0] - delphes_tree->Jet_Eta[1], 2) + 
 				pow(deltaPhi(delphes_tree->Jet_Phi[0], delphes_tree->Jet_Phi[1]), 2));
 
@@ -91,7 +93,7 @@ void dijetEvent()
 		}
 		if (higgsInvM2Jet_value > 0) 
 		{
-			hist2d->Fill(DeltaR_value, higgsInvM2Jet_value);
+			hist2d->Fill(DeltaPhi_value, higgsInvM2Jet_value);
 			higgsInvM2Jet->Fill(higgsInvM2Jet_value);
 		}
 	}
