@@ -45,7 +45,7 @@ void JetMass_dijetEvent()
 			btaggedJets += delphes_tree->Jet_BTag[i];
 		}
 
-		if (btaggedJets == 2) 
+		if (btaggedJets >= 2) 
 		{
 			std::vector<int> btaggedJetIndex;
 			for (int i = 0; i < delphes_tree->Jet_size; i++) 
@@ -69,11 +69,10 @@ void JetMass_dijetEvent()
 					(cosh(delphes_tree->Jet_Eta[0] - delphes_tree->Jet_Eta[1]) - 
 					cos(deltaPhi(delphes_tree->Jet_Phi[0], delphes_tree->Jet_Phi[1]))));
 			}
-		}
-		if (btaggedJets >=2){
 			JetMass->Fill(delphes_tree->Jet_Mass[btaggedJetIndex[0]]);
 			JetMass->Fill(delphes_tree->Jet_Mass[btaggedJetIndex[1]]);
 		}
+
 
 
 		if (delphes_tree->Electron_size == 2 && delphes_tree->Electron_Charge[0] * delphes_tree->Electron_Charge[1] == -1) 
