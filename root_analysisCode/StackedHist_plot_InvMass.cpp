@@ -38,6 +38,8 @@ void StackedHist_plot_InvMass()
 	}
 	TCanvas *invmass_canvas = new TCanvas();
 	invmass_canvas->cd();
+	StackedHist->Add(invmassFE);
+	StackedHist->Add(invmassFME);
 	StackedHist->Draw();
 	invmass_canvas->SaveAs("Stackedinvmass.png");
 
