@@ -23,6 +23,7 @@ void JetMass_dijetEvent()
 
 	TH1F *JetMass = new TH1F("JetMass", "Jet Mass", 300, 0, 300);
 	TH1F *JetMomentum = new TH1F("JetMomentum", "Jet Momentum", 300, 0, 300);
+	TH1F *JetEnergy = new TH1F("JetEnergy", "Jet Energy", 300, 0, 300);
 
 	// try using btag to find higgs invariant mass
 	TH1F *higgsInvM2Jet = new TH1F("higgsInvM2Jet", "Higgs Invariant Mass w/ 2 Jets", 75, 90, 240); // IGNORE
@@ -55,12 +56,20 @@ void JetMass_dijetEvent()
 				}
 			}
 
-			JetMass->Fill(delphes_tree->Jet_Mass[btaggedJetIndex[0]]);
-			JetMass->Fill(delphes_tree->Jet_Mass[btaggedJetIndex[1]]);
-			JetMomentum->Fill(delphes_tree->Jet_PT[btaggedJetIndex[0]]*
-				cosh(delphes_tree->Jet_Eta[btaggedJetIndex[0]]));
-			JetMomentum->Fill(delphes_tree->Jet_PT[btaggedJetIndex[1]]*
-				cosh(delphes_tree->Jet_Eta[btaggedJetIndex[1]]));
+			double JM1 = delphes_tree->Jet_Mass[btaggedJetIndex[0]];
+			double JM2 = delphes_tree->Jet_Mass[btaggedJetIndex[1]];
+			JetMass->Fill(JM1);
+			JetMass->Fill(JM2);
+			double JP1= delphes_tree->Jet_PT[btaggedJetIndex[0]] *
+				cosh(delphes_tree->Jet_Eta[btaggedJetIndex[0]]);
+			double JP2 = delphes_tree->Jet_PT[btaggedJetIndex[1]] *
+				cosh(delphes_tree->Jet_Eta[btaggedJetIndex[1]]);
+			JetMomentum->Fill(JP1);
+			JetMomentum->Fill(JP2);
+			double JE1 = sqrt(pow(JM1, 2) + pow(JP1, 2));
+			double JE2 = sqrt(pow(JM2, 2) + pow(JP2, 2));
+			JetEnergy->Fill(JE1);
+			JetEnergy->Fill(JE2);
 		}
 
 		if (higgsInvM2Jet_value > 0) 
@@ -86,6 +95,11 @@ void JetMass_dijetEvent()
 	JetMomentum_canvas->cd();
 	JetMomentum->Draw();
 	JetMomentum_canvas->SaveAs("JetMomentum.png");
+
+	TCanvas *JetEnergy_canvas = new TCanvas();
+	JetEnergy_canvas->cd();
+	JetEnergy->Draw();
+	JetEnergy_canvas->SaveAs("JetEnergy.png");
 	
 
 	std::cout << M_PI << std::endl; // Print the value of M_PI to verify it's defined correctly
