@@ -32,7 +32,7 @@ void try_invariantMass()
 			std::vector<int> btaggedJetIndex;
 			for (int i = 0; i < delphes_tree->Jet_size; i++) 
 			{
-				if (delphes_tree->Jet_BTag[i]) 
+				if (delphes_tree->Jet_BTag[i]==1) 
 				{
 					btaggedJetIndex.push_back(i);
 				}
@@ -55,7 +55,14 @@ void try_invariantMass()
 				delphes_tree->Muon_Phi[1])));
 
 		}
-		invmass->Fill(invmass_value);
+		if (higgsInvM_value > 0) 
+		{
+			higgsInvM->Fill(higgsInvM_value);
+		}
+		if (invmass_value > 0) 
+		{
+			invmass->Fill(invmass_value);
+		}
 	}
 	
 	TCanvas *higgsInvM_canvas = new TCanvas();
