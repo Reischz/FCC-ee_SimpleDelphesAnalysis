@@ -12,6 +12,7 @@ void try_invariantMass()
 
 	// try using btag to find higgs invariant mass
 	TH1F *higgsInvM = new TH1F("higgsInvM", "Higgs Invariant Mass", 90, 50, 240);
+	TH1F *higgsInvM2Jet = new TH1F("higgsInvM2Jet", "Higgs Invariant Mass w/ 2 Jets", 70, 50, 120); // IGNORE
 
 	for (Long64_t jentry=0; jentry<tree->GetEntries(); jentry++)
 	{
@@ -19,6 +20,7 @@ void try_invariantMass()
 		// check conditions to ensure InvariantMass is valid
 		double invmass_value = 0;
 		double higgsInvM_value = 0;
+		double higgsInvM2Jet_value = 0;
 		 
 		// loop to find all Btagged jets
 		int btaggedJets = 0;
@@ -40,6 +42,12 @@ void try_invariantMass()
 			higgsInvM_value = sqrt(2 * delphes_tree->Jet_PT[btaggedJetIndex[0]] * delphes_tree->Jet_PT[btaggedJetIndex[1]] *
 				(cosh(delphes_tree->Jet_Eta[btaggedJetIndex[0]] - delphes_tree->Jet_Eta[btaggedJetIndex[1]]) - 
 				cos(delphes_tree->Jet_Phi[btaggedJetIndex[0]] - delphes_tree->Jet_Phi[btaggedJetIndex[1]])));
+			if (delphes_tree->Jet_size == 2) 
+			{
+				higgsInvM2Jet_value = sqrt(2 * delphes_tree->Jet_PT[0] * delphes_tree->Jet_PT[1] *
+					(cosh(delphes_tree->Jet_Eta[0] - delphes_tree->Jet_Eta[1]) - 
+					cos(delphes_tree->Jet_Phi[0] - delphes_tree->Jet_Phi[1])));
+			}
 		}
 
 
@@ -74,6 +82,11 @@ void try_invariantMass()
 	invmass_canvas->cd();
 	invmass->Draw();
 	invmass_canvas->SaveAs("invmass.png");
+
+	TCanvas *higgsInvM2Jet_canvas = new TCanvas();
+	higgsInvM2Jet_canvas->cd();
+	higgsInvM2Jet->Draw();
+	higgsInvM2Jet_canvas->SaveAs("higgsInvM2Jet.png");
 	
 	gApplication->Terminate(0); // Exit ROOT with code 0
 }
