@@ -71,8 +71,8 @@ void JetMass_dijetEvent()
 			}
 		}
 		if (btaggedJets >=2){
-			JetMass->Fill(delphes_tree->Jet_Mass[0]);
-			JetMass->Fill(delphes_tree->Jet_Mass[1]);
+			JetMass->Fill(delphes_tree->Jet_Mass[btaggedJetIndex[0]]);
+			JetMass->Fill(delphes_tree->Jet_Mass[btaggedJetIndex[1]]);
 		}
 
 
