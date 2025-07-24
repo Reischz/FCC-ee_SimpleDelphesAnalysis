@@ -1,0 +1,124 @@
+#include "TFile.h"
+#include "TTree.h"
+#include "Delphes.C"
+#include <cmath>
+
+double deltaPhi(double phi1, double phi2) {
+	double deltaPhiValue = (phi1 - phi2);
+	if (deltaPhiValue > M_PI) {
+		deltaPhiValue = 2 * M_PI - deltaPhiValue;
+	} else if (deltaPhiValue < -M_PI) {
+		deltaPhiValue = 2 * M_PI + deltaPhiValue;
+	}
+	return deltaPhiValue;
+}
+
+void Gen_dijetEvent()
+{
+	TFile *file = new TFile("output01.root");
+	TTree *tree = (TTree*) file->Get("Delphes");
+
+	Delphes *delphes_tree = new Delphes(tree);
+	TH2D *hist2d = new TH2D("hist2d", "two-dimensional histogram;#Delta #Phi;Inv. Mass", 60, 0, 6, 210, 80, 300);
+
+	TH1F *invmass = new TH1F("invmass", "Gen-Invariant Mass", 70, 50, 120);
+
+	// try using btag to find higgs invariant mass
+	TH1F *higgsInvM = new TH1F("higgsInvM", "Gen-Higgs Invariant Mass", 90, 50, 240);
+	TH1F *higgsInvM2Jet = new TH1F("higgsInvM2Jet", "Gen-Higgs Invariant Mass w/ 2 Jets", 75, 90, 240); // IGNORE
+
+	for (Long64_t jentry=0; jentry<tree->GetEntries(); jentry++)
+	{
+		delphes_tree->GetEntry(jentry);
+		// check conditions to ensure InvariantMass is valid
+		double invmass_value = 0;
+		double higgsInvM_value = 0;
+		double higgsInvM2Jet_value = 0;
+		double DeltaR_value = 0;
+		double DeltaPhi_value = 0;
+		 
+		// loop to find all Btagged jets
+		int btaggedJets = 0;
+		for (int i = 0; i < delphes_tree->GenJet_size; i++) 
+		{
+			btaggedJets += delphes_tree->GenJet_BTag[i];
+		}
+
+		if (btaggedJets == 2) 
+		{
+			std::vector<int> btaggedJetIndex;
+			for (int i = 0; i < delphes_tree->GenJet_size; i++) 
+			{
+				if (delphes_tree->GenJet_BTag[i]==1) 
+				{
+					btaggedJetIndex.push_back(i);
+				}
+			}
+
+			higgsInvM_value = sqrt(2 * delphes_tree->GenJet_PT[btaggedJetIndex[0]] * delphes_tree->GenJet_PT[btaggedJetIndex[1]] *
+				(cosh(delphes_tree->GenJet_Eta[btaggedJetIndex[0]] - delphes_tree->GenJet_Eta[btaggedJetIndex[1]]) - 
+				cos(deltaPhi(delphes_tree->GenJet_Phi[btaggedJetIndex[0]], delphes_tree->GenJet_Phi[btaggedJetIndex[1]]))));
+			if (delphes_tree->GenJet_size == 2) 
+			{
+				DeltaPhi_value = deltaPhi(delphes_tree->GenJet_Phi[0], delphes_tree->GenJet_Phi[1]);
+				DeltaR_value = sqrt(pow(delphes_tree->GenJet_Eta[0] - delphes_tree->GenJet_Eta[1], 2) + 
+				pow(deltaPhi(delphes_tree->GenJet_Phi[0], delphes_tree->GenJet_Phi[1]), 2));
+
+				higgsInvM2Jet_value = sqrt(2 * delphes_tree->GenJet_PT[0] * delphes_tree->GenJet_PT[1] *
+					(cosh(delphes_tree->GenJet_Eta[0] - delphes_tree->GenJet_Eta[1]) - 
+					cos(deltaPhi(delphes_tree->GenJet_Phi[0], delphes_tree->GenJet_Phi[1]))));
+			}
+		}
+
+
+		if (delphes_tree->Electron_size == 2 && delphes_tree->Electron_Charge[0] * delphes_tree->Electron_Charge[1] == -1) 
+		{
+			invmass_value = sqrt(2*delphes_tree->Electron_PT[0]*delphes_tree->Electron_PT[1]*(cosh(
+						delphes_tree->Electron_Eta[0] - delphes_tree->Electron_Eta[1]) - cos(deltaPhi(delphes_tree->Electron_Phi[0], 
+						delphes_tree->Electron_Phi[1]))));
+		} else if (delphes_tree->Muon_size == 2 && delphes_tree->Muon_Charge[0] * delphes_tree->Muon_Charge[1] == -1) 
+		{
+			invmass_value = sqrt(2*delphes_tree->Muon_PT[0]*delphes_tree->Muon_PT[1]*(cosh(
+				delphes_tree->Muon_Eta[0] - delphes_tree->Muon_Eta[1]) - cos(deltaPhi(delphes_tree->Muon_Phi[0], 
+				delphes_tree->Muon_Phi[1]))));
+
+		}
+		if (higgsInvM_value > 0) 
+		{
+			higgsInvM->Fill(higgsInvM_value);
+		}
+		if (invmass_value > 0) 
+		{
+			invmass->Fill(invmass_value);
+		}
+		if (higgsInvM2Jet_value > 0) 
+		{
+			hist2d->Fill(DeltaPhi_value, higgsInvM2Jet_value);
+			higgsInvM2Jet->Fill(higgsInvM2Jet_value);
+		}
+	}
+	
+	TCanvas *higgsInvM_canvas = new TCanvas();
+	higgsInvM_canvas->cd();
+	higgsInvM->Draw();
+	higgsInvM_canvas->SaveAs("GenJetInvM.png");
+
+	TCanvas *invmass_canvas = new TCanvas();
+	invmass_canvas->cd();
+	invmass->Draw();
+	invmass_canvas->SaveAs("invmass.png");
+
+	TCanvas *higgsInvM2Jet_canvas = new TCanvas();
+	higgsInvM2Jet_canvas->cd();
+	higgsInvM2Jet->Draw();
+	higgsInvM2Jet_canvas->SaveAs("GenJetInvM2Jet.png");
+
+	TCanvas *hist2d_canvas = new TCanvas();
+	hist2d_canvas->cd();
+	hist2d->Draw("COLZ");
+	hist2d_canvas->SaveAs("GenJethist2d.png");
+	
+
+	std::cout << M_PI << std::endl; // Print the value of M_PI to verify it's defined correctly
+	gApplication->Terminate(0); // Exit ROOT with code 0
+}
