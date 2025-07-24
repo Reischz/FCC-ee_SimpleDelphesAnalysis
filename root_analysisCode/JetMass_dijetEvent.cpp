@@ -24,6 +24,7 @@ void JetMass_dijetEvent()
 	TH1F *JetMass = new TH1F("JetMass", "Jet Mass", 300, 0, 300);
 	TH1F *JetMomentum = new TH1F("JetMomentum", "Jet Momentum", 300, 0, 300);
 	TH1F *JetEnergy = new TH1F("JetEnergy", "Jet Energy", 300, 0, 300);
+	TH1F *InvMassFromJet = new TH1F("InvMassFromJet", "Invariant Mass from Jet", 70, 50, 120);
 
 	// try using btag to find higgs invariant mass
 	TH1F *higgsInvM2Jet = new TH1F("higgsInvM2Jet", "Higgs Invariant Mass w/ 2 Jets", 75, 90, 240); // IGNORE
@@ -70,6 +71,7 @@ void JetMass_dijetEvent()
 			double JE2 = sqrt(pow(JM2, 2) + pow(JP2, 2));
 			JetEnergy->Fill(JE1);
 			JetEnergy->Fill(JE2);
+			InvMassFromJet->Fill(sqrt(pow(JE1+JE2, 2) - pow(JP1+JP2, 2)));
 		}
 
 		if (higgsInvM2Jet_value > 0) 
@@ -101,6 +103,10 @@ void JetMass_dijetEvent()
 	JetEnergy->Draw();
 	JetEnergy_canvas->SaveAs("JetEnergy.png");
 	
+	TCanvas *InvMassFromJet_canvas = new TCanvas();
+	InvMassFromJet_canvas->cd();
+	InvMassFromJet->Draw();
+	InvMassFromJet_canvas->SaveAs("InvMassFromJet.png");
 
 	std::cout << M_PI << std::endl; // Print the value of M_PI to verify it's defined correctly
 	gApplication->Terminate(0); // Exit ROOT with code 0
