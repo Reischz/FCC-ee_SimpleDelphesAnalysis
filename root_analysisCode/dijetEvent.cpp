@@ -10,6 +10,8 @@ void try_invariantMass()
 	Delphes *delphes_tree = new Delphes(tree);
 	TH2D *hist2d = new TH2D("hist2d", "two-dimensional histogram", 50, 0, 5, 10, 0, 200);
 
+	TH1F *invmass = new TH1F("invmass", "Invariant Mass", 70, 50, 120);
+
 	// try using btag to find higgs invariant mass
 	TH1F *higgsInvM = new TH1F("higgsInvM", "Higgs Invariant Mass", 90, 50, 240);
 	TH1F *higgsInvM2Jet = new TH1F("higgsInvM2Jet", "Higgs Invariant Mass w/ 2 Jets", 75, 90, 240); // IGNORE
