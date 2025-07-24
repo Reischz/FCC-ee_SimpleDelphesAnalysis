@@ -2,7 +2,7 @@
 #include "TTree.h"
 #include "Delphes.C"
 
-void StackedHistHis_plot_InvMass()
+void StackedHist_plot_InvMass()
 {
 	TFile *file = new TFile("output01.root");
 	TTree *tree = (TTree*) file->Get("Delphes");
