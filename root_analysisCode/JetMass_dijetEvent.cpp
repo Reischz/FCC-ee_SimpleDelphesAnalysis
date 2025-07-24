@@ -46,7 +46,7 @@ void JetMass_dijetEvent()
 			btaggedJets += delphes_tree->Jet_BTag[i];
 		}
 
-		if (btaggedJets == 2) {
+		if (btaggedJets == 2 && delphes_tree->Jet_size == 2) {
 			std::vector<int> btaggedJetIndex;
 			for (int i = 0; i < delphes_tree->Jet_size; i++) {
 				if (delphes_tree->Jet_BTag[i]==1) {
