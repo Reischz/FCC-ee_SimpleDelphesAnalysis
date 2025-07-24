@@ -8,7 +8,7 @@ void dijetEvent()
 	TTree *tree = (TTree*) file->Get("Delphes");
 
 	Delphes *delphes_tree = new Delphes(tree);
-	TH2D *hist2d = new TH2D("hist2d", "two-dimensional histogram", 50, 0, 5, 100, 0, 240);
+	TH2D *hist2d = new TH2D("hist2d", "two-dimensional histogram", 50, 0, 5, 100, 80, 240);
 
 	TH1F *invmass = new TH1F("invmass", "Invariant Mass", 70, 50, 120);
 
@@ -100,7 +100,8 @@ void dijetEvent()
 
 	TCanvas *hist2d_canvas = new TCanvas();
 	hist2d_canvas->cd();
-	hist2d->Draw("COLZ");
+	//hist2d->Draw("COLZ");
+	hist2d->Draw();
 	hist2d_canvas->SaveAs("hist2d.png");
 	
 	gApplication->Terminate(0); // Exit ROOT with code 0
