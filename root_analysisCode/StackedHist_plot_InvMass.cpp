@@ -41,6 +41,7 @@ void StackedHist_plot_InvMass()
 	StackedHist->Add(invmassFE);
 	StackedHist->Add(invmassFME);
 	StackedHist->Draw();
+	StackedHist->BuildLegend();
 	invmass_canvas->SaveAs("Stackedinvmass.png");
 
 	
