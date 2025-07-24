@@ -71,6 +71,10 @@ void try_invariantMass()
 		{
 			invmass->Fill(invmass_value);
 		}
+		if (higgsInvM2Jet_value > 0) 
+		{
+			higgsInvM2Jet->Fill(higgsInvM2Jet_value);
+		}
 	}
 	
 	TCanvas *higgsInvM_canvas = new TCanvas();
