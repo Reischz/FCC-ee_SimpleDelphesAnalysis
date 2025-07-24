@@ -46,13 +46,10 @@ void JetMass_dijetEvent()
 			btaggedJets += delphes_tree->Jet_BTag[i];
 		}
 
-		if (btaggedJets == 2) 
-		{
+		if (btaggedJets == 2) {
 			std::vector<int> btaggedJetIndex;
-			for (int i = 0; i < delphes_tree->Jet_size; i++) 
-			{
-				if (delphes_tree->Jet_BTag[i]==1) 
-				{
+			for (int i = 0; i < delphes_tree->Jet_size; i++) {
+				if (delphes_tree->Jet_BTag[i]==1) {
 					btaggedJetIndex.push_back(i);
 				}
 			}
@@ -61,10 +58,8 @@ void JetMass_dijetEvent()
 			double JM2 = delphes_tree->Jet_Mass[btaggedJetIndex[1]];
 			JetMass->Fill(JM1);
 			JetMass->Fill(JM2);
-			double JP1= delphes_tree->Jet_PT[btaggedJetIndex[0]] *
-				cosh(delphes_tree->Jet_Eta[btaggedJetIndex[0]]);
-			double JP2 = delphes_tree->Jet_PT[btaggedJetIndex[1]] *
-				cosh(delphes_tree->Jet_Eta[btaggedJetIndex[1]]);
+			double JP1= delphes_tree->Jet_PT[btaggedJetIndex[0]] * cosh(delphes_tree->Jet_Eta[btaggedJetIndex[0]]);
+			double JP2 = delphes_tree->Jet_PT[btaggedJetIndex[1]] * cosh(delphes_tree->Jet_Eta[btaggedJetIndex[1]]);
 			JetMomentum->Fill(JP1);
 			JetMomentum->Fill(JP2);
 			double JE1 = sqrt(pow(JM1, 2) + pow(JP1, 2));
