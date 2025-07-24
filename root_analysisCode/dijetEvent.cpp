@@ -8,7 +8,7 @@ void dijetEvent()
 	TTree *tree = (TTree*) file->Get("Delphes");
 
 	Delphes *delphes_tree = new Delphes(tree);
-	TH2D *hist2d = new TH2D("hist2d", "two-dimensional histogram", 30, 2, 5, 160, 80, 240);
+	TH2D *hist2d = new TH2D("hist2d", "two-dimensional histogram;#Delta R;Inv. Mass", 30, 2, 5, 160, 80, 240);
 
 	TH1F *invmass = new TH1F("invmass", "Invariant Mass", 70, 50, 120);
 
