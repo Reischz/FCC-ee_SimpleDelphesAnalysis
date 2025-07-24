@@ -64,9 +64,14 @@ void JetMass_dijetEvent()
 			JetMomentum->Fill(JP2);
 			double JE1 = sqrt(pow(JM1, 2) + pow(JP1, 2));
 			double JE2 = sqrt(pow(JM2, 2) + pow(JP2, 2));
+			double JPT1 = delphes_tree->Jet_PT[btaggedJetIndex[0]];
+			double JPT2 = delphes_tree->Jet_PT[btaggedJetIndex[1]];
+			std::vector<double> JetMomentum1 = {JPT1*cos(delphes_tree->Jet_Phi[btaggedJetIndex[0]]),JPT1*sin(delphes_tree->Jet_Phi[btaggedJetIndex[0]]),JPT1*sinh(delphes_tree->Jet_Eta[btaggedJetIndex[0]])};
+			std::vector<double> JetMomentum2 = {JPT2*cos(delphes_tree->Jet_Phi[btaggedJetIndex[1]]),JPT2*sin(delphes_tree->Jet_Phi[btaggedJetIndex[1]]),JPT2*sinh(delphes_tree->Jet_Eta[btaggedJetIndex[1]])};
 			JetEnergy->Fill(JE1);
 			JetEnergy->Fill(JE2);
-			InvMassFromJet->Fill(sqrt(pow(JE1+JE2, 2) - pow(JP1+JP2, 2)));
+			InvMassFromJet->Fill(sqrt(pow(JE1+JE2, 2) - pow(JetMomentum1[0]+JetMomentum2[0], 2) - 
+				pow(JetMomentum1[1]+JetMomentum2[1], 2) - pow(JetMomentum1[2]+JetMomentum2[2], 2)));
 		}
 
 		if (higgsInvM2Jet_value > 0) 
