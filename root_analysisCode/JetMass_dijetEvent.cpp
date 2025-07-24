@@ -24,7 +24,7 @@ void JetMass_dijetEvent()
 	TH1F *JetMass = new TH1F("JetMass", "Jet Mass", 300, 0, 300);
 	TH1F *JetMomentum = new TH1F("JetMomentum", "Jet Momentum", 300, 0, 300);
 	TH1F *JetEnergy = new TH1F("JetEnergy", "Jet Energy", 300, 0, 300);
-	TH1F *InvMassFromJet = new TH1F("InvMassFromJet", "Invariant Mass from Jet", 260, 100, 360);
+	TH1F *InvMassFromJet = new TH1F("InvMassFromJet", "Invariant Mass from Jet", 160, 100, 260);
 
 	// try using btag to find higgs invariant mass
 	TH1F *higgsInvM2Jet = new TH1F("higgsInvM2Jet", "Higgs Invariant Mass w/ 2 Jets", 75, 90, 240); // IGNORE
