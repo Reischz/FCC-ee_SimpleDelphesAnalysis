@@ -11,7 +11,7 @@ void try_invariantMass()
 	TH1F *invmass = new TH1F("invmass", "Invariant Mass", 70, 50, 120);
 
 	// try using btag to find higgs invariant mass
-	TH1F *higgsInvM = new TH1F("higgsInvM", "Higgs Invariant Mass", 190, 50, 240);
+	TH1F *higgsInvM = new TH1F("higgsInvM", "Higgs Invariant Mass", 90, 50, 240);
 
 	for (Long64_t jentry=0; jentry<tree->GetEntries(); jentry++)
 	{
