@@ -67,5 +67,6 @@ void try_invariantMass()
 	invmass_canvas->cd();
 	invmass->Draw();
 	invmass_canvas->SaveAs("invmass.png");
-	.q
+	
+	gApplication->Terminate(0); // Exit ROOT with code 0
 }
