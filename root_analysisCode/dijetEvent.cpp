@@ -6,9 +6,9 @@
 double deltaPhi(double phi1, double phi2) {
 	double deltaPhiValue = (phi1 - phi2);
 	if (deltaPhiValue > M_PI) {
-		deltaPhiValue -= 2 * M_PI;
+		deltaPhiValue = 2 * M_PI - deltaPhiValue;
 	} else if (deltaPhiValue < -M_PI) {
-		deltaPhiValue += 2 * M_PI;
+		deltaPhiValue = 2 * M_PI + deltaPhiValue;
 	}
 	return deltaPhiValue;
 }
@@ -19,7 +19,7 @@ void dijetEvent()
 	TTree *tree = (TTree*) file->Get("Delphes");
 
 	Delphes *delphes_tree = new Delphes(tree);
-	TH2D *hist2d = new TH2D("hist2d", "two-dimensional histogram;#Delta #Phi;Inv. Mass", 32, 0, 3.14, 210, 80, 300);
+	TH2D *hist2d = new TH2D("hist2d", "two-dimensional histogram;#Delta #Phi;Inv. Mass", 60, 0, 6, 210, 80, 300);
 
 	TH1F *invmass = new TH1F("invmass", "Invariant Mass", 70, 50, 120);
 
