@@ -23,9 +23,9 @@ void plot_allFinalProcessInfo()
 	TH1D *Jet_Eta_hist = new TH1D("Jet_Eta_hist", "Jet@Eta", 60, -3, 3);
 	TH1D *Electron_Eta_hist = new TH1D("Electron_Eta_hist", "Electron@Eta", 60, -3, 3);
 	TH1D *Muon_Eta_hist = new TH1D("Muon_Eta_hist", "Muon@Eta", 60, -3, 3);
-	TH1D *Jet_Phi_hist = new TH1D("Jet_Phi_hist", "Jet@Phi", 60, -3.14, 3.14);
-	TH1D *Electron_Phi_hist = new TH1D("Electron_Phi_hist", "Electron@Phi", 60, -3.14, 3.14);
-	TH1D *Muon_Phi_hist = new TH1D("Muon_Phi_hist", "Muon@Phi", 60, -3.14, 3.14);
+	TH1D *Jet_Phi_hist = new TH1D("Jet_Phi_hist", "Jet@Phi", 100, -5, 5);
+	TH1D *Electron_Phi_hist = new TH1D("Electron_Phi_hist", "Electron@Phi", 100, -5, 5);
+	TH1D *Muon_Phi_hist = new TH1D("Muon_Phi_hist", "Muon@Phi", 100, -5, 5);
 	TH1D *Electron_Charge_hist = new TH1D("Electron_Charge_hist", "Electron@Charge", 3, -1.5, 1.5);
 	TH1D *Muon_Charge_hist = new TH1D("Muon_Charge_hist", "Muon@Charge", 3, -1.5, 1.5);
 	std::vector<TH1D*> histograms = {
@@ -104,6 +104,7 @@ void plot_allFinalProcessInfo()
 
 	PTStackedHist->Draw();
 	PTStackedHist->SetTitle("pT Stack; pT; Entries");
+	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
 	c1->SaveAs("PTStackedHist.png");
 	c1->Clear();
 	SizeStackedHist->Draw();
