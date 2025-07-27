@@ -40,14 +40,20 @@ void plot_allFinalProcessInfo()
 	for (Long64_t jentry=0; jentry<tree->GetEntries(); jentry++)
 	{
 		delphes_tree->GetEntry(jentry);
-		Jet_size_hist->Fill(delphes_tree->Jet_size);
-		Jet_PT_hist->Fill(delphes_tree->Jet_PT[0]);
-		Jet_Eta_hist->Fill(delphes_tree->Jet_Eta[0]);
-		Jet_Phi_hist->Fill(delphes_tree->Jet_Phi[0]);
+		int JetSize = delphes_tree->Jet_size;
+		if (JetSize > 0) {
+			for(int i = 0; i < JetSize; ++i) {
+				Jet_size_hist->Fill(JetSize);
+				Jet_PT_hist->Fill(delphes_tree->Jet_PT[i]);
+				Jet_Eta_hist->Fill(delphes_tree->Jet_Eta[i]);
+				Jet_Phi_hist->Fill(delphes_tree->Jet_Phi[i]);
+			}
+		}
 
 		int ElectronSize = delphes_tree->Electron_size;
 		if (ElectronSize > 0) {
 			for(int i = 0; i < ElectronSize; ++i) {
+				Electron_size_hist->Fill(ElectronSize);
 				Electron_Pt_hist->Fill(delphes_tree->Electron_PT[i]);
 				Electron_Eta_hist->Fill(delphes_tree->Electron_Eta[i]);
 				Electron_Phi_hist->Fill(delphes_tree->Electron_Phi[i]);
@@ -57,6 +63,7 @@ void plot_allFinalProcessInfo()
 		int MuonSize = delphes_tree->Muon_size;
 		if (MuonSize > 0) {
 			for(int i = 0; i < MuonSize; ++i) {
+				Muon_size_hist->Fill(MuonSize);
 				Muon_Pt_hist->Fill(delphes_tree->Muon_PT[i]);
 				Muon_Eta_hist->Fill(delphes_tree->Muon_Eta[i]);
 				Muon_Phi_hist->Fill(delphes_tree->Muon_Phi[i]);
@@ -73,24 +80,24 @@ void plot_allFinalProcessInfo()
 	std::vector<Color_t> HistogramColors = {kBlue, kMagenta, kOrange};
 	for(int j=0;j<3;j++){
 		histograms[j]->SetLineColor(HistogramColors[j]);
-		histograms[j]->SetFillColor(HistogramColors[j]+1);
+		histograms[j]->SetFillColor(HistogramColors[j]+1, 0.5); // semi-transparent
 		PTStackedHist->Add(histograms[j]);
 
 		histograms[j+3]->SetLineColor(HistogramColors[j]);
-		histograms[j+3]->SetFillColor(HistogramColors[j]+1);
+		histograms[j+3]->SetFillColor(HistogramColors[j]+1, 0.5);
 		SizeStackedHist->Add(histograms[j+3]);
 
 		histograms[j+6]->SetLineColor(HistogramColors[j]);
-		histograms[j+6]->SetFillColor(HistogramColors[j]+1);
+		histograms[j+6]->SetFillColor(HistogramColors[j]+1, 0.5);
 		EtaStackedHist->Add(histograms[j+6]);
 
 		histograms[j+9]->SetLineColor(HistogramColors[j]);
-		histograms[j+9]->SetFillColor(HistogramColors[j]+1);
+		histograms[j+9]->SetFillColor(HistogramColors[j]+1, 0.5);
 		PhiStackedHist->Add(histograms[j+9]);
 
 		if (j<2) { // Only for Electron and Muon
 			histograms[j+12]->SetLineColor(HistogramColors[j+1]);
-			histograms[j+12]->SetFillColor(HistogramColors[j+1]+1);
+			histograms[j+12]->SetFillColor(HistogramColors[j+1]+1, 0.5);
 			ChargeStackedHist->Add(histograms[j+12]);
 		}
 	}
