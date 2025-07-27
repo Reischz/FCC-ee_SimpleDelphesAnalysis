@@ -48,7 +48,7 @@ void plot_allFinalProcessInfo()
 		int ElectronSize = delphes_tree->Electron_size;
 		if (ElectronSize > 0) {
 			for(int i = 0; i < ElectronSize; ++i) {
-				Electron_PT_hist->Fill(delphes_tree->Electron_PT[i]);
+				Electron_Pt_hist->Fill(delphes_tree->Electron_PT[i]);
 				Electron_Eta_hist->Fill(delphes_tree->Electron_Eta[i]);
 				Electron_Phi_hist->Fill(delphes_tree->Electron_Phi[i]);
 				Electron_Charge_hist->Fill(delphes_tree->Electron_Charge[i]);
@@ -70,7 +70,7 @@ void plot_allFinalProcessInfo()
 	//double maxY = std::max({Jet_PT_hist->GetMaximum(), Electron_Pt_hist->GetMaximum(), Muon_Pt_hist->GetMaximum()});
 	//Jet_PT_hist->SetMaximum(maxY * 1.2);
 
-	std::vector<auto> HistogramColors = {kBlue, kMagenta, kOrange};
+	std::vector<Color_t> HistogramColors = {kBlue, kMagenta, kOrange};
 	for(int j=0;j<3;j++){
 		histograms[j]->SetLineColor(HistogramColors[j]);
 		histograms[j]->SetFillColor(HistogramColors[j]+1);
