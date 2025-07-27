@@ -9,25 +9,25 @@ void plot_allFinalProcessInfo()
 	TTree *tree = (TTree*) file->Get("Delphes");
 
 	Delphes *delphes_tree = new Delphes(tree);
-	THStack *PTStackedHist = new THStack("PTStackedHist", "pT Stack");
-	THStack *SizeStackedHist = new THStack("SizeStackedHist", "Size Stack");
-	THStack *EtaStackedHist = new THStack("EtaStackedHist", "Eta Stack");
-	THStack *PhiStackedHist = new THStack("PhiStackedHist", "Phi Stack");
-	THStack *ChargeStackedHist = new THStack("ChargeStackedHist", "Charge Stack");
+	THStack *PTStackedHist = new THStack("PTStackedHist", "Transverse Momentum");
+	THStack *SizeStackedHist = new THStack("SizeStackedHist", "Number of Particles/Jet");
+	THStack *EtaStackedHist = new THStack("EtaStackedHist", "Eta");
+	THStack *PhiStackedHist = new THStack("PhiStackedHist", "Phi");
+	THStack *ChargeStackedHist = new THStack("ChargeStackedHist", "Charge");
 	TH1D *Jet_PT_hist = new TH1D("Jet_PT_hist", "Jet.pT", 60, 0, 120);
     TH1D *Electron_Pt_hist = new TH1D("Electron_Pt_hist", "Electron.pT", 60, 0, 120);
 	TH1D *Muon_Pt_hist = new TH1D("Muon_Pt_hist", "Muon.pT", 60, 0, 120);
 	TH1D *Jet_size_hist = new TH1D("Jet_size_hist", "Jet@size", 5, -0.5, 4.5);
 	TH1D *Electron_size_hist = new TH1D("Electron_size_hist", "Electron@size", 5, -0.5, 4.5);
 	TH1D *Muon_size_hist = new TH1D("Muon_size_hist", "Muon@size", 5, -0.5, 4.5);
-	TH1D *Jet_Eta_hist = new TH1D("Jet_Eta_hist", "Jet@Eta", 60, -3, 3);
-	TH1D *Electron_Eta_hist = new TH1D("Electron_Eta_hist", "Electron@Eta", 60, -3, 3);
-	TH1D *Muon_Eta_hist = new TH1D("Muon_Eta_hist", "Muon@Eta", 60, -3, 3);
-	TH1D *Jet_Phi_hist = new TH1D("Jet_Phi_hist", "Jet@Phi", 100, -5, 5);
-	TH1D *Electron_Phi_hist = new TH1D("Electron_Phi_hist", "Electron@Phi", 100, -5, 5);
-	TH1D *Muon_Phi_hist = new TH1D("Muon_Phi_hist", "Muon@Phi", 100, -5, 5);
-	TH1D *Electron_Charge_hist = new TH1D("Electron_Charge_hist", "Electron@Charge", 3, -1.5, 1.5);
-	TH1D *Muon_Charge_hist = new TH1D("Muon_Charge_hist", "Muon@Charge", 3, -1.5, 1.5);
+	TH1D *Jet_Eta_hist = new TH1D("Jet_Eta_hist", "Jet.Eta", 60, -3, 3);
+	TH1D *Electron_Eta_hist = new TH1D("Electron_Eta_hist", "Electron.Eta", 60, -3, 3);
+	TH1D *Muon_Eta_hist = new TH1D("Muon_Eta_hist", "Muon.Eta", 60, -3, 3);
+	TH1D *Jet_Phi_hist = new TH1D("Jet_Phi_hist", "Jet.Phi", 100, -5, 5);
+	TH1D *Electron_Phi_hist = new TH1D("Electron_Phi_hist", "Electron.Phi", 100, -5, 5);
+	TH1D *Muon_Phi_hist = new TH1D("Muon_Phi_hist", "Muon.Phi", 100, -5, 5);
+	TH1D *Electron_Charge_hist = new TH1D("Electron_Charge_hist", "Electron.Charge", 3, -1.5, 1.5);
+	TH1D *Muon_Charge_hist = new TH1D("Muon_Charge_hist", "Muon.Charge", 3, -1.5, 1.5);
 	std::vector<TH1D*> histograms = {
 		Jet_PT_hist, Electron_Pt_hist, Muon_Pt_hist,
 		Jet_size_hist, Electron_size_hist, Muon_size_hist,
@@ -103,27 +103,27 @@ void plot_allFinalProcessInfo()
 	}
 
 	PTStackedHist->Draw();
-	PTStackedHist->SetTitle("pT Stack; pT; Entries");
+	PTStackedHist->SetTitle("Transverse Momentum; GeV; Entries");
 	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
 	c1->SaveAs("PTStackedHist.png");
 	c1->Clear();
 	SizeStackedHist->Draw();
-	SizeStackedHist->SetTitle("Size Stack; Size; Entries");
+	SizeStackedHist->SetTitle("Number of Particles/Jet; ; Entries");
 	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
 	c1->SaveAs("SizeStackedHist.png");
 	c1->Clear();
 	EtaStackedHist->Draw();
-	EtaStackedHist->SetTitle("Eta Stack; Eta; Entries");
+	EtaStackedHist->SetTitle("Pseudo-Rapidity; ; Entries");
 	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
 	c1->SaveAs("EtaStackedHist.png");
 	c1->Clear();
 	PhiStackedHist->Draw();
-	PhiStackedHist->SetTitle("Phi Stack; Phi; Entries");
+	PhiStackedHist->SetTitle("Phi; Rad; Entries");
 	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
 	c1->SaveAs("PhiStackedHist.png");
 	c1->Clear();
 	ChargeStackedHist->Draw();
-	ChargeStackedHist->SetTitle("Charge Stack; Charge; Entries");
+	ChargeStackedHist->SetTitle("Charge; ; Entries");
 	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
 	c1->SaveAs("ChargeStackedHist.png");
 	gApplication->Terminate(0); // Exit ROOT with code 0
