@@ -97,17 +97,22 @@ void plot_allFinalProcessInfo()
 
 	PTStackedHist->Draw();
 	PTStackedHist->SetTitle("pT Stack; pT; Entries");
+	c1->SaveAs("PTStackedHist.png");
 	c1->Clear();
 	SizeStackedHist->Draw();
 	SizeStackedHist->SetTitle("Size Stack; Size; Entries");
+	c1->SaveAs("SizeStackedHist.png");
 	c1->Clear();
 	EtaStackedHist->Draw();
 	EtaStackedHist->SetTitle("Eta Stack; Eta; Entries");
+	c1->SaveAs("EtaStackedHist.png");
 	c1->Clear();
 	PhiStackedHist->Draw();
 	PhiStackedHist->SetTitle("Phi Stack; Phi; Entries");
+	c1->SaveAs("PhiStackedHist.png");
 	c1->Clear();
 	ChargeStackedHist->Draw();
 	ChargeStackedHist->SetTitle("Charge Stack; Charge; Entries");
+	c1->SaveAs("ChargeStackedHist.png");
 	gApplication->Terminate(0); // Exit ROOT with code 0
 }
