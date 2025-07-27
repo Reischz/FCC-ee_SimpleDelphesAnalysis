@@ -1,4 +1,4 @@
-void example_histogram() {
+void FilledHistogramExample() {
   gStyle->SetOptStat(0);  // Hide stats box
 
   // Create canvas
@@ -16,6 +16,12 @@ void example_histogram() {
 
   // Style first histogram
   h1->SetFillColorAlpha(kRed + 1, 0.5);  // semi-transparent red
+  //h1->SetFillStyle(3001); // solid fill
+  /*3004: diagonal lines (/)
+    3005: crossed lines (X)
+    3006: vertical lines (|)
+    3007: horizontal lines (–)
+    3008: grid*/
   h1->SetLineColor(kRed + 3);
   h1->SetLineWidth(2);
 

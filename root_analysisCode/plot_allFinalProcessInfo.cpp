@@ -4,6 +4,7 @@
 
 void plot_allFinalProcessInfo()
 {
+	gStyle->SetOptStat(0);  // Hide stats box
 	TFile *file = new TFile("output01.root");
 	TTree *tree = (TTree*) file->Get("Delphes");
 
