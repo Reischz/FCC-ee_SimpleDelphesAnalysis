@@ -1,25 +1,40 @@
 void example_histogram() {
-  // Load ROOT
-  gStyle->SetOptStat(0);  // Turn off stats box
+  gStyle->SetOptStat(0);  // Hide stats box
 
   // Create canvas
-  TCanvas *c1 = new TCanvas("c1", "Filled Histogram", 800, 600);
+  TCanvas *c = new TCanvas("c", "Overlapping Histograms", 800, 600);
 
-  // Create histogram
-  TH1F *h = new TH1F("h", "Random Gaussian;X value;Entries", 50, -5, 5);
-
-  // Fill with Gaussian random numbers
+  // Histogram 1: Gaussian centered at 0
+  TH1F *h1 = new TH1F("h1", "Overlapping Distributions;X value;Entries", 50, -5, 10);
   for (int i = 0; i < 10000; ++i)
-    h->Fill(gRandom->Gaus(0, 1));
+    h1->Fill(gRandom->Gaus(0, 1.5));
 
-  // Styling: fill color and line color
-  h->SetFillColorAlpha(kAzure + 7, 0.5);  // semi-transparent fill
-  h->SetLineColor(kBlue + 3);             // darker border
-  h->SetLineWidth(2);
+  // Histogram 2: Gaussian centered at 2
+  TH1F *h2 = new TH1F("h2", "Overlapping Distributions;X value;Entries", 50, -5, 10);
+  for (int i = 0; i < 10000; ++i)
+    h2->Fill(gRandom->Gaus(2, 1.5));
 
-  // Draw
-  h->Draw("HIST");
+  // Style first histogram
+  h1->SetFillColorAlpha(kRed + 1, 0.5);  // semi-transparent red
+  h1->SetLineColor(kRed + 3);
+  h1->SetLineWidth(2);
 
-  // Save
-  c1->SaveAs("histogram_filled.pdf");
+  // Style second histogram
+  h2->SetFillColorAlpha(kBlue + 1, 0.5); // semi-transparent blue
+  h2->SetLineColor(kBlue + 3);
+  h2->SetLineWidth(2);
+
+  // Draw both with "SAME" to overlap
+  h1->Draw("HIST");
+  h2->Draw("HIST SAME");
+
+  // Add legend
+  auto legend = new TLegend(0.65, 0.7, 0.88, 0.88);
+  legend->AddEntry(h1, "Sample A (mean 0)", "f");
+  legend->AddEntry(h2, "Sample B (mean 2)", "f");
+  legend->Draw();
+
+  // Save result
+  c->SaveAs("overlapping_histograms.png");
+  gApplication->Terminate(0); // Exit ROOT with code 0
 }
