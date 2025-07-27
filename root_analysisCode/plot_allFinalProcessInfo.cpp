@@ -4,7 +4,7 @@
 
 void plot_allFinalProcessInfo()
 {
-	gStyle->SetOptStat(0);  // Hide stats box
+	//gStyle->SetOptStat(0);  // Hide stats box
 	TFile *file = new TFile("output01.root");
 	TTree *tree = (TTree*) file->Get("Delphes");
 
@@ -80,24 +80,24 @@ void plot_allFinalProcessInfo()
 	std::vector<Color_t> HistogramColors = {kBlue, kMagenta, kOrange};
 	for(int j=0;j<3;j++){
 		histograms[j]->SetLineColor(HistogramColors[j]);
-		histograms[j]->SetFillColorAlpha(HistogramColors[j]+1, 0.5); // semi-transparent
+		histograms[j]->SetFillColorAlpha(HistogramColors[j]+1, 0.3); // semi-transparent
 		PTStackedHist->Add(histograms[j]);
 
 		histograms[j+3]->SetLineColor(HistogramColors[j]);
-		histograms[j+3]->SetFillColorAlpha(HistogramColors[j]+1, 0.5);
+		histograms[j+3]->SetFillColorAlpha(HistogramColors[j]+1, 0.3);
 		SizeStackedHist->Add(histograms[j+3]);
 
 		histograms[j+6]->SetLineColor(HistogramColors[j]);
-		histograms[j+6]->SetFillColorAlpha(HistogramColors[j]+1, 0.5);
+		histograms[j+6]->SetFillColorAlpha(HistogramColors[j]+1, 0.3);
 		EtaStackedHist->Add(histograms[j+6]);
 
 		histograms[j+9]->SetLineColor(HistogramColors[j]);
-		histograms[j+9]->SetFillColorAlpha(HistogramColors[j]+1, 0.5);
+		histograms[j+9]->SetFillColorAlpha(HistogramColors[j]+1, 0.3);
 		PhiStackedHist->Add(histograms[j+9]);
 
 		if (j<2) { // Only for Electron and Muon
 			histograms[j+12]->SetLineColor(HistogramColors[j+1]);
-			histograms[j+12]->SetFillColorAlpha(HistogramColors[j+1]+1, 0.5);
+			histograms[j+12]->SetFillColorAlpha(HistogramColors[j+1]+1, 0.3);
 			ChargeStackedHist->Add(histograms[j+12]);
 		}
 	}
