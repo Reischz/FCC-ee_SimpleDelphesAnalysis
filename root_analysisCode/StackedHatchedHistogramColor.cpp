@@ -35,4 +35,5 @@ void StackedHatchedHistogramColor() {
   hs->Draw("HIST");  // do NOT use "SAME" here
   c->BuildLegend(0.65, 0.75, 0.88, 0.88);
   c->SaveAs("stacked_hatched_histograms.png");
+  gApplication->Terminate(0); // Exit ROOT with code 0
 }
