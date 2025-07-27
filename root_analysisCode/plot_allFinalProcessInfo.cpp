@@ -106,21 +106,25 @@ void plot_allFinalProcessInfo()
 	PTStackedHist->SetTitle("pT Stack; pT; Entries");
 	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
 	c1->SaveAs("PTStackedHist.png");
-	c1->GetListOfPrimitives()->Clear();
+	c1->Clear();
 	SizeStackedHist->Draw();
 	SizeStackedHist->SetTitle("Size Stack; Size; Entries");
+	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
 	c1->SaveAs("SizeStackedHist.png");
-	c1->GetListOfPrimitives()->Clear();
+	c1->Clear();
 	EtaStackedHist->Draw();
 	EtaStackedHist->SetTitle("Eta Stack; Eta; Entries");
+	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
 	c1->SaveAs("EtaStackedHist.png");
-	c1->GetListOfPrimitives()->Clear();
+	c1->Clear();
 	PhiStackedHist->Draw();
 	PhiStackedHist->SetTitle("Phi Stack; Phi; Entries");
+	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
 	c1->SaveAs("PhiStackedHist.png");
-	c1->GetListOfPrimitives()->Clear();
+	c1->Clear();
 	ChargeStackedHist->Draw();
 	ChargeStackedHist->SetTitle("Charge Stack; Charge; Entries");
+	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
 	c1->SaveAs("ChargeStackedHist.png");
 	gApplication->Terminate(0); // Exit ROOT with code 0
 }
