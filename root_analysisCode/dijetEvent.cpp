@@ -123,7 +123,7 @@ void dijetEvent()
 	legend->Draw();
 	c1->SaveAs("InvariantMass.png");
 	c1->Clear();
-	legend->Delete();
+	legend->Clear();
 	gPad->SetLogy(0);
 	JetSize->SetLineColor(kBlue);
 	JetSize->SetFillColorAlpha(kBlue+1, 0.3); // semi-transparent
@@ -135,7 +135,7 @@ void dijetEvent()
 	Btagged2Jets->SetFillColorAlpha(kGreen+1, 0.3);
 	JetDist->Add(Btagged2Jets);
 	JetDist->Draw("nostack");
-	TLegend *legend = new TLegend(0.65, 0.75, 0.88, 0.88);
+	//TLegend *legend = new TLegend(0.65, 0.75, 0.88, 0.88);
 	legend->AddEntry(JetSize, Form("All Jets (%d)", (int)JetSize->GetEntries()), "f");
 	legend->AddEntry(BtaggedJets, Form("B-Tagged Jets (%d)", (int)BtaggedJets->GetEntries()), "f");
 	legend->AddEntry(Btagged2Jets, Form("B-Tagged Dijet (%d)", (int)Btagged2Jets->GetEntries()), "f");
