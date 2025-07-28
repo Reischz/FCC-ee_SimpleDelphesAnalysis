@@ -24,12 +24,12 @@ void dijetEvent()
 	THStack *InvMassJet = new THStack("InvMassJet", "Invariant Mass from BTagged-Jets pair; GeV; Entries");
 	TH2D *hist2d = new TH2D("hist2d", "two-dimensional histogram;#Delta #Phi;Inv. Mass", 60, 0, 6, 210, 80, 300);
 
-	TH1F *Einvmass = new TH1F("Einvmass", "Electron Pair", 70, 50, 120);
-	TH1F *Minvmass = new TH1F("Minvmass", "Muon Pair", 70, 50, 120);
+	TH1F *Einvmass = new TH1F("Einvmass", "Electron Pair", 120, 0, 120);
+	TH1F *Minvmass = new TH1F("Minvmass", "Muon Pair", 120, 0, 120);
 
 	// try using btag to find higgs invariant mass
-	TH1F *higgsInvM = new TH1F("higgsInvM", "Higgs Invariant Mass", 90, 50, 240);
-	TH1F *higgsInvM2Jet = new TH1F("higgsInvM2Jet", "Higgs Invariant Mass w/ 2 Jets", 75, 90, 240); // IGNORE
+	TH1F *higgsInvM = new TH1F("higgsInvM", "Higgs Invariant Mass", 240, 0, 240);
+	TH1F *higgsInvM2Jet = new TH1F("higgsInvM2Jet", "Higgs Invariant Mass w/ 2 Jets", 240, 0, 240); // IGNORE
 	TH1F *BtaggedJets = new TH1F("BtaggedJets", "B-Tagged Jets", 6, -0.5, 5.5);
 	TH1F *Btagged2Jets = new TH1F("Btagged2Jets", "B-Tagged Dijet", 6, -0.5, 5.5);
 	TH1F *JetSize = new TH1F("JetSize", "All Jets", 6, -0.5, 5.5);
@@ -150,7 +150,7 @@ void dijetEvent()
 	InvMassJet->Add(higgsInvM2Jet);
 	higgsInvM2Jet->SetLineColor(kRed);
 	higgsInvM2Jet->SetFillColorAlpha(kRed+1, 0.3); // semi-transparent
-	InvMassJet->Draw();
+	InvMassJet->Draw("nostack");
 	legend->AddEntry(higgsInvM, Form("All Jets (%d)", (int)higgsInvM->GetEntries()), "f");
 	legend->AddEntry(higgsInvM2Jet, Form("Dijet (%d)", (int)higgsInvM2Jet->GetEntries()), "f");
 	legend->Draw();
