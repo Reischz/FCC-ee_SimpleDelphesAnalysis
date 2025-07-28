@@ -21,6 +21,7 @@ void dijetEvent()
 	Delphes *delphes_tree = new Delphes(tree);
 	THStack *InvMass = new THStack("InvMass", "Invariant Mass; GeV; Entries");
 	THStack *JetDist = new THStack("JetDist", "Jets Distribution; Number of Jets; Events");
+	THStack *InvMassJet = new THStack("InvMassJet", "Invariant Mass from BTagged-Jets pair; GeV; Entries");
 	TH2D *hist2d = new TH2D("hist2d", "two-dimensional histogram;#Delta #Phi;Inv. Mass", 60, 0, 6, 210, 80, 300);
 
 	TH1F *Einvmass = new TH1F("Einvmass", "Electron Pair", 70, 50, 120);
@@ -142,9 +143,18 @@ void dijetEvent()
 	legend->Draw();
 	c1->SaveAs("JetDistribution.png");
 	c1->Clear();
-	higgsInvM2Jet->SetTitle("Invariant Mass with 2 Jets; GeV; Entries");
-	higgsInvM2Jet->Draw();
-	c1->SaveAs("BTagged2JetInvMass.png");
+	legend->Clear();
+	higgsInvM->SetLineColor(kBlue);
+	higgsInvM->SetFillColorAlpha(kBlue+1, 0.3); // semi-transparent
+	InvMassJet->Add(higgsInvM);
+	InvMassJet->Add(higgsInvM2Jet);
+	higgsInvM2Jet->SetLineColor(kBlue+1);
+	higgsInvM2Jet->SetFillColorAlpha(kBlue+2, 0.3); // semi-transparent
+	InvMassJet->Draw();
+	legend->AddEntry(higgsInvM, Form("All Jets (%d)", (int)higgsInvM->GetEntries()), "f");
+	legend->AddEntry(higgsInvM2Jet, Form("Dijet (%d)", (int)higgsInvM2Jet->GetEntries()), "f");
+	legend->Draw();
+	c1->SaveAs("InvariantMass_JetOnly.png");
 
 	
 	gApplication->Terminate(0); // Exit ROOT with code 0
