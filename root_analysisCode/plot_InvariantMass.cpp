@@ -69,14 +69,14 @@ void plot_InvariantMass(const char* Png_prefix="", const char* filename = "outpu
 			double Jet2_Eta = delphes_tree->Jet_Eta[btaggedJetIndex[1]];
 			double Jet1_Phi = delphes_tree->Jet_Phi[btaggedJetIndex[0]];
 			double Jet2_Phi = delphes_tree->Jet_Phi[btaggedJetIndex[1]];
-			std::vector<double> 1stJet4Momentum = {
+			std::vector<double> _1stJet4Momentum = {
 				sqrt(pow(Jet1_PT*cosh(Jet1_Eta), 2) 
 				+ pow(delphes_tree->Jet_Mass[btaggedJetIndex[0]], 2)),
 				Jet1_PT*cos(Jet1_Phi),
 				Jet1_PT*sin(Jet1_Phi),
 				Jet1_PT*sinh(Jet1_Eta)
 			};
-			std::vector<double> 2ndJet4Momentum = {
+			std::vector<double> _2ndJet4Momentum = {
 				sqrt(pow(Jet2_PT*cosh(Jet2_Eta), 2) 
 				+ pow(delphes_tree->Jet_Mass[btaggedJetIndex[1]], 2)),
 				Jet2_PT*cos(Jet2_Phi),
