@@ -133,8 +133,12 @@ void dijetEvent()
 	Btagged2Jets->SetLineColor(kGreen);
 	Btagged2Jets->SetFillColorAlpha(kGreen+1, 0.3);
 	JetDist->Add(Btagged2Jets);
-	JetDist->Draw();
-	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
+	JetDist->Draw("nostack");
+	TLegend *legend = new TLegend(0.65, 0.75, 0.88, 0.88);
+	legend->AddEntry(JetSize, Form("All Jets (%d)", (int)JetSize->GetEntries()), "f");
+	legend->AddEntry(BtaggedJets, Form("B-Tagged Jets (%d)", (int)BtaggedJets->GetEntries()), "f");
+	legend->AddEntry(Btagged2Jets, Form("B-Tagged Dijet (%d)", (int)Btagged2Jets->GetEntries()), "f");
+	legend->Draw();
 	c1->SaveAs("JetDistribution.png");
 	c1->Clear();
 	higgsInvM2Jet->SetTitle("Invariant Mass with 2 Jets; GeV; Entries");
