@@ -109,8 +109,12 @@ void dijetEvent()
 	InvMass->Add(Einvmass);
 	InvMass->Add(Minvmass);
 	InvMass->Draw();
-	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
-	gPad->SetLogy();
+	// Instead of c1->BuildLegend(), create custom legend
+	TLegend *legend = new TLegend(0.65, 0.75, 0.88, 0.88);
+	legend->AddEntry(higgsInvM, Form("Higgs (%d)", (int)higgsInvM->GetEntries()), "f");
+	legend->AddEntry(Einvmass, Form("Electron (%d)", (int)Einvmass->GetEntries()), "f");
+	legend->AddEntry(Minvmass, Form("Muon (%d)", (int)Minvmass->GetEntries()), "f");
+	legend->Draw();
 	c1->SaveAs("InvariantMass.png");
 	c1->Clear();
 	gPad->SetLogy(0);
