@@ -15,7 +15,6 @@ double deltaPhi(double phi1, double phi2) {
 
 void dijetEvent()
 {
-	
 	TFile *file = new TFile("output01.root");
 	TTree *tree = (TTree*) file->Get("Delphes");
 
@@ -102,6 +101,7 @@ void dijetEvent()
 			hist2d->Fill(DeltaPhi_value, higgsInvM2Jet_value);
 			higgsInvM2Jet->Fill(higgsInvM2Jet_value);
 		}
+		std::cout << "in loop" << std::endl;
 	}
 	
 	TCanvas *c1 = new TCanvas();
