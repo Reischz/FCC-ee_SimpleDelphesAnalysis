@@ -28,8 +28,8 @@ void plot_InvariantMass(const char* Png_prefix="", const char* filename = "outpu
 	TH1F *Minvmass = new TH1F("Minvmass", "Muon Pair", 120, 0, 120);
 
 	// try using btag to find higgs invariant mass
-	TH1F *higgsInvM = new TH1F("higgsInvM", "Higgs Invariant Mass", 240, 0, 240);
-	TH1F *higgsInvM2Jet = new TH1F("higgsInvM2Jet", "Higgs Invariant Mass w/ 2 Jets", 240, 0, 240); // IGNORE
+	TH1F *higgsInvM = new TH1F("higgsInvM", "Higgs Invariant Mass", 300, 0, 300);
+	TH1F *higgsInvM2Jet = new TH1F("higgsInvM2Jet", "Higgs Invariant Mass w/ 2 Jets", 300, 0, 300);
 	TH1F *BtaggedJets = new TH1F("BtaggedJets", "B-Tagged Jets", 6, -0.5, 5.5);
 	TH1F *Btagged2Jets = new TH1F("Btagged2Jets", "B-Tagged Dijet", 6, -0.5, 5.5);
 	TH1F *JetSize = new TH1F("JetSize", "All Jets", 6, -0.5, 5.5);
@@ -37,12 +37,7 @@ void plot_InvariantMass(const char* Png_prefix="", const char* filename = "outpu
 	for (Long64_t jentry=0; jentry<tree->GetEntries(); jentry++)
 	{
 		delphes_tree->GetEntry(jentry);
-		// check conditions to ensure InvariantMass is valid
-		double higgsInvM_value = 0;
-		double higgsInvM2Jet_value = 0;
-		double DeltaR_value = 0;
-		double DeltaPhi_value = 0;
-		 
+
 		// loop to find all Btagged jets
 		int btaggedJets = 0;
 		int JetSize_value = delphes_tree->Jet_size;
@@ -63,19 +58,35 @@ void plot_InvariantMass(const char* Png_prefix="", const char* filename = "outpu
 				}
 			}
 
-			higgsInvM_value = sqrt(2 * delphes_tree->Jet_PT[btaggedJetIndex[0]] * delphes_tree->Jet_PT[btaggedJetIndex[1]] *
-				(cosh(delphes_tree->Jet_Eta[btaggedJetIndex[0]] - delphes_tree->Jet_Eta[btaggedJetIndex[1]]) - 
-				cos(deltaPhi(delphes_tree->Jet_Phi[btaggedJetIndex[0]], delphes_tree->Jet_Phi[btaggedJetIndex[1]]))));
+			double Jet1_PT = delphes_tree->Jet_PT[btaggedJetIndex[0]];
+			double Jet2_PT = delphes_tree->Jet_PT[btaggedJetIndex[1]];
+			double Jet1_Eta = delphes_tree->Jet_Eta[btaggedJetIndex[0]];
+			double Jet2_Eta = delphes_tree->Jet_Eta[btaggedJetIndex[1]];
+			double Jet1_Phi = delphes_tree->Jet_Phi[btaggedJetIndex[0]];
+			double Jet2_Phi = delphes_tree->Jet_Phi[btaggedJetIndex[1]];
+			std::vector<double> _1stJet4Momentum = {
+				sqrt(pow(Jet1_PT*cosh(Jet1_Eta), 2) 
+				+ pow(delphes_tree->Jet_Mass[btaggedJetIndex[0]], 2)),
+				Jet1_PT*cos(Jet1_Phi),
+				Jet1_PT*sin(Jet1_Phi),
+				Jet1_PT*sinh(Jet1_Eta)
+			};
+			std::vector<double> _2ndJet4Momentum = {
+				sqrt(pow(Jet2_PT*cosh(Jet2_Eta), 2) 
+				+ pow(delphes_tree->Jet_Mass[btaggedJetIndex[1]], 2)),
+				Jet2_PT*cos(Jet2_Phi),
+				Jet2_PT*sin(Jet2_Phi),
+				Jet2_PT*sinh(Jet2_Eta)
+			};
+			double higgsInvM_sq = pow(_1stJet4Momentum[0] + _2ndJet4Momentum[0], 2);
+			for (int i = 1; i < 4; ++i) {
+				higgsInvM_sq = higgsInvM_sq - pow(_1stJet4Momentum[i] + _2ndJet4Momentum[i], 2);
+			}
+			higgsInvM->Fill(sqrt(higgsInvM_sq));
 			if (JetSize_value == 2) 
 			{
 				Btagged2Jets->Fill(btaggedJets);
-				DeltaPhi_value = deltaPhi(delphes_tree->Jet_Phi[0], delphes_tree->Jet_Phi[1]);
-				DeltaR_value = sqrt(pow(delphes_tree->Jet_Eta[0] - delphes_tree->Jet_Eta[1], 2) + 
-				pow(deltaPhi(delphes_tree->Jet_Phi[0], delphes_tree->Jet_Phi[1]), 2));
-
-				higgsInvM2Jet_value = sqrt(2 * delphes_tree->Jet_PT[0] * delphes_tree->Jet_PT[1] *
-					(cosh(delphes_tree->Jet_Eta[0] - delphes_tree->Jet_Eta[1]) - 
-					cos(deltaPhi(delphes_tree->Jet_Phi[0], delphes_tree->Jet_Phi[1]))));
+				higgsInvM2Jet->Fill(sqrt(higgsInvM_sq));
 			}
 		}
 
@@ -92,15 +103,6 @@ void plot_InvariantMass(const char* Png_prefix="", const char* filename = "outpu
 				delphes_tree->Muon_Eta[0] - delphes_tree->Muon_Eta[1]) - cos(deltaPhi(delphes_tree->Muon_Phi[0], 
 				delphes_tree->Muon_Phi[1]))));
 			Minvmass->Fill(invmass_value);
-		}
-		if (higgsInvM_value > 0) 
-		{
-			higgsInvM->Fill(higgsInvM_value);
-		}
-		if (higgsInvM2Jet_value > 0) 
-		{
-			hist2d->Fill(DeltaPhi_value, higgsInvM2Jet_value);
-			higgsInvM2Jet->Fill(higgsInvM2Jet_value);
 		}
 	}
 	
