@@ -105,21 +105,33 @@ void dijetEvent()
 	
 	TCanvas *c1 = new TCanvas();
 	c1->cd();
+	higgsInvM->SetLineColor(kBlue);
+	higgsInvM->SetFillColorAlpha(kBlue+1, 0.3); // semi-transparent
 	InvMass->Add(higgsInvM);
+	Einvmass->SetLineColor(kMagenta);
+	Einvmass->SetFillColorAlpha(kMagenta+1, 0.3); // semi-transparent
 	InvMass->Add(Einvmass);
+	Minvmass->SetLineColor(kOrange);
+	Minvmass->SetFillColorAlpha(kOrange+1, 0.3);
 	InvMass->Add(Minvmass);
 	InvMass->Draw();
 	// Instead of c1->BuildLegend(), create custom legend
 	TLegend *legend = new TLegend(0.65, 0.75, 0.88, 0.88);
-	legend->AddEntry(higgsInvM, Form("Higgs (%d)", (int)higgsInvM->GetEntries()), "f");
+	legend->AddEntry(higgsInvM, Form("Jet (%d)", (int)higgsInvM->GetEntries()), "f");
 	legend->AddEntry(Einvmass, Form("Electron (%d)", (int)Einvmass->GetEntries()), "f");
 	legend->AddEntry(Minvmass, Form("Muon (%d)", (int)Minvmass->GetEntries()), "f");
 	legend->Draw();
 	c1->SaveAs("InvariantMass.png");
 	c1->Clear();
 	gPad->SetLogy(0);
+	JetSize->SetLineColor(kBlue);
+	JetSize->SetFillColorAlpha(kBlue+1, 0.3); // semi-transparent
 	JetDist->Add(JetSize);
+	BtaggedJets->SetLineColor(kRed);
+	BtaggedJets->SetFillColorAlpha(kRed+1, 0.3);
 	JetDist->Add(BtaggedJets);
+	Btagged2Jets->SetLineColor(kGreen);
+	Btagged2Jets->SetFillColorAlpha(kGreen+1, 0.3);
 	JetDist->Add(Btagged2Jets);
 	JetDist->Draw();
 	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
