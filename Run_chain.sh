@@ -5,7 +5,7 @@
 #SBATCH --output=HZconfig.log
 #SBATCH --ntasks=3
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=4G
+#SBATCH --mem=8G
 
 source /work/app/share_env/hepsw-gcc11p2-py3p9p9.sh
 
