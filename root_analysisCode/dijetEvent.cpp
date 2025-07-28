@@ -15,7 +15,7 @@ double deltaPhi(double phi1, double phi2) {
 
 void dijetEvent()
 {
-	gApplication->SetOptStat(0);  // Hide stats box
+	
 	TFile *file = new TFile("output01.root");
 	TTree *tree = (TTree*) file->Get("Delphes");
 
