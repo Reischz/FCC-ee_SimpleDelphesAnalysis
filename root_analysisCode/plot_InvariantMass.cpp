@@ -28,8 +28,8 @@ void plot_InvariantMass(const char* Png_prefix="", const char* filename = "outpu
 	TH1F *Minvmass = new TH1F("Minvmass", "Muon Pair", 120, 0, 120);
 
 	// try using btag to find higgs invariant mass
-	TH1F *higgsInvM = new TH1F("higgsInvM", "Higgs Invariant Mass", 240, 0, 240);
-	TH1F *higgsInvM2Jet = new TH1F("higgsInvM2Jet", "Higgs Invariant Mass w/ 2 Jets", 240, 0, 240); // IGNORE
+	TH1F *higgsInvM = new TH1F("higgsInvM", "Higgs Invariant Mass", 300, 0, 300);
+	TH1F *higgsInvM2Jet = new TH1F("higgsInvM2Jet", "Higgs Invariant Mass w/ 2 Jets", 300, 0, 300);
 	TH1F *BtaggedJets = new TH1F("BtaggedJets", "B-Tagged Jets", 6, -0.5, 5.5);
 	TH1F *Btagged2Jets = new TH1F("Btagged2Jets", "B-Tagged Dijet", 6, -0.5, 5.5);
 	TH1F *JetSize = new TH1F("JetSize", "All Jets", 6, -0.5, 5.5);
@@ -37,12 +37,7 @@ void plot_InvariantMass(const char* Png_prefix="", const char* filename = "outpu
 	for (Long64_t jentry=0; jentry<tree->GetEntries(); jentry++)
 	{
 		delphes_tree->GetEntry(jentry);
-		// check conditions to ensure InvariantMass is valid
-		double higgsInvM_value = 0;
-		double higgsInvM2Jet_value = 0;
-		double DeltaR_value = 0;
-		double DeltaPhi_value = 0;
-		 
+
 		// loop to find all Btagged jets
 		int btaggedJets = 0;
 		int JetSize_value = delphes_tree->Jet_size;
@@ -83,18 +78,15 @@ void plot_InvariantMass(const char* Png_prefix="", const char* filename = "outpu
 				Jet2_PT*sin(Jet2_Phi),
 				Jet2_PT*sinh(Jet2_Eta)
 			};
-			for (int i = 0; i < 4; ++i) {
-				if (i == 0) {
-					higgsInvM_value += pow(_1stJet4Momentum[i] + _2ndJet4Momentum[i], 2);
-				} else {
-					higgsInvM_value -= pow(_1stJet4Momentum[i] + _2ndJet4Momentum[i], 2);
-				}
+			double higgsInvM_sq = pow(_1stJet4Momentum[0] + _2ndJet4Momentum[0], 2);
+			for (int i = 1; i < 4; ++i) {
+				higgsInvM_sq = higgsInvM_sq - pow(_1stJet4Momentum[i] + _2ndJet4Momentum[i], 2);
 			}
-			higgsInvM->Fill(sqrt(higgsInvM_value));
+			higgsInvM->Fill(sqrt(higgsInvM_sq));
 			if (JetSize_value == 2) 
 			{
 				Btagged2Jets->Fill(btaggedJets);
-				higgsInvM2Jet->Fill(sqrt(higgsInvM_value));
+				higgsInvM2Jet->Fill(sqrt(higgsInvM_sq));
 			}
 		}
 
