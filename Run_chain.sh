@@ -34,6 +34,7 @@ gzip -dc HiggsStrahlungwithBDecay/Events/formal01/tag_1_pythia8_events.hepmc.gz 
  BDecay_output.root HiggsStrahlungwithBDecay/Events/formal01/tag_1_pythia8_events.hepmc
 
 root -l -b -q "root_analysisCode/plot_allFinalProcessInfo.cpp(\"BDecay_\",\"BDecay_output.root\")"
+root -l -b -q "root_analysisCode/plot_InvariantMass.cpp(\"BDecay_\",\"BDecay_output.root\")"
 }
 
 run_qdecay() {
@@ -62,6 +63,7 @@ gzip -dc HiggsStrahlungwithQuarkDecay/Events/formal01/tag_1_pythia8_events.hepmc
  QuarkDecay_output.root HiggsStrahlungwithQuarkDecay/Events/formal01/tag_1_pythia8_events.hepmc
 
 root -l -b -q "root_analysisCode/plot_allFinalProcessInfo.cpp(\"QuarkDecay_\",\"QuarkDecay_output.root\")"
+root -l -b -q "root_analysisCode/plot_InvariantMass.cpp(\"QuarkDecay_\",\"QuarkDecay_output.root\")"
 }
 
 run_nodecay() {
@@ -88,6 +90,7 @@ gzip -dc HiggsStrahlungwithoutDecay/Events/formal01/tag_1_pythia8_events.hepmc.g
  NoDecay_output.root HiggsStrahlungwithoutDecay/Events/formal01/tag_1_pythia8_events.hepmc
 
 root -l -b -q "root_analysisCode/plot_allFinalProcessInfo.cpp(\"NoDecay_\",\"NoDecay_output.root\")"
+root -l -b -q "root_analysisCode/plot_InvariantMass.cpp(\"NoDecay_\",\"NoDecay_output.root\")"
 }
 
 # Run all in parallel
