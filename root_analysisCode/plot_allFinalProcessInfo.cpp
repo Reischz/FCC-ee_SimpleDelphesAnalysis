@@ -2,10 +2,9 @@
 #include "TTree.h"
 #include "Delphes.C"
 
-void plot_allFinalProcessInfo()
+void plot_allFinalProcessInfo(const char* Png_prefix="", const char* filename = "output01.root")
 {
-	//gStyle->SetOptStat(0);  // Hide stats box
-	TFile *file = new TFile("output01.root");
+	TFile *file = new TFile(filename);	
 	TTree *tree = (TTree*) file->Get("Delphes");
 
 	Delphes *delphes_tree = new Delphes(tree);
@@ -105,26 +104,26 @@ void plot_allFinalProcessInfo()
 	PTStackedHist->Draw();
 	PTStackedHist->SetTitle("Transverse Momentum; GeV; Entries");
 	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
-	c1->SaveAs("PTStackedHist.png");
+	c1->SaveAs(Form("%sPTStackedHist.png", Png_prefix));
 	c1->Clear();
 	SizeStackedHist->Draw();
 	SizeStackedHist->SetTitle("Number of Particles/Jet; ; Entries");
 	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
-	c1->SaveAs("SizeStackedHist.png");
+	c1->SaveAs(Form("%sSizeStackedHist.png", Png_prefix));
 	c1->Clear();
 	EtaStackedHist->Draw();
 	EtaStackedHist->SetTitle("Pseudo-Rapidity; ; Entries");
 	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
-	c1->SaveAs("EtaStackedHist.png");
+	c1->SaveAs(Form("%sEtaStackedHist.png", Png_prefix));
 	c1->Clear();
 	PhiStackedHist->Draw();
 	PhiStackedHist->SetTitle("Phi; Rad; Entries");
 	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
-	c1->SaveAs("PhiStackedHist.png");
+	c1->SaveAs(Form("%sPhiStackedHist.png", Png_prefix));
 	c1->Clear();
 	ChargeStackedHist->Draw();
 	ChargeStackedHist->SetTitle("Charge; ; Entries");
 	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
-	c1->SaveAs("ChargeStackedHist.png");
+	c1->SaveAs(Form("%sChargeStackedHist.png", Png_prefix));
 	gApplication->Terminate(0); // Exit ROOT with code 0
 }

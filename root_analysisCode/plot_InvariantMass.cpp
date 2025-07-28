@@ -13,9 +13,9 @@ double deltaPhi(double phi1, double phi2) {
 	return deltaPhiValue;
 }
 
-void dijetEvent()
+void plot_InvariantMass(const char* Png_prefix="", const char* filename = "output01.root")
 {
-	TFile *file = new TFile("output01.root");
+	TFile *file = new TFile(filename);	
 	TTree *tree = (TTree*) file->Get("Delphes");
 
 	Delphes *delphes_tree = new Delphes(tree);
@@ -122,7 +122,7 @@ void dijetEvent()
 	legend->AddEntry(Einvmass, Form("Electron (%d)", (int)Einvmass->GetEntries()), "f");
 	legend->AddEntry(Minvmass, Form("Muon (%d)", (int)Minvmass->GetEntries()), "f");
 	legend->Draw();
-	c1->SaveAs("InvariantMass.png");
+	c1->SaveAs(Form("%sInvariantMass.png", Png_prefix));
 	c1->Clear();
 	legend->Clear();
 	gPad->SetLogy(0);
@@ -141,7 +141,7 @@ void dijetEvent()
 	legend->AddEntry(BtaggedJets, Form("B-Tagged Jets (%d)", (int)BtaggedJets->GetEntries()), "f");
 	legend->AddEntry(Btagged2Jets, Form("B-Tagged Dijet (%d)", (int)Btagged2Jets->GetEntries()), "f");
 	legend->Draw();
-	c1->SaveAs("JetDistribution.png");
+	c1->SaveAs(Form("%sJetDistribution.png", Png_prefix));
 	c1->Clear();
 	legend->Clear();
 	higgsInvM->SetLineColor(kBlue);
@@ -154,7 +154,7 @@ void dijetEvent()
 	legend->AddEntry(higgsInvM, Form("All Jets (%d)", (int)higgsInvM->GetEntries()), "f");
 	legend->AddEntry(higgsInvM2Jet, Form("Dijet (%d)", (int)higgsInvM2Jet->GetEntries()), "f");
 	legend->Draw();
-	c1->SaveAs("InvariantMass_JetOnly.png");
+	c1->SaveAs(Form("%sInvariantMass_JetOnly.png", Png_prefix));
 
 	
 	gApplication->Terminate(0); // Exit ROOT with code 0
