@@ -30,9 +30,9 @@ void dijetEvent()
 	// try using btag to find higgs invariant mass
 	TH1F *higgsInvM = new TH1F("higgsInvM", "Higgs Invariant Mass", 90, 50, 240);
 	TH1F *higgsInvM2Jet = new TH1F("higgsInvM2Jet", "Higgs Invariant Mass w/ 2 Jets", 75, 90, 240); // IGNORE
-	TH1F *BtaggedJets = new TH1F("BtaggedJets", "B-Tagged Jets", 5, -0.5, 4.5);
-	TH1F *Btagged2Jets = new TH1F("Btagged2Jets", "B-Tagged Dijet", 5, -0.5, 4.5);
-	TH1F *JetSize = new TH1F("JetSize", "All Jets", 5, -0.5, 4.5);
+	TH1F *BtaggedJets = new TH1F("BtaggedJets", "B-Tagged Jets", 6, -0.5, 5.5);
+	TH1F *Btagged2Jets = new TH1F("Btagged2Jets", "B-Tagged Dijet", 6, -0.5, 5.5);
+	TH1F *JetSize = new TH1F("JetSize", "All Jets", 6, -0.5, 5.5);
 
 	for (Long64_t jentry=0; jentry<tree->GetEntries(); jentry++)
 	{
@@ -148,8 +148,8 @@ void dijetEvent()
 	higgsInvM->SetFillColorAlpha(kBlue+1, 0.3); // semi-transparent
 	InvMassJet->Add(higgsInvM);
 	InvMassJet->Add(higgsInvM2Jet);
-	higgsInvM2Jet->SetLineColor(kBlue+1);
-	higgsInvM2Jet->SetFillColorAlpha(kBlue+2, 0.3); // semi-transparent
+	higgsInvM2Jet->SetLineColor(kRed);
+	higgsInvM2Jet->SetFillColorAlpha(kRed+1, 0.3); // semi-transparent
 	InvMassJet->Draw();
 	legend->AddEntry(higgsInvM, Form("All Jets (%d)", (int)higgsInvM->GetEntries()), "f");
 	legend->AddEntry(higgsInvM2Jet, Form("Dijet (%d)", (int)higgsInvM2Jet->GetEntries()), "f");
