@@ -26,9 +26,12 @@ set run_card lpp2 0
 set run_card nevents 10000
 EOF
 
+gzip -dc HiggsStrahlungwithBDecay/Events/formal01/tag_1_pythia8_events.hepmc.gz \
+ > HiggsStrahlungwithBDecay/Events/formal01/tag_1_pythia8_events.hepmc
+
 /work/app/delphes/src/Delphes-3.5.0/DelphesHepMC2 \
  /work/app/delphes/src/Delphes-3.5.0/cards/delphes_card_IDEA.tcl \
- BDecay_output.root HiggsStrahlungwithBDecay/Events/formal01/tag_1_pythia8_events.hepmc.gz
+ BDecay_output.root HiggsStrahlungwithBDecay/Events/formal01/tag_1_pythia8_events.hepmc
 
 root -l -b -q "root_analysisCode/plot_allFinalProcessInfo.cpp(\"BDecay_\",\"BDecay_output.root\")"
 }
@@ -51,9 +54,12 @@ set run_card lpp2 0
 set run_card nevents 10000
 EOF
 
+gzip -dc HiggsStrahlungwithQuarkDecay/Events/formal01/tag_1_pythia8_events.hepmc.gz \
+ > HiggsStrahlungwithQuarkDecay/Events/formal01/tag_1_pythia8_events.hepmc
+
 /work/app/delphes/src/Delphes-3.5.0/DelphesHepMC2 \
  /work/app/delphes/src/Delphes-3.5.0/cards/delphes_card_IDEA.tcl \
- QuarkDecay_output.root HiggsStrahlungwithQuarkDecay/Events/formal01/tag_1_pythia8_events.hepmc.gz
+ QuarkDecay_output.root HiggsStrahlungwithQuarkDecay/Events/formal01/tag_1_pythia8_events.hepmc
 
 root -l -b -q "root_analysisCode/plot_allFinalProcessInfo.cpp(\"QuarkDecay_\",\"QuarkDecay_output.root\")"
 }
@@ -74,9 +80,12 @@ set run_card lpp2 0
 set run_card nevents 10000
 EOF
 
+gzip -dc HiggsStrahlungwithoutDecay/Events/formal01/tag_1_pythia8_events.hepmc.gz \
+ > HiggsStrahlungwithoutDecay/Events/formal01/tag_1_pythia8_events.hepmc
+
 /work/app/delphes/src/Delphes-3.5.0/DelphesHepMC2 \
  /work/app/delphes/src/Delphes-3.5.0/cards/delphes_card_IDEA.tcl \
- NoDecay_output.root HiggsStrahlungwithoutDecay/Events/formal01/tag_1_pythia8_events.hepmc.gz
+ NoDecay_output.root HiggsStrahlungwithoutDecay/Events/formal01/tag_1_pythia8_events.hepmc
 
 root -l -b -q "root_analysisCode/plot_allFinalProcessInfo.cpp(\"NoDecay_\",\"NoDecay_output.root\")"
 }
