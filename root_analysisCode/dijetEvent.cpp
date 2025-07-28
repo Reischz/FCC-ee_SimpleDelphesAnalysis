@@ -33,10 +33,8 @@ void dijetEvent()
 	TH1F *Btagged2Jets = new TH1F("Btagged2Jets", "B-Tagged Dijet", 5, -0.5, 4.5);
 	TH1F *JetSize = new TH1F("JetSize", "All Jets", 5, -0.5, 4.5);
 
-	std::cout<<"lgudtyloy"<<std::endl;
 	for (Long64_t jentry=0; jentry<tree->GetEntries(); jentry++)
 	{
-		std::cout<<"jentry: "<<jentry<<std::endl;
 		delphes_tree->GetEntry(jentry);
 		// check conditions to ensure InvariantMass is valid
 		double higgsInvM_value = 0;
@@ -121,10 +119,10 @@ void dijetEvent()
 	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
 	c1->SaveAs("JetDistribution.png");
 	c1->Clear();
-	higgsInvM2Jet->SetTitle("Higgs Invariant Mass with 2 Jets; GeV; Entries");
+	higgsInvM2Jet->SetTitle("Invariant Mass with 2 Jets; GeV; Entries");
+	gPad->SetLogy();
 	higgsInvM2Jet->Draw();
-	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
-	c1->SaveAs("HiggsInvM2Jet.png");
+	c1->SaveAs("BTagged2JetInvMass.png");
 
 	
 	gApplication->Terminate(0); // Exit ROOT with code 0
