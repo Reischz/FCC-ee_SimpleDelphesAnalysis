@@ -110,8 +110,10 @@ void dijetEvent()
 	InvMass->Add(Minvmass);
 	InvMass->Draw();
 	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
+	gPad->SetLogy();
 	c1->SaveAs("InvariantMass.png");
 	c1->Clear();
+	gPad->SetLogy(0);
 	JetDist->Add(JetSize);
 	JetDist->Add(BtaggedJets);
 	JetDist->Add(Btagged2Jets);
@@ -120,7 +122,6 @@ void dijetEvent()
 	c1->SaveAs("JetDistribution.png");
 	c1->Clear();
 	higgsInvM2Jet->SetTitle("Invariant Mass with 2 Jets; GeV; Entries");
-	gPad->SetLogy();
 	higgsInvM2Jet->Draw();
 	c1->SaveAs("BTagged2JetInvMass.png");
 
