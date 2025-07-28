@@ -33,8 +33,10 @@ void dijetEvent()
 	TH1F *Btagged2Jets = new TH1F("Btagged2Jets", "B-Tagged Dijet", 5, -0.5, 4.5);
 	TH1F *JetSize = new TH1F("JetSize", "All Jets", 5, -0.5, 4.5);
 
+	std::cout<<"lgudtyloy"<<std::endl;
 	for (Long64_t jentry=0; jentry<tree->GetEntries(); jentry++)
 	{
+		std::cout<<"jentry: "<<jentry<<std::endl;
 		delphes_tree->GetEntry(jentry);
 		// check conditions to ensure InvariantMass is valid
 		double higgsInvM_value = 0;
@@ -101,7 +103,6 @@ void dijetEvent()
 			hist2d->Fill(DeltaPhi_value, higgsInvM2Jet_value);
 			higgsInvM2Jet->Fill(higgsInvM2Jet_value);
 		}
-		std::cout << "in loop" << std::endl;
 	}
 	
 	TCanvas *c1 = new TCanvas();
