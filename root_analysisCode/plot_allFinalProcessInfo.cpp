@@ -102,27 +102,27 @@ void plot_allFinalProcessInfo(const char* Png_prefix="", const char* filename = 
 	}
 
 	PTStackedHist->Draw();
-	PTStackedHist->SetTitle("Transverse Momentum; GeV; Entries");
+	PTStackedHist->SetTitle("Transverse Momentum (Stacked); GeV; Entries");
 	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
 	c1->SaveAs(Form("%sPTStackedHist.png", Png_prefix));
 	c1->Clear();
 	SizeStackedHist->Draw();
-	SizeStackedHist->SetTitle("Number of Particles/Jet; ; Entries");
+	SizeStackedHist->SetTitle("Number of Particles/Jet (Stacked); ; Entries");
 	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
 	c1->SaveAs(Form("%sSizeStackedHist.png", Png_prefix));
 	c1->Clear();
 	EtaStackedHist->Draw();
-	EtaStackedHist->SetTitle("Pseudo-Rapidity; ; Entries");
+	EtaStackedHist->SetTitle("Pseudo-Rapidity (Stacked); ; Entries");
 	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
 	c1->SaveAs(Form("%sEtaStackedHist.png", Png_prefix));
 	c1->Clear();
 	PhiStackedHist->Draw();
-	PhiStackedHist->SetTitle("Phi; Rad; Entries");
+	PhiStackedHist->SetTitle("Phi (Stacked); Rad; Entries");
 	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
 	c1->SaveAs(Form("%sPhiStackedHist.png", Png_prefix));
 	c1->Clear();
 	ChargeStackedHist->Draw();
-	ChargeStackedHist->SetTitle("Charge; ; Entries");
+	ChargeStackedHist->SetTitle("Charge (Stacked); ; Entries");
 	c1->BuildLegend(0.65, 0.75, 0.88, 0.88);
 	c1->SaveAs(Form("%sChargeStackedHist.png", Png_prefix));
 	gApplication->Terminate(0); // Exit ROOT with code 0
