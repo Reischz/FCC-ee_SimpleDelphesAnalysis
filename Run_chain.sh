@@ -40,8 +40,8 @@ run_qdecay() {
 rm -rf HiggsStrahlungwithQuarkDecay
 rm -rf QuarkDecay_output.root
 /work/home/ruttho/binary/MG5_aMC_v3_5_4/bin/mg5_aMC << EOF
-Defined multiparticle q = u d s c b t
-Defined multiparticle q~ = u~ d~ s~ c~ b~ t~
+define q = u d s c b t
+define q~ = u~ d~ s~ c~ b~ t~
 generate e+ e- > z h, z > l+ l-, h > q q~
 output HiggsStrahlungwithQuarkDecay
 launch -n formal01
