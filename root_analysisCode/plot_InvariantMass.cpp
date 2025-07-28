@@ -85,9 +85,9 @@ void plot_InvariantMass(const char* Png_prefix="", const char* filename = "outpu
 			};
 			for (int i = 0; i < 4; ++i) {
 				if (i == 0) {
-					higgsInvM_value += pow(1stJet4Momentum[i] + 2ndJet4Momentum[i], 2);
+					higgsInvM_value += pow(_1stJet4Momentum[i] + _2ndJet4Momentum[i], 2);
 				} else {
-					higgsInvM_value -= pow(1stJet4Momentum[i] + 2ndJet4Momentum[i], 2);
+					higgsInvM_value -= pow(_1stJet4Momentum[i] + _2ndJet4Momentum[i], 2);
 				}
 			}
 			higgsInvM->Fill(sqrt(higgsInvM_value));
