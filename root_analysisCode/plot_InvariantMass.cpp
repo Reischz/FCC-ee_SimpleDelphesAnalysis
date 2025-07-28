@@ -19,7 +19,7 @@ void plot_InvariantMass(const char* Png_prefix="", const char* filename = "outpu
 	TTree *tree = (TTree*) file->Get("Delphes");
 
 	Delphes *delphes_tree = new Delphes(tree);
-	THStack *InvMass = new THStack("InvMass", "Invariant Mass; GeV; Entries");
+	THStack *InvMass = new THStack("InvMass", "Invariant Mass (Stacked); GeV; Entries");
 	THStack *JetDist = new THStack("JetDist", "Jets Distribution; Number of Jets; Events");
 	THStack *InvMassJet = new THStack("InvMassJet", "Invariant Mass from BTagged-Jets pair; GeV; Entries");
 	TH2D *hist2d = new TH2D("hist2d", "two-dimensional histogram;#Delta #Phi;Inv. Mass", 60, 0, 6, 210, 80, 300);

@@ -8,11 +8,11 @@ void plot_allFinalProcessInfo(const char* Png_prefix="", const char* filename = 
 	TTree *tree = (TTree*) file->Get("Delphes");
 
 	Delphes *delphes_tree = new Delphes(tree);
-	THStack *PTStackedHist = new THStack("PTStackedHist", "Transverse Momentum");
-	THStack *SizeStackedHist = new THStack("SizeStackedHist", "Number of Particles/Jet");
-	THStack *EtaStackedHist = new THStack("EtaStackedHist", "Eta");
-	THStack *PhiStackedHist = new THStack("PhiStackedHist", "Phi");
-	THStack *ChargeStackedHist = new THStack("ChargeStackedHist", "Charge");
+	THStack *PTStackedHist = new THStack("PTStackedHist", "Transverse Momentum (Stacked); GeV; Entries");
+	THStack *SizeStackedHist = new THStack("SizeStackedHist", "Number of Particles/Jet (Stacked); Entries");
+	THStack *EtaStackedHist = new THStack("EtaStackedHist", "Eta (Stacked); Entries");
+	THStack *PhiStackedHist = new THStack("PhiStackedHist", "Phi (Stacked); Entries");
+	THStack *ChargeStackedHist = new THStack("ChargeStackedHist", "Charge (Stacked); Entries");
 	TH1D *Jet_PT_hist = new TH1D("Jet_PT_hist", "Jet.pT", 60, 0, 120);
     TH1D *Electron_Pt_hist = new TH1D("Electron_Pt_hist", "Electron.pT", 60, 0, 120);
 	TH1D *Muon_Pt_hist = new TH1D("Muon_Pt_hist", "Muon.pT", 60, 0, 120);
