@@ -1,13 +1,13 @@
 #!/bin/bash
 #SBATCH --job-name=HZconfig
 #SBATCH --qos=cu_hpc
+#SBATCH --partition=cpu
 #SBATCH --output=HZconfig.log
-#SBATCH --ntasks=1
+#SBATCH --ntasks=3
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=4G
 
 source /work/app/share_env/hepsw-gcc11p2-py3p9p9.sh
-cmsset
 
 # This script try to run a chain of commands in MadGraph w/o cards
 rm -rf HiggsStrahlungwithBDecay
