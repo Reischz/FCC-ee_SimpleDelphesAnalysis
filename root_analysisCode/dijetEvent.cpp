@@ -123,6 +123,7 @@ void dijetEvent()
 	legend->Draw();
 	c1->SaveAs("InvariantMass.png");
 	c1->Clear();
+	legend->Delete();
 	gPad->SetLogy(0);
 	JetSize->SetLineColor(kBlue);
 	JetSize->SetFillColorAlpha(kBlue+1, 0.3); // semi-transparent
