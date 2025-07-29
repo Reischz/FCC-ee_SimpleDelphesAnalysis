@@ -28,8 +28,8 @@ void plot_InvariantMass(const char* Png_prefix="", const char* filename = "outpu
 	TH1F *Minvmass = new TH1F("Minvmass", "Muon Pair", 120, 0, 120);
 
 	// try using btag to find higgs invariant mass
-	TH1F *higgsInvM = new TH1F("higgsInvM", "Higgs Invariant Mass", 240, 0, 240);
-	TH1F *higgsInvM2Jet = new TH1F("higgsInvM2Jet", "Higgs Invariant Mass w/ 2 Jets", 240, 0, 240); // IGNORE
+	TH1F *higgsInvM = new TH1F("higgsInvM", "Higgs Invariant Mass", 300, 0, 300);
+	TH1F *higgsInvM2Jet = new TH1F("higgsInvM2Jet", "Higgs Invariant Mass w/ 2 Jets", 300, 0, 300); // IGNORE
 	TH1F *BtaggedJets = new TH1F("BtaggedJets", "B-Tagged Jets", 6, -0.5, 5.5);
 	TH1F *Btagged2Jets = new TH1F("Btagged2Jets", "B-Tagged Dijet", 6, -0.5, 5.5);
 	TH1F *JetSize = new TH1F("JetSize", "All Jets", 6, -0.5, 5.5);
