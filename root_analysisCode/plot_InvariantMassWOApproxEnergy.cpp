@@ -13,7 +13,7 @@ double deltaPhi(double phi1, double phi2) {
 	return deltaPhiValue;
 }
 
-void plot_InvariantMass(const char* Png_prefix="", const char* filename = "output01.root")
+void plot_InvariantMassWOApproxEnergy(const char* Png_prefix="", const char* filename = "output01.root")
 {
 	TFile *file = new TFile(filename);	
 	TTree *tree = (TTree*) file->Get("Delphes");
