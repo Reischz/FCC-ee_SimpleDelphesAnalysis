@@ -119,6 +119,6 @@ root -l -b -q "root_analysisCode/plot_InvariantMass.cpp(\"${output_dir}_\",\"$ou
 }
 
 
-run_HZFourLeptons("HiggsStrahlungwithFourLeptons","e+ e- > z h, (z > w+ w-, w+ > l+ vl, w- > l- vl~), h > l+ l- l+ l-")
+run_HZFourLeptons "HiggsStrahlungwithFourLeptons", "e+ e- > z h, (z > w+ w-, w+ > l+ vl, w- > l- vl~), h > l+ l- l+ l-"
 
 echo "All decay tasks completed."
