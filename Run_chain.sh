@@ -103,6 +103,7 @@ generate $process
 output $output_dir
 launch -n formal01
 shower=Pythia8
+
 set run_card ebeam1 120
 set run_card ebeam2 120
 set run_card lpp1 -1
