@@ -95,7 +95,7 @@ root -l -b -q "root_analysisCode/plot_InvariantMass.cpp(\"NoDecay_\",\"NoDecay_o
 
 run_HZFourLeptons() {
 local output_dir=${1:- "HiggsStrahlungwithFourLeptons"}
-local process=${2:- "e+ e- > z h, (z > w+ w-, w+ > l+ vl, w- > l- vl~), h > l+ l- l+ l-"}
+local process=${2:- "e+ e- > z h, (h > w+ w-, w+ > l+ vl, w- > l- vl~), z > l+ l-"}
 rm -rf $output_dir
 rm -rf $output_dir.root
 /work/home/ruttho/binary/MG5_aMC_v3_5_4/bin/mg5_aMC << EOF
@@ -120,6 +120,6 @@ root -l -b -q "root_analysisCode/plot_InvariantMass.cpp(\"${output_dir}_\",\"$ou
 }
 
 
-run_HZFourLeptons "HiggsStrahlungwithFourLeptons" "e+ e- > z h, (z > w+ w-, w+ > l+ vl, w- > l- vl~), h > l+ l- l+ l-"
+run_HZFourLeptons "HiggsStrahlungwithFourLeptons" "e+ e- > z h, (h > w+ w-, w+ > l+ vl, w- > l- vl~), z > l+ l-"
 
 echo "All decay tasks completed."
