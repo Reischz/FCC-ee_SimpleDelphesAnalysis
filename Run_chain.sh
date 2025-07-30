@@ -106,8 +106,8 @@ shower=Pythia8
 
 set run_card ebeam1 120
 set run_card ebeam2 120
-set run_card lpp1 -1
-set run_card lpp2 -1
+set run_card lpp1 0
+set run_card lpp2 0
 set run_card nevents 10000
 EOF
 gzip -dc $output_dir/Events/formal01/tag_1_pythia8_events.hepmc.gz \
