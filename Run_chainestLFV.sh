@@ -3,7 +3,7 @@
 # This script try to run a chain of commands in MadGraph w/o cards
 rm -rf HiggsStrahlungwithDecay
 /work/home/ruttho/binary/MG5_aMC_v3_5_4/bin/mg5_aMC << EOF
-generate e+ e- > z h, z > l+ l-, h > b b~
+generate e+ e- > w+ w-, w+ > l+ vl, w- > l- v~l, w+ > h b b~, h > b b~
 output HiggsStrahlungwithDecay
 launch -n formal01
 shower=Pythia8
