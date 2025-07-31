@@ -2,7 +2,6 @@
 #SBATCH --job-name=HZconfig
 #SBATCH --qos=cu_hpc
 #SBATCH --partition=cpu
-#SBATCH --output=HZconfig.log
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=8G
@@ -122,6 +121,6 @@ root -l -b -q "root_analysisCode/plot_InvariantMass.cpp(\"${output_dir}_\",\"$ou
 
 
 #run_HZFourLeptons "HiggsStrahlungwithFourLeptons" "e+ e- > z h, (h > w+ w-, w+ > l+ vl, w- > l- vl~), z > l+ l-"
-run_HZFourLeptons "HWWFourLeptonWithoutTauSpecify" "e+ e- > z w- w+, w- > l- vl~, w+ > l+ vl, z > l+ l-"
+run_HZFourLeptons "HWWFourLeptonError" "e+ e- > z w- w+, w- > l- vl~, w+ > l+ vl, z > l+ l-"
 
 echo "All decay tasks completed."
