@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=ZWWerrLogs
+#SBATCH --job-name=ZWWFour
 #SBATCH --qos=cu_hpc
 #SBATCH --partition=cpu
 #SBATCH --ntasks=1
@@ -119,8 +119,36 @@ root -l -b -q "root_analysisCode/plot_allFinalProcessInfo.cpp(\"${output_dir}_\"
 root -l -b -q "root_analysisCode/plot_InvariantMass.cpp(\"${output_dir}_\",\"$output_dir.root\")"
 }
 
+run_sde_strategyMode() {
+local output_dir=${1:- "HiggsStrahlungwithFourLeptons"}
+local process=${2:- "e+ e- > z h, (h > w+ w-, w+ > l+ vl, w- > l- vl~), z > l+ l-"}
+rm -rf $output_dir
+rm -rf $output_dir.root
+/work/home/ruttho/binary/MG5_aMC_v3_5_4/bin/mg5_aMC << EOF
+generate $process
+output $output_dir
+launch -n formal01
+shower=Pythia8
+
+set nb_cores 10
+set run_card ebeam1 120
+set run_card ebeam2 120
+set run_card lpp1 0
+set run_card lpp2 0
+set run_card nevents 10000
+set sde_strategy 1
+EOF
+gzip -dc $output_dir/Events/formal01/tag_1_pythia8_events.hepmc.gz \
+ > $output_dir/Events/formal01/tag_1_pythia8_events.hepmc
+/work/app/delphes/src/Delphes-3.5.0/DelphesHepMC2 \
+ /work/app/delphes/src/Delphes-3.5.0/cards/delphes_card_IDEA.tcl \
+ $output_dir.root $output_dir/Events/formal01/tag_1_pythia8_events.hepmc
+root -l -b -q "root_analysisCode/plot_allFinalProcessInfo.cpp(\"${output_dir}_\",\"$output_dir.root\")"
+root -l -b -q "root_analysisCode/plot_InvariantMass.cpp(\"${output_dir}_\",\"$output_dir.root\")"
+}
+
 
 #run_HZFourLeptons "HiggsStrahlungwithFourLeptons" "e+ e- > z h, (h > w+ w-, w+ > l+ vl, w- > l- vl~), z > l+ l-"
-run_HZFourLeptons "HWWFourLeptonError" "e+ e- > z w- w+, w- > l- vl~, w+ > l+ vl, z > l+ l-"
+run_sde_strategyMode "HWWFourLepton" "e+ e- > z w- w+, w- > l- vl~, w+ > l+ vl, z > l+ l-"
 
 echo "All decay tasks completed."
