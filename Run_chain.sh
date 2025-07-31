@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=HZconfig
+#SBATCH --job-name=ZWWerrLogs
 #SBATCH --qos=cu_hpc
 #SBATCH --partition=cpu
 #SBATCH --ntasks=1
