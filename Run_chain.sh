@@ -3,8 +3,8 @@
 #SBATCH --qos=cu_hpc
 #SBATCH --partition=cpu
 #SBATCH --output=HZconfig.log
-#SBATCH --ntasks=3
-#SBATCH --cpus-per-task=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=10
 #SBATCH --mem=8G
 
 source /work/app/share_env/hepsw-gcc11p2-py3p9p9.sh
@@ -104,6 +104,7 @@ output $output_dir
 launch -n formal01
 shower=Pythia8
 
+set nb_cores 10
 set run_card ebeam1 120
 set run_card ebeam2 120
 set run_card lpp1 0
