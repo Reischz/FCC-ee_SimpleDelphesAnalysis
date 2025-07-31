@@ -37,7 +37,7 @@ root -l -b -q "root_analysisCode/plot_allFinalProcessInfo.cpp(\"BDecay_\",\"BDec
 root -l -b -q "root_analysisCode/plot_InvariantMass.cpp(\"BDecay_\",\"BDecay_output.root\")"
 }
 
-run_qdecay() {
+run_qdecay() { 
 rm -rf HiggsStrahlungwithQuarkDecay
 rm -rf QuarkDecay_output.root
 /work/home/ruttho/binary/MG5_aMC_v3_5_4/bin/mg5_aMC << EOF
@@ -120,6 +120,7 @@ root -l -b -q "root_analysisCode/plot_InvariantMass.cpp(\"${output_dir}_\",\"$ou
 }
 
 
-run_HZFourLeptons "HiggsStrahlungwithFourLeptons" "e+ e- > z h, (h > w+ w-, w+ > l+ vl, w- > l- vl~), z > l+ l-"
+#run_HZFourLeptons "HiggsStrahlungwithFourLeptons" "e+ e- > z h, (h > w+ w-, w+ > l+ vl, w- > l- vl~), z > l+ l-"
+run_HZFourLeptons "HWWFourLeptonWithoutTauSpecify" "e+ e- > z w- w+, w- > l- vl~, w+ > l+ vl, z > l+ l-"
 
 echo "All decay tasks completed."
