@@ -6,6 +6,7 @@
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=8G
 
+source /work/app/share_env/envlhapdf.sh
 source /work/app/share_env/hepsw-gcc11p2-py3p9p9.sh
 
 # This script try to run a chain of commands in MadGraph w/o cards
@@ -149,6 +150,6 @@ root -l -b -q "root_analysisCode/plot_InvariantMass.cpp(\"${output_dir}_\",\"$ou
 
 
 #run_HZFourLeptons "HiggsStrahlungwithFourLeptons" "e+ e- > z h, (h > w+ w-, w+ > l+ vl, w- > l- vl~), z > l+ l-"
-run_sde_strategyMode "HWWFourLepton" "e+ e- > z w- w+, w- > l- vl~, w+ > l+ vl, z > l+ l-"
+run_sde_strategyMode "HWWFourLeptonWithoutTauInLep" "e+ e- > z w- w+, w- > l- vl~, w+ > l+ vl, z > l+ l-"
 
 echo "All decay tasks completed."
