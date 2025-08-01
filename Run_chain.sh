@@ -125,7 +125,7 @@ local output_dir=${1:- "HiggsStrahlungwithFourLeptons"}
 local process=${2:- "e+ e- > z h, (h > w+ w-, w+ > l+ vl, w- > l- vl~), z > l+ l-"}
 rm -rf $output_dir
 rm -rf $output_dir.root
-/work/home/ruttho/binary/MG5_aMC_v3_5_4/bin/mg5_aMC << EOF
+/work/home/ruttho/binary/MG5_aMC_v2_9_24/bin/mg5_aMC << EOF
 generate $process
 output $output_dir
 launch -n formal01
