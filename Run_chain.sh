@@ -174,14 +174,14 @@ gzip -dc HZtoMuTauLFV/Events/formal01/tag_1_pythia8_events.hepmc.gz \
 
 /work/app/delphes/src/Delphes-3.5.0/DelphesHepMC2 \
  /work/app/delphes/src/Delphes-3.5.0/cards/delphes_card_IDEA.tcl \
- NoDecay_output.root HZtoMuTauLFV/Events/formal01/tag_1_pythia8_events.hepmc
+ HZtoMuTauLFV.root HZtoMuTauLFV/Events/formal01/tag_1_pythia8_events.hepmc
 
-root -l -b -q "root_analysisCode/plot_allFinalProcessInfo.cpp(\"NoDecay_\",\"NoDecay_output.root\")"
-root -l -b -q "root_analysisCode/plot_InvariantMass.cpp(\"NoDecay_\",\"NoDecay_output.root\")"
+root -l -b -q "root_analysisCode/plot_allFinalProcessInfo.cpp(\"HZtoMuTauLFV_\",\"HZtoMuTauLFV.root\")"
+root -l -b -q "root_analysisCode/plot_InvariantMass.cpp(\"HZtoMuTauLFV_\",\"HZtoMuTauLFV.root\")"
 }
 
 #run_HZFourLeptons "HiggsStrahlungwithFourLeptons" "e+ e- > z h, (h > w+ w-, w+ > l+ vl, w- > l- vl~), z > l+ l-"
-run_sde_strategyMode "ZWWFourLeptonWithoutTauInLep" "e+ e- > z w- w+, w- > l- vl~, w+ > l+ vl, z > l+ l-"
+# run_sde_strategyMode "ZWWFourLeptonWithoutTauInLep" "e+ e- > z w- w+, w- > l- vl~, w+ > l+ vl, z > l+ l-"
 run_HZ_toMuTauLFV
 
 echo "All decay tasks completed."
