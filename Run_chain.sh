@@ -138,8 +138,6 @@ set run_card lpp1 0
 set run_card lpp2 0
 set run_card nevents 10000
 set sde_strategy 1
-set hard_survey 2
-
 EOF
 gzip -dc $output_dir/Events/formal01/tag_1_pythia8_events.hepmc.gz \
  > $output_dir/Events/formal01/tag_1_pythia8_events.hepmc
@@ -182,7 +180,7 @@ root -l -b -q "root_analysisCode/plot_InvariantMass.cpp(\"NoDecay_\",\"NoDecay_o
 }
 
 #run_HZFourLeptons "HiggsStrahlungwithFourLeptons" "e+ e- > z h, (h > w+ w-, w+ > l+ vl, w- > l- vl~), z > l+ l-"
-# run_sde_strategyMode "HWWFourLeptonWithoutTauInLep" "e+ e- > z w- w+, w- > l- vl~, w+ > l+ vl, z > l+ l-"
+run_sde_strategyMode "ZWWFourLeptonWithoutTauInLep" "e+ e- > z w- w+, w- > l- vl~, w+ > l+ vl, z > l+ l-"
 run_HZ_toMuTauLFV
 
 echo "All decay tasks completed."
