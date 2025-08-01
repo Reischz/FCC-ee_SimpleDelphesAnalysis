@@ -138,6 +138,7 @@ set run_card lpp1 0
 set run_card lpp2 0
 set run_card nevents 10000
 set sde_strategy 1
+set hard_survey 2
 EOF
 gzip -dc $output_dir/Events/formal01/tag_1_pythia8_events.hepmc.gz \
  > $output_dir/Events/formal01/tag_1_pythia8_events.hepmc

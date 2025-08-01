@@ -23,7 +23,7 @@ PartonLevel:all = off
 ! General parameters 
 ! ==================
 !
-Main:numberOfEvents      = -1
+Main:numberOfEvents      = 10000
 !
 ! -------------------------------------------------------------------
 ! Specify the HEPMC output of the Pythia8 shower. You can set it to:
