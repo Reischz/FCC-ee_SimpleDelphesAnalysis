@@ -180,8 +180,8 @@ root -l -b -q "root_analysisCode/plot_allFinalProcessInfo.cpp(\"HZtoMuTauLFV_\",
 root -l -b -q "root_analysisCode/plot_InvariantMass.cpp(\"HZtoMuTauLFV_\",\"HZtoMuTauLFV.root\")"
 }
 
-#run_HZFourLeptons "HiggsStrahlungwithFourLeptons" "e+ e- > z h, (h > w+ w-, w+ > l+ vl, w- > l- vl~), z > l+ l-"
+run_HZFourLeptons "HiggsStrahlungwithFourLeptons" "e+ e- > z h, (h > w+ w-, w+ > l+ vl, w- > l- vl~), z > l+ l-"
 # run_sde_strategyMode "ZWWFourLeptonWithoutTauInLep" "e+ e- > z w- w+, w- > l- vl~, w+ > l+ vl, z > l+ l-"
-run_HZ_toMuTauLFV
+# run_HZ_toMuTauLFV
 
 echo "All decay tasks completed."
