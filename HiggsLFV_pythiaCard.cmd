@@ -1,4 +1,16 @@
 !
+! Higgs decays
+Higgs:useBSM = on               ! use BSM
+HiggsH1:parity = 1
+25:m0 = 125.0                   ! higgs mass
+25:addChannel 1 0.1 100 15 -13  ! 1=decay mode on
+25:addChannel 1 0.1 100 13 -15
+25:onMode = off                 ! off other higgs decay
+25:onIfMatch 15 13              ! higgs will only LFV decay
+TauDecays:mode = 2              ! default decay mode
+TauDecays:tauPolarization = 0
+TauDecays:tauMother = 25        ! allow decay only tau from higgs tauMother
+PartonLevel:all = off
 ! It is possible to run this card manually with:
 !    LD_LIBRARY_PATH=/work/home/ruttho/binary/MG5_aMC_v3_5_4/HEPTools/lib:$LD_LIBRARY_PATH /work/home/ruttho/binary/MG5_aMC_v3_5_4/HEPTools/MG5aMC_PY8_interface/MG5aMC_PY8_interface tag_1_pythia8.cmd
 !
