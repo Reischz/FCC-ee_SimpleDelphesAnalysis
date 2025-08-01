@@ -13,6 +13,35 @@ double deltaPhi(double phi1, double phi2) {
 	return deltaPhiValue;
 }
 
+double computeInvariantMass(double pt1, double eta1, double phi1, double mass1,
+                            double pt2, double eta2, double phi2, double mass2) {
+    // Convert (pt, eta, phi, mass) to (px, py, pz, E)
+
+    // Particle 1
+    double px1 = pt1 * std::cos(phi1);
+    double py1 = pt1 * std::sin(phi1);
+    double pz1 = pt1 * std::sinh(eta1);
+    double E1  = std::sqrt(px1*px1 + py1*py1 + pz1*pz1 + mass1*mass1);
+
+    // Particle 2
+    double px2 = pt2 * std::cos(phi2);
+    double py2 = pt2 * std::sin(phi2);
+    double pz2 = pt2 * std::sinh(eta2);
+    double E2  = std::sqrt(px2*px2 + py2*py2 + pz2*pz2 + mass2*mass2);
+
+    // Total 4-momentum
+    double E  = E1 + E2;
+    double px = px1 + px2;
+    double py = py1 + py2;
+    double pz = pz1 + pz2;
+
+    // Invariant mass squared
+    double mass2_total = E*E - (px*px + py*py + pz*pz);
+
+    // Avoid negative sqrt from floating-point rounding
+    return (mass2_total > 0.0) ? std::sqrt(mass2_total) : 0.0;
+}
+
 void plot_InvariantMassWOApproxEnergy(const char* Png_prefix="", const char* filename = "output01.root")
 {
 	TFile *file = new TFile(filename);	

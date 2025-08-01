@@ -24,8 +24,8 @@ void plot_InvariantMass(const char* Png_prefix="", const char* filename = "outpu
 	THStack *InvMassJet = new THStack("InvMassJet", "Invariant Mass from BTagged-Jets pair; GeV; Entries");
 	TH2D *hist2d = new TH2D("hist2d", "two-dimensional histogram;#Delta #Phi;Inv. Mass", 60, 0, 6, 210, 80, 300);
 
-	TH1F *Einvmass = new TH1F("Einvmass", "Electron Pair", 120, 0, 120);
-	TH1F *Minvmass = new TH1F("Minvmass", "Muon Pair", 120, 0, 120);
+	TH1F *Einvmass = new TH1F("Einvmass", "Electron Pair", 300, 0, 300);
+	TH1F *Minvmass = new TH1F("Minvmass", "Muon Pair", 300, 0, 300);
 
 	// try using btag to find higgs invariant mass
 	TH1F *higgsInvM = new TH1F("higgsInvM", "Higgs Invariant Mass", 300, 0, 300);
