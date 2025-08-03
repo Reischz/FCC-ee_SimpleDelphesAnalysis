@@ -7,3 +7,5 @@ mg5 minimal : https://cp3.irmp.ucl.ac.be/projects/madgraph/attachment/wiki/Manua
 pdgid : https://pdg.lbl.gov/2007/reviews/montecarlorpp.pdf
 
 SMEFT : https://arxiv.org/pdf/2012.11343
+
+Pythia Manual : https://www.pythia.org/pdfdoc/pythia8300.pdf
