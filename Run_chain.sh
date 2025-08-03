@@ -210,5 +210,7 @@ gzip -dc HZtoMuE_LFV/Events/formal01/tag_1_pythia8_events.hepmc.gz \
 root -l -b -q "root_analysisCode/plot_allFinalProcessInfo.cpp(\"HZtoMuE_LFV_\",\"HZtoMuE_LFV.root\")"
 root -l -b -q "root_analysisCode/plot_InvariantMass.cpp(\"HZtoMuE_LFV_\",\"HZtoMuE_LFV.root\")"
 }
+run_HZ_toMuELFV
+
 
 echo "All decay tasks completed."
