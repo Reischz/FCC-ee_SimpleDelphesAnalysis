@@ -180,8 +180,35 @@ root -l -b -q "root_analysisCode/plot_allFinalProcessInfo.cpp(\"HZtoMuTauLFV_\",
 root -l -b -q "root_analysisCode/plot_InvariantMass.cpp(\"HZtoMuTauLFV_\",\"HZtoMuTauLFV.root\")"
 }
 
-run_HZFourLeptons "HiggsStrahlungwithFourLeptons" "e+ e- > z h, (h > w+ w-, w+ > l+ vl, w- > l- vl~), z > l+ l-"
-# run_sde_strategyMode "ZWWFourLeptonWithoutTauInLep" "e+ e- > z w- w+, w- > l- vl~, w+ > l+ vl, z > l+ l-"
-# run_HZ_toMuTauLFV
+run_HZ_toMuELFV() {
+rm -rf HZtoMuE_LFV
+rm -rf HZtoMuE_LFV.root
+/work/home/ruttho/binary/MG5_aMC_v3_5_4/bin/mg5_aMC << EOF
+generate e+ e- > z h, z > l+ l-
+output HZtoMuE_LFV
+launch -n formal01
+shower=off
+
+set run_card ebeam1 120
+set run_card ebeam2 120
+set run_card lpp1 0
+set run_card lpp2 0
+set run_card nevents 10000
+EOF
+
+cp HiggsLFV_pythiaCard.cmd HZtoMuE_LFV/Events/formal01/tag_1_pythia8.cmd
+cd HZtoMuE_LFV/Events/formal01/
+LD_LIBRARY_PATH=/work/home/ruttho/binary/MG5_aMC_v3_5_4/HEPTools/lib:$LD_LIBRARY_PATH /work/home/ruttho/binary/MG5_aMC_v3_5_4/HEPTools/MG5aMC_PY8_interface/MG5aMC_PY8_interface tag_1_pythia8.cmd
+cd -
+gzip -dc HZtoMuE_LFV/Events/formal01/tag_1_pythia8_events.hepmc.gz \
+ > HZtoMuE_LFV/Events/formal01/tag_1_pythia8_events.hepmc
+
+/work/app/delphes/src/Delphes-3.5.0/DelphesHepMC2 \
+ /work/app/delphes/src/Delphes-3.5.0/cards/delphes_card_IDEA.tcl \
+ HZtoMuE_LFV.root HZtoMuE_LFV/Events/formal01/tag_1_pythia8_events.hepmc
+
+root -l -b -q "root_analysisCode/plot_allFinalProcessInfo.cpp(\"HZtoMuE_LFV_\",\"HZtoMuE_LFV.root\")"
+root -l -b -q "root_analysisCode/plot_InvariantMass.cpp(\"HZtoMuE_LFV_\",\"HZtoMuE_LFV.root\")"
+}
 
 echo "All decay tasks completed."
