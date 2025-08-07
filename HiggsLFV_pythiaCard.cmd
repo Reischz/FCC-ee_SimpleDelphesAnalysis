@@ -15,12 +15,11 @@
 ! Higgs EMu dacays
 ! NN:oneChannel = onMode bRatio meMode product1 product2 ...
 25:oneChannel 1 0.1 100 11 -13  ! 1=decay mode on,oneChannel decays channel before this is disable
-25:addChannel 1 0.1 100 13 -11
-!25:onMode = off                ! off other higgs decay
+25:addChannel 1 0.1 100 13 -11  ! add another channel
 25:onIfAny 11 13                ! higgs will only decay either 11 or 13
 !
 Main:numberOfEvents      = 10000
-HEPMCoutput:file         = tag_1_pythia8_events.hepmc.gz
+HEPMCoutput:file         = tag_1_pythia8_events.hepmc
 SysCalc:fullCutVariation = off
 Beams:frameType=4
 HEPMCoutput:scaling=1.0000000000e+09
