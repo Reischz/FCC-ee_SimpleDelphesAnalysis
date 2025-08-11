@@ -1,0 +1,41 @@
+- Run_name: "eeToZH_HtoWW_FourLeptons"
+  madgraph:
+    gen_card: |
+      generate e+ e- > z h, (h > w+ w-, w+ > l+ vl, w- > l- vl~), z > l+ l-
+      output eeToZH_HtoWW_FourLeptons
+    run_card: |
+      launch eeToZH_HtoWW_FourLeptons -n formal01
+      shower=Pythia8
+      set run_card nb_cores 10
+      set run_card ebeam1 120
+      set run_card ebeam2 120
+      set run_card lpp1 0
+      set run_card lpp2 0
+      set run_card nevents 10000
+      set sde_strategy 1
+      set hard_survey 2
+  Pythia:
+    PythiaSwitch: False
+    PythiaCard: ''
+  DelphesCardPath: "lib/YamlConfig/FCC-ee_FourLeptonProcessesIncludeHiggsLFV.yaml"
+
+- Run_name: "eeToZH_FourLeptons_HiggsLFV"
+  Pythia:
+    PythiaSwitch: True
+    PythiaCard: |
+      25:oneChannel 1 0.1 100 11 -13  ! 1=decay mode on,oneChannel decays channel before this is disable
+      25:addChannel 1 0.1 100 13 -11  ! add another channel
+      25:onIfAny 11 13                ! higgs will only decay either 11 or 13
+      Main:numberOfEvents      = 10000
+      !HEPMCoutput:file         = tag_1_pythia8_events.hepmc
+      SysCalc:fullCutVariation = off
+      Beams:frameType=4
+      HEPMCoutput:scaling=1.0000000000e+09
+      Check:epTolErr=1.0000000000e-02
+      JetMatching:etaJetMax=1.0000000000e+03
+      JetMatching:setMad=off
+      LHEFInputs:nSubruns=1
+      Main:subrun=0
+      !Beams:LHEF=unweighted_events.lhe.gz
+
+- Run_name: "eeToZWW_FourLeptons"
