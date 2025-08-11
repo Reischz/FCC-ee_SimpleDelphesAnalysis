@@ -47,7 +47,7 @@ class GenerateSignalChains:
             print(f"Pythia events already exist for {self.Run_name}.")
             subprocess.run('ln -s ' + pythia_events_path + ' ./' + self.Run_name + '_pythia8_events.hepmc', shell=True)
             return 0
-        self.PythiaCard+= f'\nBeams:LHEF={self.Run_name}_unweighted_events.lhe\nHEPMC:output={self.Run_name}_pythia8_events.hepmc'
+        self.PythiaCard+= f'Beams:LHEF={self.Run_name}_unweighted_events.lhe\nHEPMC:output={self.Run_name}_pythia8_events.hepmc'
         with open(f'{self.Run_name}_pythia8_card.cmd', 'w') as pythia_card_file:
             pythia_card_file.write(self.PythiaCard)
         run_pythia = subprocess.run(
