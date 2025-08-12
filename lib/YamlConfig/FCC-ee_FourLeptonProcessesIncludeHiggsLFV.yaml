@@ -18,6 +18,19 @@
   DelphesCardPath: "delphes_card_IDEA.tcl"
 
 - Run_name: "eeToZH_FourLeptons_HiggsLFV"
+  madgraph:
+    gen_card: |
+      generate e+ e- > z h, z > l+ l-
+      output eeToZH_FourLeptons_HiggsLFV
+    run_card: |
+      launch eeToZH_FourLeptons_HiggsLFV -n formal01
+      shower=Pythia8
+      set run_card nb_cores 10
+      set run_card ebeam1 120
+      set run_card ebeam2 120
+      set run_card lpp1 0
+      set run_card lpp2 0
+      set run_card nevents 10000
   Pythia:
     PythiaSwitch: True
     PythiaCard: |

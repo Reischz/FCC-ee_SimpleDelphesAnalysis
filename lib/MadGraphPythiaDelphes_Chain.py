@@ -9,8 +9,8 @@ class GenerateSignalChains:
         self.MadGraphPath = '/work/home/ruttho/binary/MG5_aMC_v2_9_24/bin/mg5_aMC'
         self.PythiaInterfacePath = '/work/app/pythia8/MGInterface/1.3/MG5aMC_PY8_interface'
         self.DelphesPath = '/work/app/delphes/src/Delphes-3.5.0/DelphesHepMC2'
-        self.MadGraphGen = process_config['MadGraph']['gen_card']
-        self.MadGraphRun = process_config['MadGraph']['run_card']
+        self.MadGraphGen = process_config['madgraph']['gen_card']
+        self.MadGraphRun = process_config['madgraph']['run_card']
         self.Run_name = process_config['Run_name']
         self.PythiaCard = process_config['Pythia']['PythiaCard']
         self.DelphesCardPath = process_config['DelphesCardPath']
