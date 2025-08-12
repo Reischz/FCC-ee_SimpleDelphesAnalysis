@@ -3,12 +3,12 @@ import os
 
 class GenerateSignalChains:
     def __init__(self,process_config):
-        self.MadGraphSwitch = True
-        self.PythiaExternal = True
-        self.DelphesSwitch = True
+        # self.MadGraphSwitch = True
+        self.PythiaExternal = process_config['Pythia']['PythiaSwitch']
+        # self.DelphesSwitch = True
         self.MadGraphPath = '/work/home/ruttho/binary/MG5_aMC_v2_9_24/bin/mg5_aMC'
-        self.PythiaInterfacePath = '/work/home/ruttho/binary/pythia8-8305/bin/pythia8'
-        self.DelphesPath = '/work/home/ruttho/binary/Delphes-3'
+        self.PythiaInterfacePath = '/work/app/pythia8/MGInterface/1.3/MG5aMC_PY8_interface'
+        self.DelphesPath = '/work/app/delphes/src/Delphes-3.5.0/DelphesHepMC2'
         self.MadGraphGen = process_config['MadGraph']['gen_card']
         self.MadGraphRun = process_config['MadGraph']['run_card']
         self.Run_name = process_config['Run_name']
@@ -41,12 +41,24 @@ class GenerateSignalChains:
 
     def begin_extpythia(self):
         pythia_events_path = f'{self.Run_name}/Events/formal01/tag_1_pythia8_events.hepmc'
+
+        # Check permissions for the PythiaExt
+        if not self.PythiaExternal:
+            print("Pythia is not set to external. Skipping Pythia step.")
+            return 0
+        # Check if the LHE file exists in current directory
         if not os.path.exists(f'{self.Run_name}_unweighted_events.lhe'):
-            exit(1, "LHE file not found. Please run MadGraph first.")
+            print("LHE file not found in current directory. Try locating it...")
+        # Check Events directory for the LHE file
         elif os.path.exists(pythia_events_path):
             print(f"Pythia events already exist for {self.Run_name}.")
             subprocess.run('ln -s ' + pythia_events_path + ' ./' + self.Run_name + '_pythia8_events.hepmc', shell=True)
-            return 0
+        # if not found, Go run madgraph
+        else:
+            print("LHE file not found. Please check the MadGraph output.")
+            return 1
+        
+        # Set up Pythia card
         self.PythiaCard+= f'Beams:LHEF={self.Run_name}_unweighted_events.lhe\nHEPMC:output={self.Run_name}_pythia8_events.hepmc'
         with open(f'{self.Run_name}_pythia8_card.cmd', 'w') as pythia_card_file:
             pythia_card_file.write(self.PythiaCard)
