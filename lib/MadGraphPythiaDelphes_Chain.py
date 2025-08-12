@@ -45,6 +45,14 @@ class GenerateSignalChains:
         # Check permissions for the PythiaExt
         if not self.PythiaExternal:
             print("Pythia is not set to external. Skipping Pythia step.")
+            hepmc_path = f'{self.Run_name}/Events/formal01/tag_1_pythia8_events.hepmc'
+            if os.path.exists(hepmc_path):
+                subprocess.run('ln -s ' + hepmc_path + ' ./' + self.Run_name + '_pythia8_events.hepmc', shell=True)
+                print(f"Pythia events already exist for {self.Run_name}.")
+            elif os.path.exists(hepmc_path + '.gz'):
+                subprocess.run('gunzip -c ' + hepmc_path + '.gz', shell=True)
+                subprocess.run('ln -s ' + hepmc_path + ' ./' + self.Run_name + '_pythia8_events.hepmc', shell=True)
+                print(f"Pythia events already exist for {self.Run_name}.")
             return 0
         # Check if the LHE file exists in current directory
         if not os.path.exists(f'{self.Run_name}_unweighted_events.lhe'):

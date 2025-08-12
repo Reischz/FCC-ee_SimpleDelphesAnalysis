@@ -12,7 +12,7 @@ def RunConfig(process_config):
     return 0
 
 def yaml_runall(yamlContent):
-    for item in yamlContent[:1]:
+    for item in yamlContent:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S") 
         dirName = f"{timestamp}_{item['Run_name']}_"
         print(f"Running process: {item['Run_name']}")
