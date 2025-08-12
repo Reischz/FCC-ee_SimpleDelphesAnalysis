@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# from lib import MadGraphPythiaDelphes_Chain as mgpd
 from lib.MadGraphPythiaDelphes_Chain import GenerateSignalChains
 import os
 import yaml

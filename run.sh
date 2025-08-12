@@ -22,6 +22,6 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-conda activate ext
 source /work/app/share_env/hepsw-gcc11p2-py3p9p9.sh
-./orchestratedFile.py
+conda activate ext
+python orchestratedFile.py
