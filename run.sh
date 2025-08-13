@@ -1,6 +1,5 @@
 #!/bin/bash
 #SBATCH --job-name=test
-#SBATCH --output=test.out
 #SBATCH --qos=cu_hpc
 #SBATCH --partition=cpu
 #SBATCH --ntasks=1

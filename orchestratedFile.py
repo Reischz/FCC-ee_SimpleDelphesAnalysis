@@ -14,7 +14,7 @@ def RunConfig(process_config):
 def yaml_runall(yamlContent):
     for item in yamlContent:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S") 
-        dirName = f"{timestamp}_{item['Run_name']}_"
+        dirName = f"{timestamp}_{item['Run_name']}"
         print(f"Running process: {item['Run_name']}")
         os.makedirs(dirName, exist_ok=True)
         os.chdir(dirName)

@@ -29,11 +29,11 @@ class GenerateSignalChains:
             output_file.write(run_DefinedEvent.stdout + '\n' + run_LaunchEvent.stdout)
         Lhe_path = f'{self.Run_name}/Events/formal01/unweighted_events.lhe'
         if os.path.exists(Lhe_path):
-            subprocess.run('ln -s ' + Lhe_path + ' ./' + self.Run_name + '_unweighted_events.lhe', shell=True)
+            subprocess.run('mv ' + Lhe_path + ' ./' + self.Run_name + '_unweighted_events.lhe', shell=True)
             print(f"LHE file created successfully at {Lhe_path}")
         elif os.path.exists(f'{self.Run_name}/Events/formal01/unweighted_events.lhe.gz'):
-            subprocess.run('gunzip -c ' + f'{self.Run_name}/Events/formal01/unweighted_events.lhe.gz', shell=True)
-            subprocess.run('ln -s ' + Lhe_path + ' ./' + self.Run_name + '_unweighted_events.lhe', shell=True)
+            subprocess.run('gunzip' + f'{self.Run_name}/Events/formal01/unweighted_events.lhe.gz', shell=True)
+            subprocess.run('mv ' + Lhe_path + ' ./' + self.Run_name + '_unweighted_events.lhe', shell=True)
             print(f"LHE file created successfully at {Lhe_path}")
         else:
             exit(1, "LHE file not created. Please check the MadGraph output.")
@@ -47,11 +47,11 @@ class GenerateSignalChains:
             print("Pythia is not set to external. Skipping Pythia step.")
             hepmc_path = f'{self.Run_name}/Events/formal01/tag_1_pythia8_events.hepmc'
             if os.path.exists(hepmc_path):
-                subprocess.run('ln -s ' + hepmc_path + ' ./' + self.Run_name + '_pythia8_events.hepmc', shell=True)
+                subprocess.run('mv ' + hepmc_path + ' ./' + self.Run_name + '_pythia8_events.hepmc', shell=True)
                 print(f"Pythia events already exist for {self.Run_name}.")
             elif os.path.exists(hepmc_path + '.gz'):
-                subprocess.run('gunzip -c ' + hepmc_path + '.gz', shell=True)
-                subprocess.run('ln -s ' + hepmc_path + ' ./' + self.Run_name + '_pythia8_events.hepmc', shell=True)
+                subprocess.run('gunzip' + hepmc_path + '.gz', shell=True)
+                subprocess.run('mv ' + hepmc_path + ' ./' + self.Run_name + '_pythia8_events.hepmc', shell=True)
                 print(f"Pythia events already exist for {self.Run_name}.")
             return 0
         # Check if the LHE file exists in current directory
@@ -60,7 +60,7 @@ class GenerateSignalChains:
         # Check Events directory for the LHE file
         elif os.path.exists(pythia_events_path):
             print(f"Pythia events already exist for {self.Run_name}.")
-            subprocess.run('ln -s ' + pythia_events_path + ' ./' + self.Run_name + '_pythia8_events.hepmc', shell=True)
+            subprocess.run('mv ' + pythia_events_path + ' ./' + self.Run_name + '_pythia8_events.hepmc', shell=True)
         # if not found, Go run madgraph
         else:
             print("LHE file not found. Please check the MadGraph output.")
