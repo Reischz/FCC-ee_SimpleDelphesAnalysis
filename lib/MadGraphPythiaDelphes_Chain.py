@@ -29,41 +29,40 @@ class GenerateSignalChains:
             output_file.write(run_DefinedEvent.stdout + '\n' + run_LaunchEvent.stdout)
         Lhe_path = f'{self.Run_name}/Events/formal01/unweighted_events.lhe'
         if os.path.exists(Lhe_path):
+            print(f"LHE file already exists at {Lhe_path}.")
             subprocess.run('mv ' + Lhe_path + ' ./' + self.Run_name + '_unweighted_events.lhe', shell=True)
-            print(f"LHE file created successfully at {Lhe_path}")
+            print(f"LHE file moved to ./{self.Run_name}_unweighted_events.lhe")
         elif os.path.exists(f'{self.Run_name}/Events/formal01/unweighted_events.lhe.gz'):
-            subprocess.run('gunzip' + f'{self.Run_name}/Events/formal01/unweighted_events.lhe.gz', shell=True)
+            print(f"LHE file compressed found at {self.Run_name}/Events/formal01/unweighted_events.lhe.gz.")
+            subprocess.run('gunzip ' + f'{self.Run_name}/Events/formal01/unweighted_events.lhe.gz', shell=True)
+            print("Uncompressed LHE file.")
+            # Move the uncompressed file to the current directory
             subprocess.run('mv ' + Lhe_path + ' ./' + self.Run_name + '_unweighted_events.lhe', shell=True)
-            print(f"LHE file created successfully at {Lhe_path}")
+            print(f"LHE file moved to ./{self.Run_name}_unweighted_events.lhe")
         else:
             exit(1, "LHE file not created. Please check the MadGraph output.")
         return 0
 
     def begin_extpythia(self):
-        pythia_events_path = f'{self.Run_name}/Events/formal01/tag_1_pythia8_events.hepmc'
-
         # Check permissions for the PythiaExt
         if not self.PythiaExternal:
             print("Pythia is not set to external. Skipping Pythia step.")
             hepmc_path = f'{self.Run_name}/Events/formal01/tag_1_pythia8_events.hepmc'
             if os.path.exists(hepmc_path):
+                print(f"Pythia events already at {hepmc_path}.")
                 subprocess.run('mv ' + hepmc_path + ' ./' + self.Run_name + '_pythia8_events.hepmc', shell=True)
-                print(f"Pythia events already exist for {self.Run_name}.")
+                print(f"Pythia events moved to ./{self.Run_name}_pythia8_events.hepmc.")
             elif os.path.exists(hepmc_path + '.gz'):
-                subprocess.run('gunzip' + hepmc_path + '.gz', shell=True)
+                print(f"Pythia events compressed found at {hepmc_path}.gz.")
+                subprocess.run('gunzip ' + hepmc_path + '.gz', shell=True)
+                print("Uncompressed Pythia events.")
+                # Move the uncompressed file to the current directory
                 subprocess.run('mv ' + hepmc_path + ' ./' + self.Run_name + '_pythia8_events.hepmc', shell=True)
-                print(f"Pythia events already exist for {self.Run_name}.")
+                print(f"Pythia events moved to ./{self.Run_name}_pythia8_events.hepmc.")
             return 0
         # Check if the LHE file exists in current directory
         if not os.path.exists(f'{self.Run_name}_unweighted_events.lhe'):
-            print("LHE file not found in current directory. Try locating it...")
-        # Check Events directory for the LHE file
-        elif os.path.exists(pythia_events_path):
-            print(f"Pythia events already exist for {self.Run_name}.")
-            subprocess.run('mv ' + pythia_events_path + ' ./' + self.Run_name + '_pythia8_events.hepmc', shell=True)
-        # if not found, Go run madgraph
-        else:
-            print("LHE file not found. Please check the MadGraph output.")
+            print("LHE file not found in current directory. Please check the MadGraph output.")
             return 1
         
         # Set up Pythia card
