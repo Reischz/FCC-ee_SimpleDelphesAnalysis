@@ -15,7 +15,7 @@ gunzip eeToZWW_FourLeptons/Events/formal01/tag_1_pythia8_events.hepmc.gz
 gunzip eeToZWW_FourLeptons/Events/formal01/unweighted_events.lhe.gz
 mv eeToZWW_FourLeptons/Events/formal01/unweighted_events.lhe ZWWFourLepton_1M_Seed30_unweighted_events.lhe
 mv eeToZWW_FourLeptons/Events/formal01/tag_1_pythia8_events.hepmc.gz ZWWFourLepton_1M_Seed30_pythia8_events.hepmc
-cp ../delphes_card_IDEA.tcl .
+cp ../../delphes_card_IDEA.tcl .
 echo 'set RandomSeed 30' >> delphes_card_IDEA.tcl
 /work/app/delphes/src/Delphes-3.5.0/DelphesHepMC2 delphes_card_IDEA.tcl \
  ZWWFourLepton_1M_Seed30.root ZWWFourLepton_1M_Seed30_pythia8_events.hepmc
