@@ -8,7 +8,7 @@
 
 source /work/app/share_env/hepsw-gcc11p2-py3p9p9.sh
 echo 'Initailize MadGraphWPythia'
-/work/home/ruttho/binary/MG5_aMC_v3_5_4/bin/mg5_aMC HZFourLepton_1M_Seed10_mg5Card.dat
+/work/home/ruttho/binary/MG5_aMC_v2_9_24/bin/mg5_aMC HZFourLepton_1M_Seed10_mg5Card.dat
 # try uzip file
 
 gunzip eeToZH_HtoWW_FourLeptons/Events/formal01/tag_1_pythia8_events.hepmc.gz
