@@ -1,0 +1,22 @@
+#!/bin/bash
+#SBATCH --job-name=ZWW4l
+#SBATCH --qos=cu_hpc
+#SBATCH --partition=cpu
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=10
+#SBATCH --mem=8G
+
+source /work/app/share_env/hepsw-gcc11p2-py3p9p9.sh
+echo 'Initailize MadGraphWPythia'
+/work/home/ruttho/binary/MG5_aMC_v3_5_4/bin/mg5_aMC ZWWFourLepton_1M_Seed30_mg5Card.dat
+# try uzip file
+
+gunzip eeToZWW_FourLeptons/Events/formal01/tag_1_pythia8_events.hepmc.gz
+gunzip eeToZWW_FourLeptons/Events/formal01/unweighted_events.lhe.gz
+mv eeToZWW_FourLeptons/Events/formal01/unweighted_events.lhe ZWWFourLepton_1M_Seed30_unweighted_events.lhe
+mv eeToZWW_FourLeptons/Events/formal01/tag_1_pythia8_events.hepmc.gz ZWWFourLepton_1M_Seed30_pythia8_events.hepmc
+cp ../delphes_card_IDEA.tcl .
+echo 'set RandomSeed 30' >> delphes_card_IDEA.tcl
+/work/app/delphes/src/Delphes-3.5.0/DelphesHepMC2 delphes_card_IDEA.tcl \
+ ZWWFourLepton_1M_Seed30.root ZWWFourLepton_1M_Seed30_pythia8_events.hepmc
+echo 'Delphes done'
