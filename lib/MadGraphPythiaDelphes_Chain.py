@@ -79,7 +79,7 @@ class GenerateSignalChains:
 
     def begin_delphes(self):
         run_delphes = subprocess.run(
-            [self.DelphesPath, self.DelphesCardPath, f'{self.Run_name}_pythia8_events.hepmc', f'{self.Run_name}_DelphesOutput.root'],
+            [self.DelphesPath, self.DelphesCardPath, f'{self.Run_name}_DelphesOutput.root', f'{self.Run_name}_pythia8_events.hepmc'],
             capture_output=True, text=True, check=True
         )
         with open(f'{self.Run_name}_DelphesOutput.log', 'w') as output_file:
