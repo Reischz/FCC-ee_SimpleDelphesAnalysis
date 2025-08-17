@@ -12,6 +12,6 @@ with open('test_output.log', 'w') as f:
 
 # subprocess.run("cd '20250817_192306_eeToZH_HtoWW_FourLeptons'", shell=True)
 run_delphes = subprocess.run(
-            ['/work/app/delphes/src/Delphes-3.5.0/DelphesHepMC2', 'delphes_card_IDEA.tcl', 'eeToZH_HtoWW_FourLeptons_DelphesOutput.root', 'eeToZH_HtoWW_FourLeptons_pythia8_events.hepmc'],
+            ['/work/app/delphes/src/Delphes-3.5.0/DelphesHepMC2', '20250817_192306_eeToZH_HtoWW_FourLeptons/delphes_card_IDEA.tcl', '20250817_192306_eeToZH_HtoWW_FourLeptons/eeToZH_HtoWW_FourLeptons_DelphesOutput.root', '20250817_192306_eeToZH_HtoWW_FourLeptons/eeToZH_HtoWW_FourLeptons_pythia8_events.hepmc'],
             capture_output=True, text=True, check=True
         )
