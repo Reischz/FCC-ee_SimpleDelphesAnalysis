@@ -10,7 +10,7 @@ testoscomand=subprocess.run(["/work/home/ruttho/binary/MG5_aMC_v2_9_24/bin/mg5_a
 with open('test_output.log', 'w') as f:
     f.write(testoscomand.stdout + '\n' + testoscomand.stderr)
 
-subprocess.run("cd '20250817_192306_eeToZH_HtoWW_FourLeptons'", shell=True)
+# subprocess.run("cd '20250817_192306_eeToZH_HtoWW_FourLeptons'", shell=True)
 run_delphes = subprocess.run(
             ['/work/app/delphes/src/Delphes-3.5.0/DelphesHepMC2', 'delphes_card_IDEA.tcl', 'eeToZH_HtoWW_FourLeptons_DelphesOutput.root', 'eeToZH_HtoWW_FourLeptons_pythia8_events.hepmc'],
             capture_output=True, text=True, check=True
