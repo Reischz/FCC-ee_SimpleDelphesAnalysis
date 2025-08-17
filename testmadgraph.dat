@@ -1,0 +1,4 @@
+generate e+ e- > mu+ mu-
+output testmadgraph
+launch
+set run_card nevents 100
