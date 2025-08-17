@@ -15,7 +15,7 @@
   Pythia:
     PythiaSwitch: False
     PythiaCard: ''
-  DelphesCardPath: "delphes_card_IDEA.tcl"
+  DelphesCardPath: "../delphes_card_IDEA.tcl"
 
 - Run_name: "eeToZH_FourLeptons_HiggsLFV"
   madgraph:
@@ -46,7 +46,8 @@
       JetMatching:setMad=off
       LHEFInputs:nSubruns=1
       Main:subrun=0
-      
+  DelphesCardPath: "../delphes_card_IDEA.tcl"
+
 - Run_name: "eeToZWW_FourLeptons"
   madgraph:
     gen_card: |
@@ -64,3 +65,4 @@
   Pythia:
     PythiaSwitch: False
     PythiaCard: ''
+  DelphesCardPath: "../delphes_card_IDEA.tcl"
