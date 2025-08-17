@@ -1,5 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=test
+#SBATCH --output=output.log
 #SBATCH --qos=cu_hpc
 #SBATCH --partition=cpugpu
 #SBATCH --ntasks=1
