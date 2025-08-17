@@ -7,7 +7,7 @@ import subprocess
 
 # i will test all sunction and argument of or.system and subprocess.run
 # 1. os.system
-testosrun = os.system(['/work/home/ruttho/binary/MG5_aMC_v2_9_24/bin/mg5_aMC', 'testmadgraph.dat'])
+testosrun = os.system('/work/home/ruttho/binary/MG5_aMC_v2_9_24/bin/mg5_aMC testmadgraph.dat')
 with open('testosrun.log', 'w') as f:
     f.write(f"Test os.system output: \n{testosrun}\n")
 
