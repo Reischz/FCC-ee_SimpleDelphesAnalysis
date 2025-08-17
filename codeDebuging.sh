@@ -23,4 +23,4 @@ unset __conda_setup
 
 source /work/app/share_env/hepsw-gcc11p2-py3p9p9.sh
 conda activate ext
-/work/home/ruttho/binary/miniconda3/envs/ext/bin/python orchestratedFile.py
+/work/home/ruttho/binary/miniconda3/envs/ext/bin/python pythontest.py
