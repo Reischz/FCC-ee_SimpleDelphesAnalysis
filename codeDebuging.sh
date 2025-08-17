@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=test
 #SBATCH --qos=cu_hpc
-#SBATCH --partition=cpu
+#SBATCH --partition=cpugpu
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=8G
