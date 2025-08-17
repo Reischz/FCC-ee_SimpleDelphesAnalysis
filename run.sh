@@ -2,6 +2,7 @@
 #SBATCH --job-name=test
 #SBATCH --qos=cu_hpc
 #SBATCH --partition=cpu
+#SBATCH --output=outputChain.log
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=8G
