@@ -45,3 +45,8 @@ print("Testing subprocess.run with all arguments...")
 testsubprocessrun_all = subprocess.run(['/work/home/ruttho/binary/MG5_aMC_v2_9_24/bin/mg5_aMC', 'testmadgraph.dat'], capture_output=True, text=True, check=True)
 with open('testsubprocessrun_all.log', 'w') as f:
     f.write(f"Test subprocess.run with all arguments output: \n{testsubprocessrun_all.stdout}\n")
+
+# summarize all test results
+# 1. os.system is more easier to handle
+# 3. subprocess.run with capture_output=True is useful for capturing output without blocking
+# 6. subprocess.run with all arguments is the most comprehensive and flexible option

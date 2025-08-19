@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --job-name=test
-#SBATCH --output=output.log
+#SBATCH --output=debuggingOutput.log
 #SBATCH --qos=cu_hpc
 #SBATCH --partition=cpugpu
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=10
-#SBATCH --mem=8G
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=4G
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
@@ -24,4 +24,6 @@ unset __conda_setup
 
 source /work/app/share_env/hepsw-gcc11p2-py3p9p9.sh
 conda activate ext
-/work/home/ruttho/binary/miniconda3/envs/ext/bin/python pythontest.py
+# /work/home/ruttho/binary/miniconda3/envs/ext/bin/python pythontest.py
+echo "Tell me qhich python is being used"
+which python
