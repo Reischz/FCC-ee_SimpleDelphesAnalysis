@@ -1,4 +1,5 @@
 generate e+ e- > mu+ mu-
 output testmadgraph
+set nb_cores 10
 launch
 set run_card nevents 100
