@@ -9,8 +9,8 @@ import time
 start_time = time.perf_counter()
 print("Starting analysis...")
 
-def check_jet(tree,name,number=None):
-    jet_array = tree.arrays(["Jet_size"], library="pd", entry_stop=number)
+def check_jet(tree,name,mask,number=None):
+    jet_array = tree.arrays(["Jet_size"], library="pd", entry_stop=number)[mask]
     # jet_array_mask = (jet_array["Jet_size"] >= 2)
     fig=plt.figure()
     ax=fig.add_subplot(111)
@@ -22,8 +22,8 @@ def check_jet(tree,name,number=None):
     plt.close()
     return 1
 
-def check_lepton(tree,name,mask,number=None):
-    lep_array = tree.arrays(["Electron_size","Muon_size"], library="pd", entry_stop=number)[mask]
+def check_lepton(tree,name,number=None):
+    lep_array = tree.arrays(["Electron_size","Muon_size"], library="pd", entry_stop=number)
     # lep_array_mask = (lep_array["Electron_size"] + lep_array["Muon_size"] >= 2)
     fig=plt.figure()
     ax=fig.add_subplot(111)
