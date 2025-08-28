@@ -9,12 +9,12 @@ import time
 start_time = time.perf_counter()
 print("Starting analysis...")
 
-def check_jet(tree,name,mask,number=None):
-    jet_array = tree.arrays(["Jet_size"], library="pd", entry_stop=number)[mask]
+def check_jet(array,name,mask):
+    jet_array = array[mask]
     # jet_array_mask = (jet_array["Jet_size"] >= 2)
     fig=plt.figure()
     ax=fig.add_subplot(111)
-    ax.hist(jet_array["Jet_size"], bins=10, range=(-0.5, 9.5))
+    ax.hist(jet_array, bins=10, range=(-0.5, 9.5))
     ax.set_title(f"Jet Size Distribution - {name}")
     ax.set_xlabel("Jet Size")
     ax.set_ylabel("Count")
@@ -22,12 +22,10 @@ def check_jet(tree,name,mask,number=None):
     plt.close()
     return 1
 
-def check_lepton(tree,name,number=None):
-    lep_array = tree.arrays(["Electron_size","Muon_size"], library="pd", entry_stop=number)
-    # lep_array_mask = (lep_array["Electron_size"] + lep_array["Muon_size"] >= 2)
+def check_lepton(Earray, Muarray, name, mask):
     fig=plt.figure()
     ax=fig.add_subplot(111)
-    ax.hist(lep_array["Electron_size"] + lep_array["Muon_size"], bins=10, range=(-0.5, 9.5))
+    ax.hist(Earray[mask] + Muarray[mask], bins=10, range=(-0.5, 9.5))
     ax.set_title(f"Lepton Size Distribution - {name}")
     ax.set_xlabel("Lepton Size")
     ax.set_ylabel("Count")
@@ -52,26 +50,23 @@ HZ4Lep_tree = HZ4Lep["Delphes"]
 ZWW4Lep_tree = ZWW4Lep["Delphes"]
 HZ4LepLFV_tree = HZ4LepLFV["Delphes"]
 
-# check_jet(HZ4Lep_tree, "HZ4Lep")
-# check_jet(ZWW4Lep_tree, "ZWW4Lep")
-# check_jet(HZ4LepLFV_tree, "HZ4LepLFV")
-# check_lepton(HZ4Lep_tree, "HZ4Lep")
-# check_lepton(ZWW4Lep_tree, "ZWW4Lep")
-# check_lepton(HZ4LepLFV_tree, "HZ4LepLFV")
-
 # Check for events with exactly 4 leptons
-HZ4Lep_array = HZ4Lep_tree.arrays(["Electron_size","Muon_size"], library="pd", entry_stop=MAX_EVENTS)
-ZWW4Lep_array = ZWW4Lep_tree.arrays(["Electron_size","Muon_size"], library="pd", entry_stop=MAX_EVENTS)
-HZ4LepLFV_array = HZ4LepLFV_tree.arrays(["Electron_size","Muon_size"], library="pd", entry_stop=MAX_EVENTS)
+HZ4Lep_array = HZ4Lep_tree.arrays(["Jet_size","Electron_size","Muon_size"], library="pd", entry_stop=MAX_EVENTS)
+ZWW4Lep_array = ZWW4Lep_tree.arrays(["Jet_size","Electron_size","Muon_size"], library="pd", entry_stop=MAX_EVENTS)
+HZ4LepLFV_array = HZ4LepLFV_tree.arrays(["Jet_size","Electron_size","Muon_size"], library="pd", entry_stop=MAX_EVENTS)
 print("Analyzing ratio of Events with exactly 4 leptons...")
 HZ4Lep_4lcut=finalstate_fourlepton_cut("HZ4Lep", HZ4Lep_array["Electron_size"], HZ4Lep_array["Muon_size"])
 ZWW4Lep_4lcut=finalstate_fourlepton_cut("ZWW4Lep", ZWW4Lep_array["Electron_size"], ZWW4Lep_array["Muon_size"])
 HZ4LepLFV_4lcut=finalstate_fourlepton_cut("HZ4LepLFV", HZ4LepLFV_array["Electron_size"], HZ4LepLFV_array["Muon_size"])
 
+# Check jet distributions
+check_jet(HZ4Lep_array["Jet_size"], "HZ4Lep", np.ones(len(HZ4Lep_array), dtype=bool))
+check_jet(ZWW4Lep_array["Jet_size"], "ZWW4Lep", np.ones(len(ZWW4Lep_array), dtype=bool))
+check_jet(HZ4LepLFV_array["Jet_size"], "HZ4LepLFV", np.ones(len(HZ4LepLFV_array), dtype=bool))
 # Check jet and lepton distributions again after 4-lepton cut
-check_jet(HZ4Lep_tree, "HZ4Lep_4lcut", HZ4Lep_4lcut, MAX_EVENTS)
-check_jet(ZWW4Lep_tree, "ZWW4Lep_4lcut", ZWW4Lep_4lcut, MAX_EVENTS)
-check_jet(HZ4LepLFV_tree, "HZ4LepLFV_4lcut", HZ4LepLFV_4lcut, MAX_EVENTS)
+check_jet(HZ4Lep_array["Jet_size"], "4lCut_HZ4Lep", HZ4Lep_4lcut)
+check_jet(ZWW4Lep_array["Jet_size"], "4lCut_ZWW4Lep", ZWW4Lep_4lcut)
+check_jet(HZ4LepLFV_array["Jet_size"], "4lCut_HZ4LepLFV", HZ4LepLFV_4lcut)
 # Record the end time
 end_time = time.perf_counter()
 elapsed_time = end_time - start_time
