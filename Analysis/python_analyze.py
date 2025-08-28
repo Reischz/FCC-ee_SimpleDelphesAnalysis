@@ -21,6 +21,19 @@ def check_jet(tree,name):
     plt.close()
     return 1
 
+def check_lepton(tree,name):
+    lep_array = tree.arrays(["Electron_size","Muon_size"], library="pd", entry_stop=1000000)
+    # lep_array_mask = (lep_array["Electron_size"] + lep_array["Muon_size"] >= 2)
+    fig=plt.figure()
+    ax=fig.add_subplot(111)
+    ax.hist(lep_array["Electron_size"] + lep_array["Muon_size"], bins=10, range=(-0.5, 9.5))
+    ax.set_title(f"Lepton Size Distribution - {name}")
+    ax.set_xlabel("Lepton Size")
+    ax.set_ylabel("Count")
+    plt.savefig(f"LeptonSize_{name}.png")
+    plt.close()
+    return 1
+
 # Configuration for testing vs production
 TESTING_MODE = True  # Set to False for full analysis
 MAX_EVENTS = 1000 if TESTING_MODE else None  # None means read all events
@@ -158,5 +171,8 @@ elapsed_time = end_time - start_time
 check_jet(HZ4Lep_tree, "HZ4Lep")
 check_jet(ZWW4Lep_tree, "ZWW4Lep")
 check_jet(HZ4LepLFV_tree, "HZ4LepLFV")
+check_lepton(HZ4Lep_tree, "HZ4Lep")
+check_lepton(ZWW4Lep_tree, "ZWW4Lep")
+check_lepton(HZ4LepLFV_tree, "HZ4LepLFV")
 
 print(f"Total execution time: {elapsed_time:.2f} seconds")
