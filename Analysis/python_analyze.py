@@ -36,7 +36,7 @@ def check_lepton(tree,name,number=None):
     return 1
 
 def finalstate_fourlepton_cut(name,Earray,Muarray):
-    mask = (Earray["Electron_size"] + Muarray["Muon_size"] == 4)
+    mask = (Earray + Muarray == 4)
     print(f"For {name}:{np.sum(mask)}/{len(mask)} : {np.sum(mask)/len(mask)*100:.2f}%")
     return mask
 
