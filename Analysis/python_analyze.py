@@ -22,8 +22,8 @@ def check_jet(tree,name,number=None):
     plt.close()
     return 1
 
-def check_lepton(tree,name,number=None):
-    lep_array = tree.arrays(["Electron_size","Muon_size"], library="pd", entry_stop=number)
+def check_lepton(tree,name,mask,number=None):
+    lep_array = tree.arrays(["Electron_size","Muon_size"], library="pd", entry_stop=number)[mask]
     # lep_array_mask = (lep_array["Electron_size"] + lep_array["Muon_size"] >= 2)
     fig=plt.figure()
     ax=fig.add_subplot(111)
@@ -58,15 +58,20 @@ HZ4LepLFV_tree = HZ4LepLFV["Delphes"]
 # check_lepton(HZ4Lep_tree, "HZ4Lep")
 # check_lepton(ZWW4Lep_tree, "ZWW4Lep")
 # check_lepton(HZ4LepLFV_tree, "HZ4LepLFV")
+
+# Check for events with exactly 4 leptons
 HZ4Lep_array = HZ4Lep_tree.arrays(["Electron_size","Muon_size"], library="pd", entry_stop=MAX_EVENTS)
 ZWW4Lep_array = ZWW4Lep_tree.arrays(["Electron_size","Muon_size"], library="pd", entry_stop=MAX_EVENTS)
 HZ4LepLFV_array = HZ4LepLFV_tree.arrays(["Electron_size","Muon_size"], library="pd", entry_stop=MAX_EVENTS)
 print("Analyzing ratio of Events with exactly 4 leptons...")
+HZ4Lep_4lcut=finalstate_fourlepton_cut("HZ4Lep", HZ4Lep_array["Electron_size"], HZ4Lep_array["Muon_size"])
+ZWW4Lep_4lcut=finalstate_fourlepton_cut("ZWW4Lep", ZWW4Lep_array["Electron_size"], ZWW4Lep_array["Muon_size"])
+HZ4LepLFV_4lcut=finalstate_fourlepton_cut("HZ4LepLFV", HZ4LepLFV_array["Electron_size"], HZ4LepLFV_array["Muon_size"])
 
-finalstate_fourlepton_cut("HZ4Lep", HZ4Lep_array["Electron_size"], HZ4Lep_array["Muon_size"])
-finalstate_fourlepton_cut("ZWW4Lep", ZWW4Lep_array["Electron_size"], ZWW4Lep_array["Muon_size"])
-finalstate_fourlepton_cut("HZ4LepLFV", HZ4LepLFV_array["Electron_size"], HZ4LepLFV_array["Muon_size"])
-
+# Check jet and lepton distributions again after 4-lepton cut
+check_jet(HZ4Lep_tree, "HZ4Lep_4lcut", HZ4Lep_4lcut, number=MAX_EVENTS)
+check_jet(ZWW4Lep_tree, "ZWW4Lep_4lcut", ZWW4Lep_4lcut, number=MAX_EVENTS)
+check_jet(HZ4LepLFV_tree, "HZ4LepLFV_4lcut", HZ4LepLFV_4lcut, number=MAX_EVENTS)
 # Record the end time
 end_time = time.perf_counter()
 elapsed_time = end_time - start_time
