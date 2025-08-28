@@ -3,6 +3,10 @@ import uproot
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import time
+
+# Record the start time
+start_time = time.time()
 
 # Configuration for testing vs production
 TESTING_MODE = True  # Set to False for full analysis
@@ -132,3 +136,11 @@ ax3.text(0.02, 0.98, stats_text, transform=ax3.transAxes, verticalalignment='top
 fig.suptitle("Electron Size Distribution in Different Datasets")
 # Save to PNG
 plt.savefig("CheckLFV_Electron.png")
+
+# 3. Record the end time
+end_time = time.time()
+
+# 4. Calculate the elapsed time
+elapsed_time = end_time - start_time
+
+print(f"Total execution time: {elapsed_time:.2f} seconds")
