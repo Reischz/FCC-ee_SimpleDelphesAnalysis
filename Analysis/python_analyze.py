@@ -8,9 +8,22 @@ import time
 # Record the start time
 start_time = time.time()
 
+def check_jet(tree,name):
+    jet_array = tree.arrays(["Jet_size"], library="pd", entry_stop=1000)
+    # jet_array_mask = (jet_array["Jet_size"] >= 2)
+    fig=plt.figure()
+    ax=fig.add_subplot(111)
+    ax.hist(jet_array["Jet_size"], bins=10, range=(0, 10))
+    ax.set_title(f"Jet Size Distribution - {name}")
+    ax.set_xlabel("Jet Size")
+    ax.set_ylabel("Count")
+    plt.savefig(f"JetSize_{name}.png")
+    plt.close()
+    return 1
+
 # Configuration for testing vs production
 TESTING_MODE = True  # Set to False for full analysis
-MAX_EVENTS = 100 if TESTING_MODE else None  # None means read all events
+MAX_EVENTS = 1000 if TESTING_MODE else None  # None means read all events
 
 print(f"Running in {'TESTING' if TESTING_MODE else 'PRODUCTION'} mode")
 if TESTING_MODE:
@@ -142,5 +155,8 @@ end_time = time.time()
 
 # 4. Calculate the elapsed time
 elapsed_time = end_time - start_time
+check_jet(HZ4Lep_tree, "HZ4Lep")
+check_jet(ZWW4Lep_tree, "ZWW4Lep")
+check_jet(HZ4LepLFV_tree, "HZ4LepLFV")
 
 print(f"Total execution time: {elapsed_time:.2f} seconds")
