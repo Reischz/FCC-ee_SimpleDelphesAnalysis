@@ -9,7 +9,7 @@ import time
 start_time = time.time()
 
 def check_jet(tree,name):
-    jet_array = tree.arrays(["Jet_size"], library="pd", entry_stop=1000)
+    jet_array = tree.arrays(["Jet_size"], library="pd", entry_stop=1000000)
     # jet_array_mask = (jet_array["Jet_size"] >= 2)
     fig=plt.figure()
     ax=fig.add_subplot(111)
