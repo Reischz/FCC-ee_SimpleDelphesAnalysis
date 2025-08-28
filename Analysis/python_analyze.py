@@ -13,7 +13,7 @@ def check_jet(tree,name):
     # jet_array_mask = (jet_array["Jet_size"] >= 2)
     fig=plt.figure()
     ax=fig.add_subplot(111)
-    ax.hist(jet_array["Jet_size"], bins=10, range=(0, 10))
+    ax.hist(jet_array["Jet_size"], bins=10, range=(0.5, 10.5))
     ax.set_title(f"Jet Size Distribution - {name}")
     ax.set_xlabel("Jet Size")
     ax.set_ylabel("Count")
