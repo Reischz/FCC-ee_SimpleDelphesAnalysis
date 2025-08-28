@@ -4,6 +4,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+# Configuration for testing vs production
+TESTING_MODE = True  # Set to False for full analysis
+MAX_EVENTS = 100 if TESTING_MODE else None  # None means read all events
+
+print(f"Running in {'TESTING' if TESTING_MODE else 'PRODUCTION'} mode")
+if TESTING_MODE:
+    print(f"Will read only first {MAX_EVENTS} events from each file")
+
 HZ4Lep = uproot.open("Bg1_hz.root")
 ZWW4Lep = uproot.open("Bg2_zww.root")
 HZ4LepLFV = uproot.open("Sn1_hzLFV.root")
@@ -13,9 +21,15 @@ HZ4LepLFV_tree = HZ4LepLFV["Delphes"]
 
 print(type(HZ4Lep_tree))
 
-HZ4Lep_array = HZ4Lep_tree.arrays(["Electron_size","Muon_size","Jet_size"], library="pd")
-ZWW4Lep_array = ZWW4Lep_tree.arrays(["Electron_size","Muon_size","Jet_size"], library="pd")
-HZ4LepLFV_array = HZ4LepLFV_tree.arrays(["Electron_size","Muon_size","Jet_size"], library="pd")
+# Read events (limited for testing or all for production)
+if TESTING_MODE:
+    HZ4Lep_array = HZ4Lep_tree.arrays(["Electron_size","Muon_size","Jet_size"], library="pd", entry_stop=MAX_EVENTS)
+    ZWW4Lep_array = ZWW4Lep_tree.arrays(["Electron_size","Muon_size","Jet_size"], library="pd", entry_stop=MAX_EVENTS)
+    HZ4LepLFV_array = HZ4LepLFV_tree.arrays(["Electron_size","Muon_size","Jet_size"], library="pd", entry_stop=MAX_EVENTS)
+else:
+    HZ4Lep_array = HZ4Lep_tree.arrays(["Electron_size","Muon_size","Jet_size"], library="pd")
+    ZWW4Lep_array = ZWW4Lep_tree.arrays(["Electron_size","Muon_size","Jet_size"], library="pd")
+    HZ4LepLFV_array = HZ4LepLFV_tree.arrays(["Electron_size","Muon_size","Jet_size"], library="pd")
 
 HZ4Lep_array_mask = (HZ4Lep_array["Muon_size"] + HZ4Lep_array["Electron_size"] == 4)
 ZWW4Lep_array_mask = (ZWW4Lep_array["Muon_size"] + ZWW4Lep_array["Electron_size"] == 4)
