@@ -39,7 +39,7 @@ def finalstate_fourlepton_cut(name,Earray,Muarray):
     return mask
 
 # Configuration for testing vs production
-TESTING_MODE = True  # Set to False for full analysis
+TESTING_MODE = False  # Set to False for full analysis
 MAX_EVENTS = 1000 if TESTING_MODE else None  # None means read all events
 print(f"Running in {'TESTING' if TESTING_MODE else 'PRODUCTION'} mode")
 # Load the ROOT files and access the trees
