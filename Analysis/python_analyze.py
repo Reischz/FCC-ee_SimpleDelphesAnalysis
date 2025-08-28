@@ -69,9 +69,9 @@ ZWW4Lep_4lcut=finalstate_fourlepton_cut("ZWW4Lep", ZWW4Lep_array["Electron_size"
 HZ4LepLFV_4lcut=finalstate_fourlepton_cut("HZ4LepLFV", HZ4LepLFV_array["Electron_size"], HZ4LepLFV_array["Muon_size"])
 
 # Check jet and lepton distributions again after 4-lepton cut
-check_jet(HZ4Lep_tree, "HZ4Lep_4lcut", HZ4Lep_4lcut, number=MAX_EVENTS)
-check_jet(ZWW4Lep_tree, "ZWW4Lep_4lcut", ZWW4Lep_4lcut, number=MAX_EVENTS)
-check_jet(HZ4LepLFV_tree, "HZ4LepLFV_4lcut", HZ4LepLFV_4lcut, number=MAX_EVENTS)
+check_jet(HZ4Lep_tree, "HZ4Lep_4lcut", HZ4Lep_4lcut, MAX_EVENTS)
+check_jet(ZWW4Lep_tree, "ZWW4Lep_4lcut", ZWW4Lep_4lcut, MAX_EVENTS)
+check_jet(HZ4LepLFV_tree, "HZ4LepLFV_4lcut", HZ4LepLFV_4lcut, MAX_EVENTS)
 # Record the end time
 end_time = time.perf_counter()
 elapsed_time = end_time - start_time
