@@ -39,7 +39,7 @@ def finalstate_fourlepton_cut(name,Earray,Muarray):
 def check_MET_distribution(array,name):
     fig=plt.figure()
     ax=fig.add_subplot(111)
-    ax.hist(array, bins=10, range=(-0.5, 9.5))
+    ax.hist(array["MissingET_size"], bins=10, range=(-0.5, 9.5))
     ax.set_title(f"MET_size Distribution - {name}")
     ax.set_xlabel("MET_size")
     ax.set_ylabel("Count")
