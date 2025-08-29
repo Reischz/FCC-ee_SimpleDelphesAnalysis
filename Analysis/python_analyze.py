@@ -97,9 +97,9 @@ HZ4LepLFV_tree = HZ4LepLFV["Delphes"]
 
 # Check for events with exactly 4 leptons
 column_arrays = ["MissingET_size","MissingET.Eta","MissingET.Phi","Jet_size","Electron_size","Electron.Eta","Electron.Phi","Muon_size","Muon.Eta","Muon.Phi"]
-HZ4Lep_array = HZ4Lep_tree.arrays(column_arrays, library="pd", entry_stop=MAX_EVENTS)
-ZWW4Lep_array = ZWW4Lep_tree.arrays(column_arrays, library="pd", entry_stop=MAX_EVENTS)
-HZ4LepLFV_array = HZ4LepLFV_tree.arrays(column_arrays, library="pd", entry_stop=MAX_EVENTS)
+HZ4Lep_array = HZ4Lep_tree.arrays(column_arrays, library="np", entry_stop=MAX_EVENTS)
+ZWW4Lep_array = ZWW4Lep_tree.arrays(column_arrays, library="np", entry_stop=MAX_EVENTS)
+HZ4LepLFV_array = HZ4LepLFV_tree.arrays(column_arrays, library="np", entry_stop=MAX_EVENTS)
 print("Analyzing ratio of Events with exactly 4 leptons...")
 HZ4Lep_4lcut=finalstate_fourlepton_cut("HZ4Lep", HZ4Lep_array["Electron_size"], HZ4Lep_array["Muon_size"])
 ZWW4Lep_4lcut=finalstate_fourlepton_cut("ZWW4Lep", ZWW4Lep_array["Electron_size"], ZWW4Lep_array["Muon_size"])
