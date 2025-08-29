@@ -38,8 +38,16 @@ def finalstate_fourlepton_cut(name,Earray,Muarray):
     print(f"For {name}:{np.sum(mask)}/{len(mask)} : {np.sum(mask)/len(mask)*100:.2f}%")
     return mask
 
-def check_drFromMET():
+def check_drFromMET(array,name,mask):
     # Placeholder for future implementation
+    fig=plt.figure()
+    ax=fig.add_subplot(111)
+    ax.hist(array[mask], bins=10, range=(-0.5, 9.5))
+    ax.set_title("MET_size Distribution")
+    ax.set_xlabel("MET_size")
+    ax.set_ylabel("Count")
+    plt.savefig(f"MET_size_{name}.png")
+    plt.close()
     return 1
 
 
@@ -56,9 +64,10 @@ ZWW4Lep_tree = ZWW4Lep["Delphes"]
 HZ4LepLFV_tree = HZ4LepLFV["Delphes"]
 
 # Check for events with exactly 4 leptons
-HZ4Lep_array = HZ4Lep_tree.arrays(["Jet_size","Electron_size","Muon_size"], library="pd", entry_stop=MAX_EVENTS)
-ZWW4Lep_array = ZWW4Lep_tree.arrays(["Jet_size","Electron_size","Muon_size"], library="pd", entry_stop=MAX_EVENTS)
-HZ4LepLFV_array = HZ4LepLFV_tree.arrays(["Jet_size","Electron_size","Muon_size"], library="pd", entry_stop=MAX_EVENTS)
+column_arrays = ["MissingET_size","Jet_size","Electron_size","Muon_size"]
+HZ4Lep_array = HZ4Lep_tree.arrays(column_arrays, library="pd", entry_stop=MAX_EVENTS)
+ZWW4Lep_array = ZWW4Lep_tree.arrays(column_arrays, library="pd", entry_stop=MAX_EVENTS)
+HZ4LepLFV_array = HZ4LepLFV_tree.arrays(column_arrays, library="pd", entry_stop=MAX_EVENTS)
 print("Analyzing ratio of Events with exactly 4 leptons...")
 HZ4Lep_4lcut=finalstate_fourlepton_cut("HZ4Lep", HZ4Lep_array["Electron_size"], HZ4Lep_array["Muon_size"])
 ZWW4Lep_4lcut=finalstate_fourlepton_cut("ZWW4Lep", ZWW4Lep_array["Electron_size"], ZWW4Lep_array["Muon_size"])
@@ -73,7 +82,10 @@ check_jet(HZ4Lep_array["Jet_size"], "4lCut_HZ4Lep", HZ4Lep_4lcut)
 check_jet(ZWW4Lep_array["Jet_size"], "4lCut_ZWW4Lep", ZWW4Lep_4lcut)
 check_jet(HZ4LepLFV_array["Jet_size"], "4lCut_HZ4LepLFV", HZ4LepLFV_4lcut)
 
-
+# check MET distributions
+check_drFromMET(HZ4Lep_array["MissingET_size"], "HZ4Lep", np.ones(len(HZ4Lep_array), dtype=bool))
+check_drFromMET(ZWW4Lep_array["MissingET_size"], "ZWW4Lep", np.ones(len(ZWW4Lep_array), dtype=bool))
+check_drFromMET(HZ4LepLFV_array["MissingET_size"], "HZ4LepLFV", np.ones(len(HZ4LepLFV_array), dtype=bool))
 # Record the end time
 end_time = time.perf_counter()
 elapsed_time = end_time - start_time
