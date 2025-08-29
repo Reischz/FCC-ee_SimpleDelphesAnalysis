@@ -9,9 +9,7 @@ import time
 start_time = time.perf_counter()
 print("Starting analysis...")
 
-def check_jet(array,name,mask):
-    jet_array = array[mask]
-    # jet_array_mask = (jet_array["Jet_size"] >= 2)
+def check_jet(jet_array,name):
     fig=plt.figure()
     ax=fig.add_subplot(111)
     ax.hist(jet_array, bins=10, range=(-0.5, 9.5))
@@ -38,10 +36,10 @@ def finalstate_fourlepton_cut(name,Earray,Muarray):
     print(f"    {name}:{np.sum(mask)}/{len(mask)} : {np.sum(mask)/len(mask)*100:.2f}%")
     return mask
 
-def check_MET_distribution(array,name,mask):
+def check_MET_distribution(array,name):
     fig=plt.figure()
     ax=fig.add_subplot(111)
-    ax.hist(array[mask], bins=10, range=(-0.5, 9.5))
+    ax.hist(array, bins=10, range=(-0.5, 9.5))
     ax.set_title(f"MET_size Distribution - {name}")
     ax.set_xlabel("MET_size")
     ax.set_ylabel("Count")
@@ -97,27 +95,27 @@ HZ4LepLFV_tree = HZ4LepLFV["Delphes"]
 
 # Check for events with exactly 4 leptons
 column_arrays = ["MissingET_size","MissingET.Eta","MissingET.Phi","Jet_size","Electron_size","Electron.Eta","Electron.Phi","Muon_size","Muon.Eta","Muon.Phi"]
-HZ4Lep_array = HZ4Lep_tree.arrays(column_arrays, library="pd", entry_stop=MAX_EVENTS)
-ZWW4Lep_array = ZWW4Lep_tree.arrays(column_arrays, library="pd", entry_stop=MAX_EVENTS)
-HZ4LepLFV_array = HZ4LepLFV_tree.arrays(column_arrays, library="pd", entry_stop=MAX_EVENTS)
+HZ4Lep_array = HZ4Lep_tree.arrays(column_arrays, library="np", entry_stop=MAX_EVENTS)
+ZWW4Lep_array = ZWW4Lep_tree.arrays(column_arrays, library="np", entry_stop=MAX_EVENTS)
+HZ4LepLFV_array = HZ4LepLFV_tree.arrays(column_arrays, library="np", entry_stop=MAX_EVENTS)
 print("Analyzing ratio of Events with exactly 4 leptons...")
 HZ4Lep_4lcut=finalstate_fourlepton_cut("HZ4Lep", HZ4Lep_array["Electron_size"], HZ4Lep_array["Muon_size"])
 ZWW4Lep_4lcut=finalstate_fourlepton_cut("ZWW4Lep", ZWW4Lep_array["Electron_size"], ZWW4Lep_array["Muon_size"])
 HZ4LepLFV_4lcut=finalstate_fourlepton_cut("HZ4LepLFV", HZ4LepLFV_array["Electron_size"], HZ4LepLFV_array["Muon_size"])
 
 # Check jet distributions
-check_jet(HZ4Lep_array["Jet_size"], "HZ4Lep", np.ones(len(HZ4Lep_array), dtype=bool))
-check_jet(ZWW4Lep_array["Jet_size"], "ZWW4Lep", np.ones(len(ZWW4Lep_array), dtype=bool))
-check_jet(HZ4LepLFV_array["Jet_size"], "HZ4LepLFV", np.ones(len(HZ4LepLFV_array), dtype=bool))
+check_jet(HZ4Lep_array["Jet_size"], "HZ4Lep")
+check_jet(ZWW4Lep_array["Jet_size"], "ZWW4Lep")
+check_jet(HZ4LepLFV_array["Jet_size"], "HZ4LepLFV")
 # Check jet and lepton distributions again after 4-lepton cut
-check_jet(HZ4Lep_array["Jet_size"], "4lCut_HZ4Lep", HZ4Lep_4lcut)
-check_jet(ZWW4Lep_array["Jet_size"], "4lCut_ZWW4Lep", ZWW4Lep_4lcut)
-check_jet(HZ4LepLFV_array["Jet_size"], "4lCut_HZ4LepLFV", HZ4LepLFV_4lcut)
+check_jet(HZ4Lep_array["Jet_size"][HZ4Lep_4lcut], "4lCut_HZ4Lep")
+check_jet(ZWW4Lep_array["Jet_size"][ZWW4Lep_4lcut], "4lCut_ZWW4Lep")
+check_jet(HZ4LepLFV_array["Jet_size"][HZ4LepLFV_4lcut], "4lCut_HZ4LepLFV")
 
 # check MET distributions
-check_MET_distribution(HZ4Lep_array, "HZ4Lep", np.ones(len(HZ4Lep_array), dtype=bool))
-check_MET_distribution(ZWW4Lep_array, "ZWW4Lep", np.ones(len(ZWW4Lep_array), dtype=bool))
-check_MET_distribution(HZ4LepLFV_array, "HZ4LepLFV", np.ones(len(HZ4LepLFV_array), dtype=bool))
+check_MET_distribution(HZ4Lep_array, "HZ4Lep")
+check_MET_distribution(ZWW4Lep_array, "ZWW4Lep")
+check_MET_distribution(HZ4LepLFV_array, "HZ4LepLFV")
 
 # check dr from MET to all lepton
 check_drFromMET(HZ4Lep_array, "HZ4Lep")
