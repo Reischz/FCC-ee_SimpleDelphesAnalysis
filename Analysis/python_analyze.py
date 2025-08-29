@@ -35,7 +35,7 @@ def check_lepton(Earray, Muarray, name, mask):
 
 def finalstate_fourlepton_cut(name,Earray,Muarray):
     mask = (Earray + Muarray == 4)
-    print(f"For {name}:{np.sum(mask)}/{len(mask)} : {np.sum(mask)/len(mask)*100:.2f}%")
+    print(f"    {name}:{np.sum(mask)}/{len(mask)} : {np.sum(mask)/len(mask)*100:.2f}%")
     return mask
 
 def check_MET_distribution(array,name,mask):
@@ -49,27 +49,42 @@ def check_MET_distribution(array,name,mask):
     plt.close()
     return 1
 
-def check_drFromMET(array, name, mask):
+def check_drFromMET(n_array, name):
     # Calculate delta R between MET and each lepton
-
-    Esize=array["Electron_size"]
-    Msize=array["Muon_size"]
-    METsize=array["MissingET_size"]
-
-    leptons = array[mask][["Electron", "Muon"]]
-    delta_r = np.sqrt((leptons["Electron"].eta - met.eta)**2 + (leptons["Electron"].phi - met.phi)**2)
     fig=plt.figure()
     ax=fig.add_subplot(111)
-    ax.hist(delta_r, bins=10, range=(0, 5))
     ax.set_title(f"Delta R from MET to Leptons - {name}")
     ax.set_xlabel("Delta R")
     ax.set_ylabel("Count")
+    deta_r=np.array([])
+    for number_event in range(len(n_array)):
+        enum=n_array["Electron_size"][number_event]
+        for ie in range(enum):
+            dphi=n_array["Electron.Phi"][number_event][ie]-n_array["MissingET.Phi"][number_event]
+            while (dphi > np.pi):
+                dphi -= 2*np.pi
+            while (dphi < -np.pi):
+                dphi += 2*np.pi
+            dr=np.sqrt((n_array["Electron.Eta"][number_event][ie]-n_array["MissingET.Eta"][number_event])**2 + dphi**2)
+            deta_r=np.append(deta_r, dr)
+        mnum=n_array["Muon_size"][number_event]
+        for im in range(mnum):
+            dphi=n_array["Muon.Phi"][number_event][im]-n_array["MissingET.Phi"][number_event]
+            while (dphi > np.pi):
+                dphi -= 2*np.pi
+            while (dphi < -np.pi):
+                dphi += 2*np.pi
+            dr=np.sqrt((n_array["Muon.Eta"][number_event][im]-n_array["MissingET.Eta"][number_event])**2 + dphi**2)
+            deta_r=np.append(deta_r, dr) 
+            
+    ax.hist(deta_r, bins=100, range=(0, 5))
+
     plt.savefig(f"DeltaR_MET_Leptons_{name}.png")
     plt.close()
     return 1
 
 # Configuration for testing vs production
-TESTING_MODE = True  # Set to False for full analysis
+TESTING_MODE = False  # Set to False for full analysis
 MAX_EVENTS = 1000 if TESTING_MODE else None  # None means read all events
 print(f"Running in {'TESTING' if TESTING_MODE else 'PRODUCTION'} mode")
 # Load the ROOT files and access the trees
@@ -81,7 +96,7 @@ ZWW4Lep_tree = ZWW4Lep["Delphes"]
 HZ4LepLFV_tree = HZ4LepLFV["Delphes"]
 
 # Check for events with exactly 4 leptons
-column_arrays = ["MissingET_size","MissingET_Eta","MissingET_Phi","Jet_size","Electron_size","Electron_Eta","Electron_Phi","Muon_size","Muon_Eta","Muon_Phi"]
+column_arrays = ["MissingET_size","MissingET.Eta","MissingET.Phi","Jet_size","Electron_size","Electron.Eta","Electron.Phi","Muon_size","Muon.Eta","Muon.Phi"]
 HZ4Lep_array = HZ4Lep_tree.arrays(column_arrays, library="pd", entry_stop=MAX_EVENTS)
 ZWW4Lep_array = ZWW4Lep_tree.arrays(column_arrays, library="pd", entry_stop=MAX_EVENTS)
 HZ4LepLFV_array = HZ4LepLFV_tree.arrays(column_arrays, library="pd", entry_stop=MAX_EVENTS)
@@ -100,12 +115,15 @@ check_jet(ZWW4Lep_array["Jet_size"], "4lCut_ZWW4Lep", ZWW4Lep_4lcut)
 check_jet(HZ4LepLFV_array["Jet_size"], "4lCut_HZ4LepLFV", HZ4LepLFV_4lcut)
 
 # check MET distributions
-check_MET_distribution(HZ4Lep_array["MissingET_size"], "HZ4Lep", np.ones(len(HZ4Lep_array), dtype=bool))
-check_MET_distribution(ZWW4Lep_array["MissingET_size"], "ZWW4Lep", np.ones(len(ZWW4Lep_array), dtype=bool))
-check_MET_distribution(HZ4LepLFV_array["MissingET_size"], "HZ4LepLFV", np.ones(len(HZ4LepLFV_array), dtype=bool))
+check_MET_distribution(HZ4Lep_array, "HZ4Lep", np.ones(len(HZ4Lep_array), dtype=bool))
+check_MET_distribution(ZWW4Lep_array, "ZWW4Lep", np.ones(len(ZWW4Lep_array), dtype=bool))
+check_MET_distribution(HZ4LepLFV_array, "HZ4LepLFV", np.ones(len(HZ4LepLFV_array), dtype=bool))
 
 # check dr from MET to all lepton
-check_drFromMET(HZ4Lep_array, "HZ4Lep", HZ4Lep_4lcut)
+check_drFromMET(HZ4Lep_array, "HZ4Lep")
+check_drFromMET(ZWW4Lep_array, "ZWW4Lep")
+check_drFromMET(HZ4LepLFV_array, "HZ4LepLFV")
+
 # Record the end time
 end_time = time.perf_counter()
 elapsed_time = end_time - start_time
