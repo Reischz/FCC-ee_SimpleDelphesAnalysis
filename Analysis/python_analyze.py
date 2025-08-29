@@ -38,6 +38,11 @@ def finalstate_fourlepton_cut(name,Earray,Muarray):
     print(f"For {name}:{np.sum(mask)}/{len(mask)} : {np.sum(mask)/len(mask)*100:.2f}%")
     return mask
 
+def check_drFromMET():
+    # Placeholder for future implementation
+    return 1
+
+
 # Configuration for testing vs production
 TESTING_MODE = False  # Set to False for full analysis
 MAX_EVENTS = 1000 if TESTING_MODE else None  # None means read all events
@@ -67,6 +72,8 @@ check_jet(HZ4LepLFV_array["Jet_size"], "HZ4LepLFV", np.ones(len(HZ4LepLFV_array)
 check_jet(HZ4Lep_array["Jet_size"], "4lCut_HZ4Lep", HZ4Lep_4lcut)
 check_jet(ZWW4Lep_array["Jet_size"], "4lCut_ZWW4Lep", ZWW4Lep_4lcut)
 check_jet(HZ4LepLFV_array["Jet_size"], "4lCut_HZ4LepLFV", HZ4LepLFV_4lcut)
+
+
 # Record the end time
 end_time = time.perf_counter()
 elapsed_time = end_time - start_time
