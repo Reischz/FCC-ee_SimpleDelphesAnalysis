@@ -16,4 +16,5 @@ print(all_column_names)
 # see type of Electron/Electron.Eta
 HZ4Lep_df = HZ4Lep_tree.arrays(["Electron"]["Electron.Eta"], library="pd", entry_stop=5)
 print(HZ4Lep_df)
-print(type(HZ4Lep_df["Electron"]["Electron.Eta"][0]))
+print(type(HZ4Lep_df["Electron.Eta"][0]))
+print(type(HZ4Lep_df[0]["Electron.Eta"]))
