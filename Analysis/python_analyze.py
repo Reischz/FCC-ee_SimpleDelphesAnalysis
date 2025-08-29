@@ -55,7 +55,7 @@ def check_drFromMET(n_array, name):
     ax.set_xlabel("Delta R")
     ax.set_ylabel("Count")
     deta_r=np.array([])
-    for number_event in range(len(n_array)):
+    for number_event in range(len(n_array["MissingET_size"])):
         enum=n_array["Electron_size"][number_event]
         for ie in range(enum):
             dphi=n_array["Electron.Phi"][number_event][ie]-n_array["MissingET.Phi"][number_event]
