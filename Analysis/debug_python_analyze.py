@@ -132,6 +132,7 @@ check_MET_distribution(HZ4Lep_array, "HZ4Lep")
 check_MET_distribution(ZWW4Lep_array, "ZWW4Lep")
 check_MET_distribution(HZ4LepLFV_array, "HZ4LepLFV")
 
+print("Generating PT distributions...")
 PT_distribution(HZ4Lep_array, "HZ4Lep")
 PT_distribution(ZWW4Lep_array, "ZWW4Lep")
 PT_distribution(HZ4LepLFV_array, "HZ4LepLFV")
