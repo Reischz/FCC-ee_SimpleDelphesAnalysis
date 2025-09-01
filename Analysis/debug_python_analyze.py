@@ -47,6 +47,17 @@ def check_MET_distribution(array,name):
     plt.close()
     return 1
 
+def PT_distribution(array,name):
+    fig=plt.figure()
+    ax=fig.add_subplot(111)
+    ax.hist(array["Electron.PT"], bins=10, range=(-0.5, 9.5))
+    ax.set_title(f"Electron PT :{name}")
+    ax.set_xlabel("Electron PT")
+    ax.set_ylabel("Count")
+    plt.savefig(f"Electron_PT_{name}.png")
+    plt.close()
+    return 1
+
 def check_drFromMET(n_array, name):
     # Calculate delta R between MET and each lepton
     print(f"Calculating Delta R from MET to Leptons for {name}...")
@@ -86,8 +97,8 @@ def check_drFromMET(n_array, name):
     return 1
 
 # Configuration for testing vs production
-TESTING_MODE = False  # Set to False for full analysis
-MAX_EVENTS = 100000 if TESTING_MODE else None  # None means read all events
+TESTING_MODE = True  # Set to False for full analysis
+MAX_EVENTS = 10000 if TESTING_MODE else None  # None means read all events
 print(f"Running in {'TESTING' if TESTING_MODE else 'PRODUCTION'} mode")
 # Load the ROOT files and access the trees
 HZ4Lep = uproot.open("Bg1_hz.root")
@@ -98,10 +109,10 @@ ZWW4Lep_tree = ZWW4Lep["Delphes"]
 HZ4LepLFV_tree = HZ4LepLFV["Delphes"]
 
 # Check for events with exactly 4 leptons
-column_arrays = ["MissingET_size","MissingET.Eta","MissingET.Phi","Jet_size","Electron_size","Electron.Eta","Electron.Phi","Muon_size","Muon.Eta","Muon.Phi"]
-HZ4Lep_array = HZ4Lep_tree.arrays(column_arrays, library="np", entry_stop=MAX_EVENTS)
-ZWW4Lep_array = ZWW4Lep_tree.arrays(column_arrays, library="np", entry_stop=MAX_EVENTS)
-HZ4LepLFV_array = HZ4LepLFV_tree.arrays(column_arrays, library="np", entry_stop=MAX_EVENTS)
+column_arrays = ["MissingET_size","MissingET.Eta","MissingET.Phi","Jet_size","Electron_size","Electron.PT","Electron.Eta","Electron.Phi","Muon_size","Muon.Eta","Muon.Phi"]
+HZ4Lep_array = HZ4Lep_tree.arrays(column_arrays,  entry_stop=MAX_EVENTS)
+ZWW4Lep_array = ZWW4Lep_tree.arrays(column_arrays,  entry_stop=MAX_EVENTS)
+HZ4LepLFV_array = HZ4LepLFV_tree.arrays(column_arrays, entry_stop=MAX_EVENTS)
 print("Analyzing ratio of Events with exactly 4 leptons...")
 HZ4Lep_4lcut=finalstate_fourlepton_cut("HZ4Lep", HZ4Lep_array["Electron_size"], HZ4Lep_array["Muon_size"])
 ZWW4Lep_4lcut=finalstate_fourlepton_cut("ZWW4Lep", ZWW4Lep_array["Electron_size"], ZWW4Lep_array["Muon_size"])
@@ -121,10 +132,14 @@ check_MET_distribution(HZ4Lep_array, "HZ4Lep")
 check_MET_distribution(ZWW4Lep_array, "ZWW4Lep")
 check_MET_distribution(HZ4LepLFV_array, "HZ4LepLFV")
 
+PT_distribution(HZ4Lep_array, "HZ4Lep")
+PT_distribution(ZWW4Lep_array, "ZWW4Lep")
+PT_distribution(HZ4LepLFV_array, "HZ4LepLFV")
+
 # check dr from MET to all lepton
-check_drFromMET(HZ4Lep_array, "HZ4Lep")
-check_drFromMET(ZWW4Lep_array, "ZWW4Lep")
-check_drFromMET(HZ4LepLFV_array, "HZ4LepLFV")
+# check_drFromMET(HZ4Lep_array, "HZ4Lep")
+# check_drFromMET(ZWW4Lep_array, "ZWW4Lep")
+# check_drFromMET(HZ4LepLFV_array, "HZ4LepLFV")
 
 # Record the end time
 end_time = time.perf_counter()
