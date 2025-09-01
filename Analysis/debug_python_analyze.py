@@ -84,7 +84,7 @@ def check_drFromMET(n_array, name):
 
 # Configuration for testing vs production
 TESTING_MODE = True  # Set to False for full analysis
-MAX_EVENTS = 10 if TESTING_MODE else None  # None means read all events
+MAX_EVENTS = 10000 if TESTING_MODE else None  # None means read all events
 print(f"Running in {'TESTING' if TESTING_MODE else 'PRODUCTION'} mode")
 # Load the ROOT files and access the trees
 HZ4Lep = uproot.open("Bg1_hz.root")
