@@ -51,7 +51,7 @@ def check_MET_distribution(array,name):
 def PT_distribution(array,name):
     fig=plt.figure()
     ax=fig.add_subplot(111)
-    ax.hist(ak.flatten(array["Electron.PT"]), ins=120, range=(0, 240))
+    ax.hist(ak.flatten(array["Electron.PT"]), bins=120, range=(0, 240))
     ax.set_title(f"Electron PT :{name}")
     ax.set_xlabel("Electron PT")
     ax.set_ylabel("Count")
