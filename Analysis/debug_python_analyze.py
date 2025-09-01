@@ -56,8 +56,8 @@ def check_drFromMET(n_array, name):
     ax.set_xlabel("Delta R")
     ax.set_ylabel("Count")
     deta_r=np.array([])
-    for number_event in range(len(n_array["MissingET_size"])):
-        print(f"Processing event {number_event+1}/{len(n_array['MissingET_size'])}", end='\r')
+    total_events = len(n_array["MissingET_size"])
+    for number_event in range(total_events):
         enum=n_array["Electron_size"][number_event]
         for ie in range(enum):
             dphi=n_array["Electron.Phi"][number_event][ie]-n_array["MissingET.Phi"][number_event]
@@ -76,6 +76,8 @@ def check_drFromMET(n_array, name):
                 dphi += 2*np.pi
             dr=np.sqrt((n_array["Muon.Eta"][number_event][im]-n_array["MissingET.Eta"][number_event])**2 + dphi**2)
             deta_r=np.append(deta_r, dr)
+        
+        print(f"Finished event {(number_event+1)/total_events*100:.2f}%", end='\r')
             
     ax.hist(deta_r, bins=100, range=(0, 5))
 
@@ -84,7 +86,7 @@ def check_drFromMET(n_array, name):
     return 1
 
 # Configuration for testing vs production
-TESTING_MODE = True  # Set to False for full analysis
+TESTING_MODE = False  # Set to False for full analysis
 MAX_EVENTS = 100000 if TESTING_MODE else None  # None means read all events
 print(f"Running in {'TESTING' if TESTING_MODE else 'PRODUCTION'} mode")
 # Load the ROOT files and access the trees
