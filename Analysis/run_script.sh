@@ -25,7 +25,4 @@ unset __conda_setup
 # <<< conda initialize <<<
 
 conda activate HEP
-which python
-python --version
-echo "Python path:"
-echo $PATH
+python debug_python_analyze.py
