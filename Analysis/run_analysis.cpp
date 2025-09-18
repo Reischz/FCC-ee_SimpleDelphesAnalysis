@@ -245,7 +245,7 @@ void run_analysis() {
         }
         
         hs->Draw("NOSTACK");
-        hs->SetTitle(TString::Format("%s;GeV;Normalized Entries", plot_name.c_st()));
+        hs->SetTitle(TString::Format("%s;GeV;Normalized Entries", plot_name.c_str()));
         hs->SetMaximum(max_y * 1.2);
         legend->Draw();
         
