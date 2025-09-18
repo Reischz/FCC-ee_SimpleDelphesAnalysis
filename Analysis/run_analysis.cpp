@@ -67,41 +67,42 @@ void run_analysis() {
 
     // Loop over each file/dataset
     for (auto const& [name, path] : file_paths) {
-        TFile* file = TFile::Open(path.c_str());
-        if (!file || file->IsZombie()) {
-            std::cerr << "Error opening file: " << path << std::endl;
+        TChain* chain = new TChain("Delphes");
+        chain->Add(path.c_str());
+
+        if (chain->GetEntries() == 0) {
+            std::cerr << "Error opening file or tree not found in: " << path << std::endl;
             continue;
         }
         
         std::cout << "Processing file: " << path << " for dataset: " << name << std::endl;
 
-        TTree* tree = (TTree*)file->Get("Delphes");
-        Delphes* d = new Delphes(tree);
-        long long n_entries = tree->GetEntries();
+        Delphes d(chain); // Create Delphes object on the stack from the TChain
+        long long n_entries = chain->GetEntries();
         hist_map.at(name).n_total = n_entries;
 
         // --- Event Loop ---
         for (long long i = 0; i < n_entries; ++i) {
-            d->GetEntry(i);
+            d.GetEntry(i);
 
             // --- Cut 1: Exactly 4 leptons ---
-            if (d->Electron_size + d->Muon_size != 4) continue;
+            if (d.Electron_size + d.Muon_size != 4) continue;
             hist_map.at(name).n_pass_cut1++;
             
             // --- Cut 2: Odd number of electrons and muons (signal signature) ---
-            if (d->Electron_size % 2 == 0 || d->Muon_size % 2 == 0) continue;
+            if (d.Electron_size % 2 == 0 || d.Muon_size % 2 == 0) continue;
             hist_map.at(name).n_pass_cut2++;
 
             // --- Cut 3: Total charge is zero and no charge product violation ---
             int total_charge = 0;
             int charge_product = 1;
-            for (int j = 0; j < d->Electron_size; ++j) {
-                total_charge += d->Electron_Charge[j];
-                charge_product *= d->Electron_Charge[j];
+            for (int j = 0; j < d.Electron_size; ++j) {
+                total_charge += d.Electron_Charge[j];
+                charge_product *= d.Electron_Charge[j];
             }
-            for (int j = 0; j < d->Muon_size; ++j) {
-                total_charge += d->Muon_Charge[j];
-                charge_product *= d->Muon_Charge[j];
+            for (int j = 0; j < d.Muon_size; ++j) {
+                total_charge += d.Muon_Charge[j];
+                charge_product *= d.Muon_Charge[j];
             }
             if (total_charge != 0 || charge_product != 1) continue;
             hist_map.at(name).n_pass_cut3++;
@@ -110,18 +111,18 @@ void run_analysis() {
             std::vector<TLorentzVector> electrons, muons, other_leptons, single_lepton_type;
             
             // This logic identifies the LFV candidate lepton type (e or mu)
-            bool is_electron_single = (d->Electron_size == 1);
+            bool is_electron_single = (d.Electron_size == 1);
             
-            for (int j = 0; j < d->Electron_size; ++j) {
+            for (int j = 0; j < d.Electron_size; ++j) {
                 TLorentzVector p;
-                p.SetPtEtaPhiM(d->Electron_PT[j], d->Electron_Eta[j], d->Electron_Phi[j], ELECTRON_MASS);
+                p.SetPtEtaPhiM(d.Electron_PT[j], d.Electron_Eta[j], d.Electron_Phi[j], ELECTRON_MASS);
                 electrons.push_back(p);
                 if (is_electron_single) single_lepton_type.push_back(p);
                 else other_leptons.push_back(p);
             }
-            for (int j = 0; j < d->Muon_size; ++j) {
+            for (int j = 0; j < d.Muon_size; ++j) {
                 TLorentzVector p;
-                p.SetPtEtaPhiM(d->Muon_PT[j], d->Muon_Eta[j], d->Muon_Phi[j], MUON_MASS);
+                p.SetPtEtaPhiM(d.Muon_PT[j], d.Muon_Eta[j], d.Muon_Phi[j], MUON_MASS);
                 muons.push_back(p);
                 if (!is_electron_single) single_lepton_type.push_back(p);
                 else other_leptons.push_back(p);
@@ -192,12 +193,10 @@ void run_analysis() {
             }
         } // End of event loop
         
-        file->Close();
-        delete file;
-        delete d;
+        delete chain; // Clean up the TChain
     } // End of file loop
 
-    // --- Plotting ---
+    // --- Plotting --- (This part remains the same)
     std::cout << "\nPlotting histograms..." << std::endl;
     
     // Define plot configurations
@@ -230,7 +229,7 @@ void run_analysis() {
 
             if (h) {
                 // Normalize to unit area (like density=True)
-                if (h->Integral() > 0) {
+                if (h->GetEntries() > 0 && h->Integral() > 0) {
                     h->Scale(1.0 / h->Integral());
                 }
                 
@@ -249,7 +248,7 @@ void run_analysis() {
         hs->SetMaximum(max_y * 1.2);
         legend->Draw();
         
-        c1->SaveAs(TString::Format("CFigure/%s.png", plot_name.c_str()));
+        c1->SaveAs(TString::Format("Figure/%s.png", plot_name.c_str()));
         delete legend;
         delete hs;
         delete c1;
