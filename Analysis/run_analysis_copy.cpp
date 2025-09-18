@@ -13,7 +13,7 @@
 #include "TLegend.h"
 #include "TLorentzVector.h"
 #include "TClonesArray.h"
-//#include "classes/DelphesClasses.h" // Include Delphes classes header
+#include "classes/DelphesClasses.h" // Include Delphes classes header
 
 // --- Physics Constants ---
 const double ELECTRON_MASS = 0.000511; // GeV/c^2
