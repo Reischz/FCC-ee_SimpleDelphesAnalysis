@@ -196,7 +196,7 @@ void run_analysis() {
         delete chain; // Clean up the TChain
     } // End of file loop
 
-    // --- Plotting --- (This part remains the same)
+    // --- Plotting ---
     std::cout << "\nPlotting histograms..." << std::endl;
     
     // Define plot configurations
@@ -249,11 +249,13 @@ void run_analysis() {
         legend->Draw();
         
         c1->SaveAs(TString::Format("Figure/%s.png", plot_name.c_str()));
-        delete legend;
-        delete hs;
-        delete c1;
+        
+        // --- FIX ---
+        // DO NOT delete hs and legend here.
+        // They are owned by the canvas and ROOT will manage them.
+        // Deleting them manually causes a double-free error.
+        delete c1; // Deleting the canvas is sufficient
     }
-
     // --- Cut Report ---
     std::cout << "\n--- Cut Report ---" << std::endl;
     for (const auto& name : dataset_order) {
