@@ -19,8 +19,8 @@ echo -e '\nMain:numberOfEvents      = 10000000' >> PythiaCard_HiggsEMuLFV.cmd
 echo 'Random:setSeed = on                ! Turn on the seed setting' >> PythiaCard_HiggsEMuLFV.cmd
 echo 'Random:seed = 50' >> PythiaCard_HiggsEMuLFV.cmd
 echo 'Beams:LHEF=unweighted_events.lhe.gz' >> PythiaCard_HiggsEMuLFV.cmd
-LD_LIBRARY_PATH=/work/home/ruttho/binary/MG5_aMC_v2_9_24/HEPTools/lib:$LD_LIBRARY_PATH\
- /work/home/ruttho/binary/MG5_aMC_v2_9_24/HEPTools/MG5aMC_PY8_interface/MG5aMC_PY8_interface PythiaCard_HiggsEMuLFV.cmd
+LD_LIBRARY_PATH=/work/app/pythia8/8.310/lib:$LD_LIBRARY_PATH\
+ /work/app/pythia8/MGInterface/1.3/MG5aMC_PY8_interface PythiaCard_HiggsEMuLFV.cmd
 gunzip tag_1_pythia8_events.hepmc.gz
 
 mv unweighted_events.lhe.gz HZFourLeptonHiggsLFV_10M_Seed50_unweighted_events.lhe.gz

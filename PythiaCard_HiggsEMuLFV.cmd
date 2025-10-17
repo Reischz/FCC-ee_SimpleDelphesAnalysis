@@ -28,4 +28,3 @@ JetMatching:etaJetMax=1.0000000000e+03
 JetMatching:setMad=off
 LHEFInputs:nSubruns=1
 Main:subrun=0
-Beams:LHEF=unweighted_events.lhe.gz
