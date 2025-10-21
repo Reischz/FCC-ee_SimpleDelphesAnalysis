@@ -1,0 +1,10 @@
+generate e+ e- > z h, (h > w+ w-, w+ > l+ vl, w- > l- vl~), z > l+ l-
+output eeToZH_HtoWW_FourLeptons
+launch eeToZH_HtoWW_FourLeptons -n formal01
+shower=off
+set run_card ebeam1 120
+set run_card ebeam2 120
+set run_card lpp1 0
+set run_card lpp2 0
+set run_card nevents 1000000
+set iseed 10
