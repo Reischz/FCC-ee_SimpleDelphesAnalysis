@@ -12,7 +12,7 @@ event_number=100
 number_in_M=0.1k
 # make for loop for different masses
 # mass points to scan 110 to 120 by 5
-rm -rf MassScan_HZ4l_HLFV
+rm -rf MassScan_HZ4l_HLFV # remove old directory if exists
 mkdir -p MassScan_HZ4l_HLFV
 cd MassScan_HZ4l_HLFV
 for mass in {110..120..5}
