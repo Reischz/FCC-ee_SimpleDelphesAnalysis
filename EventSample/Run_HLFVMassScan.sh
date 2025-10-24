@@ -8,14 +8,14 @@
 
 echo 'Starting HZ Higgs LFV 4l Sample Mass Scan'
 echo 'Initailize MadGraphWOPythia'
-event_number=100
-number_in_M=0.1k
+event_number=1000000
+number_in_M=1M
 # make for loop for different masses
-# mass points to scan 110 to 120 by 5
+# mass points to scan 110 to 160 by 5
 rm -rf MassScan_HZ4l_HLFV # remove old directory if exists
 mkdir -p MassScan_HZ4l_HLFV
 cd MassScan_HZ4l_HLFV
-for mass in {110..120..5}
+for mass in {110..160..5}
 do
     target_dir=HZ4l_HLFV_${number_in_M}_HMass${mass}_Seed${mass}
     mkdir -p $target_dir
