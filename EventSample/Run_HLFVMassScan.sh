@@ -35,7 +35,7 @@ do
     mv eeToZH_HLFV_FourLeptons/Events/formal01/unweighted_events.lhe.gz .
     # Make Pythia8 card
     pythiaCard_name=HZ4l_HLFV_PythiaCard_HMass${mass}_Seed${mass}.cmd
-    cp ../../Card/HZ4lLFV/HZ4l_HLFV_PythiaCard.cmd $pythiaCard_name
+    cp ../../Card/HZ4lLFV/HZ4lLFV_PythiaCard.cmd $pythiaCard_name
     sed -i "s/MASS_POINT/$mass/g" $pythiaCard_name
     sed -i "s/SEED_POINT/$mass/g" $pythiaCard_name
     # Run Pythia8
