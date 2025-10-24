@@ -14,11 +14,13 @@
 !
 ! Higgs EMu dacays
 ! NN:oneChannel = onMode bRatio meMode product1 product2 ...
+Higgs:useBSM = on               ! use BSM
+25:m0 = MASS_POINT              ! higgs mass
 25:oneChannel 1 0.1 100 11 -13  ! 1=decay mode on,oneChannel decays channel before this is disable
 25:addChannel 1 0.1 100 13 -11  ! add another channel
 25:onIfAny 11 13                ! higgs will only decay either 11 or 13
 !
-!Main:numberOfEvents      = 10000
+Main:numberOfEvents      = -1
 HEPMCoutput:file         = tag_1_pythia8_events.hepmc
 SysCalc:fullCutVariation = off
 Beams:frameType=4
@@ -28,3 +30,6 @@ JetMatching:etaJetMax=1.0000000000e+03
 JetMatching:setMad=off
 LHEFInputs:nSubruns=1
 Main:subrun=0
+Random:setSeed  = on                ! Turn on the seed setting
+Random:seed     = SEED_POINT           ! Set the seed to a fixed value for reproducibility
+Beams:LHEF      = unweighted_events.lhe.gz
