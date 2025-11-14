@@ -9,7 +9,7 @@
 using namespace std;
 
 void LFV_VaryMassCut() {
-    unordered_map<TString,Bool> cutFlow = {
+    unordered_map<TString,bool> cutFlow = {
         {"NoCut", true},
         {"ZOffShellCut", true}
     };
