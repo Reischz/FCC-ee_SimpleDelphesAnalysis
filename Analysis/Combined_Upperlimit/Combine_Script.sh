@@ -49,17 +49,18 @@ for ((mass_index=0; mass_index<COUNT; mass_index++ )); do
     sed -i "s/XXXX/${LFV_Yield[mass_index]}/g" Data_Card_Combine.dat
     sed -i "s/YYYY/${HZ4l_Yield[mass_index]}/g" Data_Card_Combine.dat
     sed -i "s/ZZZZ/${ZWW4l_Yield[mass_index]}/g" Data_Card_Combine.dat
-    mv Data_Card_Combine.dat Data_Card_Combine_mh${Mass_Points[mass_index]}.dat
+    CARD=Data_Card_Combine_mh${Mass_Points[mass_index]}.dat
+    mv Data_Card_Combine.dat ${CARD}
 
     # Create the workspace
     for quantile in -1 0.5 0.84 0.16 0.975 0.025; do
         if [ $quantile == -1 ]; then
             echo "Calculating Observed Limit"
-            combine -M HybridNew --LHCmode LHC-limits no-bkg-test.txt --verbose 1 --saveHybridResult -s ${LUMI} \
+            combine -M HybridNew --LHCmode LHC-limits ${CARD} --verbose 1 --saveHybridResult -s ${LUMI} \
                     --saveToys -T 5000 --setParameters lumiscale=${LUMI} --mass ${Mass_Points[mass_index]} &
         else
             echo "Calculating Expected Limit for quantile ${quantile}"
-            combine -M HybridNew --LHCmode LHC-limits no-bkg-test.txt --verbose 1 --saveHybridResult -s ${LUMI} \
+            combine -M HybridNew --LHCmode LHC-limits ${CARD} --verbose 1 --saveHybridResult -s ${LUMI} \
                     --expectedFromGrid $quantile --saveToys -T 5000 --setParameters lumiscale=${LUMI} \
                     --mass ${Mass_Points[mass_index]} &
         fi
