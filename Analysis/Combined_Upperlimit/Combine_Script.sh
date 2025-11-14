@@ -68,6 +68,7 @@ for ((mass_index=0; mass_index<COUNT; mass_index++ )); do
     wait
     cd ..
 done
+echo "All combine jobs Completed."
 
 # Plotting the Test Statistic Distributions and Limits
 # python3 /work/home/vwachira/CMSSW_14_1_0_pre5/src/HiggsAnalysis/CombinedLimit/test/plotTestStatCLs.py --input higgsCombineTest.HybridNew.mH120.${LUMI}.root --poi r --val all --mass 120
