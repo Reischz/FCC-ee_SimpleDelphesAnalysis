@@ -41,8 +41,8 @@ LUMI=1
 COUNT=${#Mass_Points[@]}
 # Expected Limit Band Calculations
 for ((mass_index=0; mass_index<COUNT; mass_index++ )); do
-    mkdir -p Combin_Mass_${Mass_Points[mass_index]}
-    cd Combin_Mass_${Mass_Points[mass_index]}
+    mkdir -p Combine_Mass_${Mass_Points[mass_index]}
+    cd Combine_Mass_${Mass_Points[mass_index]}
 
     # Prepare Data Card
     cp ../Data_Card_Combine.dat .
