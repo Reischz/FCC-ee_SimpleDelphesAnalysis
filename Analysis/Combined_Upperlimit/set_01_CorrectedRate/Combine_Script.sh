@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=combine
+#SBATCH --job-name=combine_bg
 #SBATCH --qos=cu_hpc
 #SBATCH --partition=cpu
 #SBATCH --ntasks=1

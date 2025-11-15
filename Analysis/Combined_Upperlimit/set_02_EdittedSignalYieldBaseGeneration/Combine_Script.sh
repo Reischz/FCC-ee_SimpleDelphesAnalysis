@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=combine
+#SBATCH --job-name=combine_sn
 #SBATCH --qos=cu_hpc
 #SBATCH --partition=cpu
 #SBATCH --ntasks=1
@@ -35,7 +35,16 @@ ZWW4l_Yield=(
     0.00010763999999999999
     1.8837e-05
 )
-LFV_Yield=(0.617264 0.611064 0.604286 0.597715 0.591248 0.583566 0.575209 0.569374)
+LFV_Yield=(
+    0.834
+    0.758
+    0.679
+    0.598
+    0.513
+    0.422
+    0.321
+    0.199
+)
 
 Mass_Points=(110 115 120 125 130 135 140 145)
 LUMI=1
