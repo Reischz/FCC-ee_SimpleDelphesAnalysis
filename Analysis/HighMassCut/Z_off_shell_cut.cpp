@@ -4,6 +4,7 @@
 #include <TString.h>
 #include <filesystem>
 
+exit(0);
 // Function cut for Higgs Mass >= 150 GeV that push Z bosons off-shell at centre-of-mass energy 240 GeV
 void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="HLFV_125GeV_Zoff.root") {
     // check input file
