@@ -17,6 +17,8 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
         std::cerr << "Input file is corrupted (zombie): " << inputfile << std::endl;
         std::exit(1);
     }
+    cout << "Applying Z off-shell cut on file: " << inputfile << std::endl;
+    exit(0);
     TTree *t = (TTree*)f->Get("events");
 
     // Define variables
