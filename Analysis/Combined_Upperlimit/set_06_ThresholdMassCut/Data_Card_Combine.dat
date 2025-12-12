@@ -1,0 +1,17 @@
+imax 1 number of channels
+jmax * number of backgrounds
+kmax * number of nuisance parameters (sources of systematical uncertainties)
+------------
+bin bin1
+observation 0
+------------
+bin bin1 bin1 bin1
+process HZ4LepLFV HZ4Lep ZWW4Lep
+process 0 1 2
+rate XXXX YYYY ZZZZ
+------------
+lumi  lnN  1.11  1.11  1.11
+bkg_unc  lnN  -  2  2
+
+lumiscale rateParam     *           *           1.0
+nuisance edit freeze lumiscale

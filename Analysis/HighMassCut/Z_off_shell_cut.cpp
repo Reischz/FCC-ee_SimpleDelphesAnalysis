@@ -339,8 +339,8 @@ std::vector<AnalysisStep> ConfigurePipeline() {
         { new Charge_Violation()    ,    true  },
         { new Z_Window()            ,    true  },
         { new NotZ_dR()             ,    true  }, // Placeholder for future modules
-        { new NotZ_MET_dPhi()       ,    true }, // Disabled module example
-        { new NotZ_MassThreshold()  ,    true}
+        { new NotZ_MET_dPhi()       ,    true  }, // Disabled module example
+        { new NotZ_MassThreshold()  ,    true  }
     };
 }
 // ==========================================
