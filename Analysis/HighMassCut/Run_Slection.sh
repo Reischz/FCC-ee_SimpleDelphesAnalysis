@@ -7,7 +7,7 @@
 #SBATCH --mem=18G
 
 # Source the CMS environment
-# source /work/app/cms/cmsset_default.sh
+source /work/app/cms/cmsset_default.sh
 function cmsset() {
   cd ~/binary/CMSSW_14_1_0_pre5/src && source /work/app/share_env/hepsw.sh && cmsenv && cd -
 }
@@ -22,8 +22,11 @@ FILELIST=(
     "/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/EventSample/MassScan_HZ4l_HLFV/HZ4l_HLFV_1M_HMass135_Seed135/HZ4l_HLFV_1M_HMass135_Seed135_IDEA.root"
     "/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/EventSample/MassScan_HZ4l_HLFV/HZ4l_HLFV_1M_HMass140_Seed140/HZ4l_HLFV_1M_HMass140_Seed140_IDEA.root"
     "/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/EventSample/MassScan_HZ4l_HLFV/HZ4l_HLFV_1M_HMass145_Seed145/HZ4l_HLFV_1M_HMass145_Seed145_IDEA.root"
-    "/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/EventSample/HZFourLepton_1M_Seed10/HZFourLepton_1M_Seed10.root"
-    "/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/EventSample/ZWWFourLepton_1M_Seed30/ZWWFourLepton_1M_Seed30.root")
+    '/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/Analysis/HighMassCut/zh_ll_tautau.root'
+    "/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/Analysis/HighMassCut/zh_ll_ww.root"
+    "/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/Analysis/HighMassCut/zz_ll_tautau.root"
+    "/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/EventSample/ZWWFourLepton_1M_Seed30/ZWWFourLepton_1M_Seed30.root"
+    )
 NUM_FILES=${#FILELIST[@]}
 rm -rf SelectionResults
 mkdir SelectionResults
@@ -37,7 +40,9 @@ RESULT=(
     "HLFV_135GeV_SelectionResults.root"
     "HLFV_140GeV_SelectionResults.root"
     "HLFV_145GeV_SelectionResults.root"
-    "HZ4l_SelectionResults.root"
+    "ZHTaTa_SelectionResults.root"
+    "ZHWW_SelectionResults.root"
+    "ZZTaTa_SelectionResults.root"
     "ZWW4l_SelectionResults.root"
 )
 TREERESULT=(
@@ -49,7 +54,9 @@ TREERESULT=(
     "HLFV_135GeV_AdditionalTree.root"
     "HLFV_140GeV_AdditionalTree.root"
     "HLFV_145GeV_AdditionalTree.root"
-    "HZ4l_AdditionalTree.root"
+    "ZHTaTa_AdditionalTree.root"
+    "ZHWW_AdditionalTree.root"
+    "ZZTaTa_AdditionalTree.root"
     "ZWW4l_AdditionalTree.root"
 )
 for i in "${!FILELIST[@]}"; do
