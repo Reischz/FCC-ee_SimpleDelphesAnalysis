@@ -291,7 +291,7 @@ std::vector<AnalysisStep> ConfigurePipeline() {
 // ==========================================
 // Main Execution (ROOT Macro)
 // ==========================================
-void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="HLFV_125GeV_Zoff.root") {
+void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="HLFV_125GeV_Zoff.root", TString TreeOutput="HLFV_125GeV_AdditionalTree.root") {
     
     // ===============================
     // Setting up input (Root) file
@@ -354,29 +354,34 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     //================================
     // Setting up new tree for contains cut results
     //================================
-    // TTree *t_out = new TTree("Selection Results", "Tree with Z off-shell cut results");
-    // int dummy = 0;
-    //  // Create branches for each cut in the pipeline
-    // for (auto& step : pipeline) {
-    //     if (step.second) { // If module is active
-    //         TString branchName = TString::Format("Status_%02d_%s", dummy, step.first->getName().c_str()); 
-    //         // e.g., Cut_00_Lepton_PT, Cut_1_FinalState_4Leptons, etc.
-    //         t_out->Branch(branchName, &currentEvent.CutStatus[dummy], (branchName + "/I").c_str());
-    //         dummy++;
-    //     }
-    // }
-    // t_out->Branch("NearestZ_Mass", &currentEvent.NearestZ_Mass, "NearestZ_Mass/F");
-    // t_out->Branch("OtherPair_Mass", &currentEvent.OtherPair_Mass, "OtherPair_Mass/F");
-    // t_out->Branch("Z_PairIndexSum", &currentEvent.Z_PairIndexSum, "Z_PairIndexSum/I");
-    // // ==============================
+    TFile *tfile_out = TFile::Open(TreeOutput, "RECREATE");
+    tfile_out->cd();
+    TTree *t_out = new TTree("Selection Results", "Tree with Z off-shell cut results");
+    int dummy = 0;
+     // Create branches for each cut in the pipeline
+    for (auto& step : pipeline) {
+        if (step.second) { // If module is active
+            TString branchName = TString::Format("Status_%02d_%s", dummy, step.first->getName().c_str()); 
+            // e.g., Cut_00_Lepton_PT, Cut_1_FinalState_4Leptons, etc.
+            t_out->Branch(branchName, &currentEvent.CutStatus[dummy], (branchName + "/I"));
+            dummy++;
+        }
+    }
+    t_out->Branch("NearestZ_Mass", &currentEvent.NearestZ_Mass, "NearestZ_Mass/F");
+    t_out->Branch("OtherPair_Mass", &currentEvent.OtherPair_Mass, "OtherPair_Mass/F");
+    t_out->Branch("Z_PairIndexSum", &currentEvent.Z_PairIndexSum, "Z_PairIndexSum/I");
+    t_out->Branch("NotZ_dR", &currentEvent.NotZ_dR, "NotZ_dR/F");
+    t_out->Branch("NotZ_dPhi", &currentEvent.NotZ_dPhi, "NotZ_dPhi/F");
+    // ==============================
     
     //=============================
     // Histogram Definition
     //=============================
     TFile *f_out = TFile::Open(outputfile, "RECREATE");
+    f_out->cd();
     TDirectory *histDir = f_out->mkdir("histgramtree");
     bool mass_hist=false;
-    int dummy=0;
+    // int dummy=0;
     vector<float> ZBIN={params.Z_MASS-params.Z_WINDOW, params.Z_MASS+params.Z_WINDOW};
     vector<TString> histNames={"Lepton.PT","Lepton.Eta","Lepton.Phi","NearestZ_Mass","OtherPair_Mass"};
     vector<TString> histXLabels={"GeV"," "," ","GeV","GeV"};
@@ -425,6 +430,8 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
                 currentEvent.CurrentCut++;
             }
         }
+        // Fill the output tree
+        t_out->Fill();
         // Fill histograms based on cut results
         dummy=0;
         for (auto& step : pipeline) {
@@ -507,6 +514,12 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     auto end_time = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end_time - start_time;
     cout << "Loop overhead time: " << elapsed.count() << " seconds" << endl;
+    //==============================
+    // Write Tree Output
+    //==============================
+    tfile_out->cd();
+    t_out->Write();
+    tfile_out->Close();
 
     //==============================
     // Write output histogram to file

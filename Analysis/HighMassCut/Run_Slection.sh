@@ -6,6 +6,13 @@
 #SBATCH --cpus-per-task=6
 #SBATCH --mem=18G
 
+# Source the CMS environment
+# source /work/app/cms/cmsset_default.sh
+function cmsset() {
+  cd ~/binary/CMSSW_14_1_0_pre5/src && source /work/app/share_env/hepsw.sh && cmsenv && cd -
+}
+cmsset
+
 FILELIST=(
     "/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/EventSample/MassScan_HZ4l_HLFV/HZ4l_HLFV_1M_HMass110_Seed110/HZ4l_HLFV_1M_HMass110_Seed110_IDEA.root"
     "/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/EventSample/MassScan_HZ4l_HLFV/HZ4l_HLFV_1M_HMass115_Seed115/HZ4l_HLFV_1M_HMass115_Seed115_IDEA.root"
@@ -33,9 +40,21 @@ RESULT=(
     "HZ4l_SelectionResults.root"
     "ZWW4l_SelectionResults.root"
 )
+TREERESULT=(
+    "HLFV_110GeV_AdditionalTree.root"
+    "HLFV_115GeV_AdditionalTree.root"
+    "HLFV_120GeV_AdditionalTree.root"
+    "HLFV_125GeV_AdditionalTree.root"
+    "HLFV_130GeV_AdditionalTree.root"
+    "HLFV_135GeV_AdditionalTree.root"
+    "HLFV_140GeV_AdditionalTree.root"
+    "HLFV_145GeV_AdditionalTree.root"
+    "HZ4l_AdditionalTree.root"
+    "ZWW4l_AdditionalTree.root"
+)
 for i in "${!FILELIST[@]}"; do
     echo "Processing file ${FILELIST[$i]}"
-    root -l -b -q "../Z_off_shell_cut.cpp(\"${FILELIST[$i]}\", \"${RESULT[$i]}\")" &
+    root -l -b -q "../Z_off_shell_cut.cpp(\"${FILELIST[$i]}\", \"${RESULT[$i]}\", \"${TREERESULT[$i]}\")" &
     # Limit the number of concurrent jobs to 6
     if (( (i + 1) % 6 == 0 )); then
         wait
