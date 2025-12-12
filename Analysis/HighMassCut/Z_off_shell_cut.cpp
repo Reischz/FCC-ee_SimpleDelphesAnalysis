@@ -48,6 +48,8 @@ struct EventContext {
     float NearestZ_Mass;
     float OtherPair_Mass;
     int Z_PairIndexSum;
+    float NotZ_dR;
+    float NotZ_dPhi;
 
     // Constructor to reset values per loop
     void reset() {
@@ -59,6 +61,8 @@ struct EventContext {
         NearestZ_Mass = 0.0;
         OtherPair_Mass = 0.0;
         Z_PairIndexSum = -1;
+        NotZ_dR = -1.0;
+        NotZ_dPhi = -1.0;
         for (int i = 0; i < 10; ++i) {
             CutStatus[i] = 0;
         }
@@ -97,6 +101,7 @@ class AnalysisModule {
         AnalysisModule(std::string n) : name(n) {}
         virtual ~AnalysisModule() {}
         virtual void process(EventContext &data, const defaultParameters &params) = 0; // Pure virtual
+        virtual std::string getName() const { return name; }
 };
 
 // ==========================================
@@ -242,6 +247,32 @@ class Z_Window : public AnalysisModule {
             return;
         }
 };
+class NotZ_dR : public AnalysisModule {
+    public:
+        NotZ_dR() : AnalysisModule("NotZ_dR") {}
+
+        void process(EventContext &data, const defaultParameters &params) override {
+            if (!data.CutStatus[data.CurrentCut-1]){
+                return;
+            }
+            // Identify the not Z pair leptons
+            TLorentzVector MuVector, EleVector;
+            int EleIndex=0, MuIndex=0;
+            if (data.Electron_size > data.Muon_size) {
+                // 3 Electrons + 1 Muon case
+                EleIndex = 3-data.Z_PairIndexSum;
+            } else {
+                // 3 Muons + 1 Electron case
+                MuIndex = 3-data.Z_PairIndexSum;
+            }
+            MuVector.SetPtEtaPhiM(data.Muon_PT[MuIndex], data.Muon_Eta[MuIndex], data.Muon_Phi[MuIndex], params.Muon_MASS);
+            EleVector.SetPtEtaPhiM(data.Electron_PT[EleIndex], data.Electron_Eta[EleIndex], data.Electron_Phi[EleIndex], params.Electron_MASS);
+            float dR = MuVector.DeltaR(EleVector);
+            float dPhi = fabs(MuVector.DeltaPhi(EleVector));
+            data.NotZ_dR = dR;
+            data.NotZ_dPhi = dPhi;
+        }
+};
 // ==========================================
 // Workflow Modular Design
 // ==========================================
@@ -253,7 +284,8 @@ std::vector<AnalysisStep> ConfigurePipeline() {
         { new FinalState_4Leptons() ,    true  }, 
         { new Lepton_Odd()          ,    true  },
         { new Charge_Violation()    ,    true  },
-        { new Z_Window()            ,    true  }
+        { new Z_Window()            ,    true  },
+        { new NotZ_dR()             ,    true  } // Placeholder for future modules
     };
 }
 // ==========================================
@@ -319,10 +351,58 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     if (t->GetBranch("Muon.Phi")) t->SetBranchAddress("Muon.Phi", &currentEvent.Muon_Phi);
     if (t->GetBranch("Muon.Charge")) t->SetBranchAddress("Muon.Charge", &currentEvent.Muon_Charge);
 
-    // Create output file and tree
+    //================================
+    // Setting up new tree for contains cut results
+    //================================
+    // TTree *t_out = new TTree("Selection Results", "Tree with Z off-shell cut results");
+    // int dummy = 0;
+    //  // Create branches for each cut in the pipeline
+    // for (auto& step : pipeline) {
+    //     if (step.second) { // If module is active
+    //         TString branchName = TString::Format("Status_%02d_%s", dummy, step.first->getName().c_str()); 
+    //         // e.g., Cut_00_Lepton_PT, Cut_1_FinalState_4Leptons, etc.
+    //         t_out->Branch(branchName, &currentEvent.CutStatus[dummy], (branchName + "/I").c_str());
+    //         dummy++;
+    //     }
+    // }
+    // t_out->Branch("NearestZ_Mass", &currentEvent.NearestZ_Mass, "NearestZ_Mass/F");
+    // t_out->Branch("OtherPair_Mass", &currentEvent.OtherPair_Mass, "OtherPair_Mass/F");
+    // t_out->Branch("Z_PairIndexSum", &currentEvent.Z_PairIndexSum, "Z_PairIndexSum/I");
+    // // ==============================
+    
+    //=============================
+    // Histogram Definition
+    //=============================
     TFile *f_out = TFile::Open(outputfile, "RECREATE");
-    // Make new empty tree
-    TTree *t_out;
+    TDirectory *histDir = f_out->mkdir("histgramtree");
+    bool mass_hist=false;
+    int dummy=0;
+    vector<float> ZBIN={params.Z_MASS-params.Z_WINDOW, params.Z_MASS+params.Z_WINDOW};
+    vector<TString> histNames={"Lepton.PT","Lepton.Eta","Lepton.Phi","NearestZ_Mass","OtherPair_Mass"};
+    vector<TString> histXLabels={"GeV"," "," ","GeV","GeV"};
+    vector<int> histNBins={100,100,100,50,160};
+    vector<float> histXMin={0, -3, -5, ZBIN[0], 0};
+    vector<float> histXMax={200, 3, 5, ZBIN[1], 160};
+     // Create histograms for each cut in the pipeline
+    for (auto& step : pipeline) {
+            if (step.second) { // If module is active
+                for (int histidx=0; histidx<histNames.size(); histidx++){
+                    TString histName = TString::Format("%02d_%s", dummy, histNames[histidx].Data());
+                    TH1F *hist = new TH1F(histName, histName + ";" + histXLabels[histidx] + ";Events",
+                        histNBins[histidx], histXMin[histidx], histXMax[histidx]);
+                    hist->SetDirectory(histDir); // Associate histogram with directory
+                }
+            }
+            dummy++;
+        }
+    TH2F *vsmass = new TH2F("MassPairHeatmap", "Mass Map;Pair 1 Mass (GeV);Pair 2 Mass (GeV)", 50, ZBIN[0], ZBIN[1], 160, 0, 160);
+    TH1F *NotZdR = new TH1F("NotZ_dR", "dR of Not Z Pair;dR;Events", 50, 0, 6);
+    TH1F *NotZdPhi = new TH1F("NotZ_dPhi", "dPhi of Not Z Pair;dPhi;Events", 50, 0, 3.5);
+    NotZdR->SetDirectory(histDir); // Associate histogram with directory
+    NotZdPhi->SetDirectory(histDir); // Associate histogram with directory
+    vsmass->SetDirectory(histDir); // Associate histogram with directory
+    // ==============================
+
 
     // Loop over events and apply cut
     Long64_t nentries = t->GetEntries();
@@ -345,6 +425,52 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
                 currentEvent.CurrentCut++;
             }
         }
+        // Fill histograms based on cut results
+        dummy=0;
+        for (auto& step : pipeline) {
+            if (step.second && currentEvent.CutStatus[dummy]) { // If module is active
+                for (int histidx=0; histidx<histNames.size(); histidx++){
+                    TString histName = TString::Format("%02d_%s", dummy, histNames[histidx].Data());
+                    TH1F *hist = (TH1F*)histDir->Get(histName);
+                    if (hist) {
+                        if (histNames[histidx]=="Lepton.PT"){
+                            for (int e=0; e<currentEvent.Electron_size; e++){
+                                hist->Fill(currentEvent.Electron_PT[e]);
+                            }
+                            for (int m=0; m<currentEvent.Muon_size; m++){
+                                hist->Fill(currentEvent.Muon_PT[m]);
+                            }
+                        } else if (histNames[histidx]=="Lepton.Eta"){
+                            for (int e=0; e<currentEvent.Electron_size; e++){
+                                hist->Fill(currentEvent.Electron_Eta[e]);
+                            }
+                            for (int m=0; m<currentEvent.Muon_size; m++){
+                                hist->Fill(currentEvent.Muon_Eta[m]);
+                            }
+                        } else if (histNames[histidx]=="Lepton.Phi"){
+                            for (int e=0; e<currentEvent.Electron_size; e++){
+                                hist->Fill(currentEvent.Electron_Phi[e]);
+                            }
+                            for (int m=0; m<currentEvent.Muon_size; m++){
+                                hist->Fill(currentEvent.Muon_Phi[m]);
+                            }
+                        } else if (histNames[histidx]=="NearestZ_Mass"){
+                            hist->Fill(currentEvent.NearestZ_Mass);
+                        } else if (histNames[histidx]=="OtherPair_Mass"){
+                            hist->Fill(currentEvent.OtherPair_Mass);
+                        }
+                    }
+                }
+            }
+            dummy++;
+        }
+        // Fill 2D mass histogram
+        if (currentEvent.CutStatus[4]==1){ // Passed Z_Window cut
+            vsmass->Fill(currentEvent.NearestZ_Mass, currentEvent.OtherPair_Mass);
+            NotZdR->Fill(currentEvent.NotZ_dR);
+            NotZdPhi->Fill(currentEvent.NotZ_dPhi);
+        }
+
         // Find index of 1 in CutStatus
         for (int i=0; i < 10; i++){
             if (currentEvent.CutStatus[i]==1){
@@ -362,6 +488,8 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     for (auto& step : pipeline) {
         delete step.first;
     }
+    // Close input file
+    f->Close();
     // ==============================
     // Summary of selection
     // ==============================
@@ -380,12 +508,15 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     std::chrono::duration<double> elapsed = end_time - start_time;
     cout << "Loop overhead time: " << elapsed.count() << " seconds" << endl;
 
-    // Write output tree to file
+    //==============================
+    // Write output histogram to file
+    //==============================
     f_out->cd();
-    t_out->Write();
-    
+    histDir->Write(); // Write all histograms in the directory
     // Clean up
     cout << "Done. Output written to: " << outputfile << endl;
     f_out->Close();
     // t_out->Close();
+    //==============================
+    gApplication->Terminate(); // Clean ROOT termination
 }

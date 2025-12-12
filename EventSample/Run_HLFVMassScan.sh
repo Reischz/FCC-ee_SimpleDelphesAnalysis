@@ -10,6 +10,9 @@ echo 'Starting HZ Higgs LFV 4l Sample Mass Scan'
 echo 'Initailize MadGraphWOPythia'
 event_number=1000000
 number_in_M=1M
+# madgraph_path=/work/home/ruttho/binary/MG5_aMC_v2_9_24
+# pythia_interface_path=/work/app/pythia8/MGInterface/1.3/MG5aMC_PY8_interface
+# delphes_path=/work/app/delphes/src/Delphes-3.5.0/DelphesHepMC2
 # make for loop for different masses
 # mass points to scan 110 to 160 by 5
 rm -rf MassScan_HZ4l_HLFV # remove old directory if exists
