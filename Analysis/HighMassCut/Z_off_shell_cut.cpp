@@ -26,6 +26,7 @@ struct defaultParameters {
     static constexpr float Min_ElecPT = 10.0; // GeV
     static constexpr float Min_MuonPT = 10.0; // GeV
     static constexpr float dRCut = 2.0; // dR cut for Not Z lepton pair
+    static constexpr float NotZ_MassCut = 75.0; // dPhi cut for Not Z lepton pair and MET
 };
 struct EventContext {
     // --- Inputs (e.g., from TTree) ---
@@ -311,6 +312,20 @@ class NotZ_MET_dPhi : public AnalysisModule {
             return;
         }
 };
+class NotZ_MassThreshold : public AnalysisModule {
+    public:
+        NotZ_MassThreshold() : AnalysisModule("NotZ_MassThreshold") {}
+
+        void process(EventContext &data, const defaultParameters &params) override {
+            if (!data.CutStatus[data.CurrentCut-1]){
+                return;
+            }
+            if (data.OtherPair_Mass < params.NotZ_MassCut) {
+                data.PassThisCut = false;
+            }
+            return;
+        }
+};
 // ==========================================
 // Workflow Modular Design
 // ==========================================
@@ -325,6 +340,7 @@ std::vector<AnalysisStep> ConfigurePipeline() {
         { new Z_Window()            ,    true  },
         { new NotZ_dR()             ,    true  }, // Placeholder for future modules
         { new NotZ_MET_dPhi()       ,    true }, // Disabled module example
+        { new NotZ_MassThreshold()  ,    true}
     };
 }
 // ==========================================
