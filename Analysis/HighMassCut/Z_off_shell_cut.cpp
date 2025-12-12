@@ -25,6 +25,7 @@ struct defaultParameters {
     static constexpr float Z_WINDOW = 10.0; // GeV
     static constexpr float Min_ElecPT = 10.0; // GeV
     static constexpr float Min_MuonPT = 10.0; // GeV
+    static constexpr float dRCut = 2.0; // dR cut for Not Z lepton pair
 };
 struct EventContext {
     // --- Inputs (e.g., from TTree) ---
@@ -278,6 +279,10 @@ class NotZ_dR : public AnalysisModule {
             float dPhi = fabs(MuVector.DeltaPhi(EleVector));
             data.NotZ_dR = dR;
             data.NotZ_dPhi = dPhi;
+            if (dR < params.dRCut) {
+                data.PassThisCut = false;
+            }
+            return;
         }
 };
 class NotZ_MET_dPhi : public AnalysisModule {
