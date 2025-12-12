@@ -41,6 +41,9 @@ struct EventContext {
     float Muon_Phi[4];
     int Muon_Charge[4];
 
+    float MET_PT;
+    float MET_Phi;
+
     int CutStatus[10]; // To store cut results
     int CurrentCut;
     bool PassThisCut;
@@ -50,6 +53,8 @@ struct EventContext {
     int Z_PairIndexSum;
     float NotZ_dR;
     float NotZ_dPhi;
+    float NotZ_EleMET_dPhi;
+    float NotZ_MuMET_dPhi;
 
     // Constructor to reset values per loop
     void reset() {
@@ -58,9 +63,11 @@ struct EventContext {
         Muon_size = 0;
         CurrentCut = 0;
         PassThisCut = true;
-        NearestZ_Mass = 0.0;
-        OtherPair_Mass = 0.0;
+        NearestZ_Mass = -1.0;
+        OtherPair_Mass = -1.0;
         Z_PairIndexSum = -1;
+        NotZ_EleMET_dPhi = -1.0;
+        NotZ_MuMET_dPhi = -1.0;
         NotZ_dR = -1.0;
         NotZ_dPhi = -1.0;
         for (int i = 0; i < 10; ++i) {
@@ -273,6 +280,32 @@ class NotZ_dR : public AnalysisModule {
             data.NotZ_dPhi = dPhi;
         }
 };
+class NotZ_MET_dPhi : public AnalysisModule {
+    public:
+        NotZ_MET_dPhi() : AnalysisModule("NotZ_MET_dPhi") {}
+
+        void process(EventContext &data, const defaultParameters &params) override {
+            // Placeholder for future implementation
+            if (!data.CutStatus[data.CurrentCut-1]){
+                return;
+            }
+            // Identify the not Z pair leptons
+            int EleIndex=0, MuIndex=0;
+            if (data.Electron_size > data.Muon_size) {
+                // 3 Electrons + 1 Muon case
+                EleIndex = 3-data.Z_PairIndexSum;
+            } else {
+                // 3 Muons + 1 Electron case
+                MuIndex = 3-data.Z_PairIndexSum;
+            }
+            float METPhi=data.MET_Phi;
+            // Calculate dPhi between Not Z lepton pair and MET
+            // Logic: Calculate raw difference -> Normalize to [-pi, pi] -> Take absolute value
+            data.NotZ_EleMET_dPhi = fabs(TVector2::Phi_mpi_pi(data.Electron_Phi[EleIndex] - METPhi));
+            data.NotZ_MuMET_dPhi  = fabs(TVector2::Phi_mpi_pi(data.Muon_Phi[MuIndex] - METPhi));
+            return;
+        }
+};
 // ==========================================
 // Workflow Modular Design
 // ==========================================
@@ -285,7 +318,8 @@ std::vector<AnalysisStep> ConfigurePipeline() {
         { new Lepton_Odd()          ,    true  },
         { new Charge_Violation()    ,    true  },
         { new Z_Window()            ,    true  },
-        { new NotZ_dR()             ,    true  } // Placeholder for future modules
+        { new NotZ_dR()             ,    true  }, // Placeholder for future modules
+        { new NotZ_MET_dPhi()       ,    true }, // Disabled module example
     };
 }
 // ==========================================
@@ -331,6 +365,8 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     t->SetBranchStatus("Event_size", 1);
     t->SetBranchStatus("Electron*", 1); // Enables all branches starting with Electron
     t->SetBranchStatus("Muon*", 1);     // Enables all branches starting with Muon
+    // t->SetBranchStatus("MissingET.MET", 1);
+    t->SetBranchStatus("MissingET.Phi", 1);
     // --- SPEED OPTIMIZATION END ---
 
     // Define variables
@@ -350,6 +386,7 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     if (t->GetBranch("Muon.Eta")) t->SetBranchAddress("Muon.Eta", &currentEvent.Muon_Eta);
     if (t->GetBranch("Muon.Phi")) t->SetBranchAddress("Muon.Phi", &currentEvent.Muon_Phi);
     if (t->GetBranch("Muon.Charge")) t->SetBranchAddress("Muon.Charge", &currentEvent.Muon_Charge);
+    if (t->GetBranch("MissingET.Phi")) t->SetBranchAddress("MissingET.Phi", &currentEvent.MET_Phi);
 
     //================================
     // Setting up new tree for contains cut results
@@ -372,6 +409,8 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     t_out->Branch("Z_PairIndexSum", &currentEvent.Z_PairIndexSum, "Z_PairIndexSum/I");
     t_out->Branch("NotZ_dR", &currentEvent.NotZ_dR, "NotZ_dR/F");
     t_out->Branch("NotZ_dPhi", &currentEvent.NotZ_dPhi, "NotZ_dPhi/F");
+    t_out->Branch("NotZ_EleMET_dPhi", &currentEvent.NotZ_EleMET_dPhi, "NotZ_EleMET_dPhi/F");
+    t_out->Branch("NotZ_MuMET_dPhi", &currentEvent.NotZ_MuMET_dPhi, "NotZ_MuMET_dPhi/F");
     // ==============================
     
     //=============================
