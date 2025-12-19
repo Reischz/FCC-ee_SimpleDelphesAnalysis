@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=Sel
 #SBATCH --qos=cu_hpc
-#SBATCH --partition=cpu
+#SBATCH --partition=cpugpu
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=6
 #SBATCH --mem=18G
@@ -59,13 +59,39 @@ TREERESULT=(
     "ZZTaTa_AdditionalTree.root"
     "ZWW4l_AdditionalTree.root"
 )
+# for i in "${!FILELIST[@]}"; do
+#     echo "Processing file ${FILELIST[$i]}"
+#     root -l -b -q "../Z_off_shell_cut.cpp(\"${FILELIST[$i]}\", \"${RESULT[$i]}\", \"${TREERESULT[$i]}\")" &
+#     # Limit the number of concurrent jobs to 6
+#     if (( (i + 1) % 6 == 0 )); then
+#         wait
+#     fi
+# done
+# wait
+# echo "All selection jobs submitted."
+
+rm -rf SelectionResults
+mkdir SelectionResults
+cd SelectionResults
+
+# 1. PRE-COMPILE STEP
+# We run ROOT once on the first file just to generate the .so library.
+# This avoids the 6-way race condition.
+echo "Pre-compiling macro..."
+root -l -b -q "../Z_off_shell_cut.cpp+(\"${FILELIST[0]}\", \"${RESULT[0]}\", \"${TREERESULT[0]}\")"
+
+# 2. PREPARE TASK LIST
+CMD_FILE="task_list.txt"
+> $CMD_FILE
+
 for i in "${!FILELIST[@]}"; do
-    echo "Processing file ${FILELIST[$i]}"
-    root -l -b -q "../Z_off_shell_cut.cpp(\"${FILELIST[$i]}\", \"${RESULT[$i]}\", \"${TREERESULT[$i]}\")" &
-    # Limit the number of concurrent jobs to 6
-    if (( (i + 1) % 6 == 0 )); then
-        wait
-    fi
+    # Use the '+' again; ROOT will see it's already compiled and just load the .so
+    echo "root -l -b -q \"../Z_off_shell_cut.cpp+(\\\"${FILELIST[$i]}\\\", \\\"${RESULT[$i]}\\\", \\\"${TREERESULT[$i]}\\\")\"" >> $CMD_FILE
 done
-wait
-echo "All selection jobs submitted."
+
+echo "Submitting parallel jobs..."
+# 3. RUN PARALLEL
+tr '\n' '\0' < $CMD_FILE | xargs -0 -P $SLURM_CPUS_PER_TASK -I % sh -c %
+
+rm $CMD_FILE
+echo "All selection jobs completed successfully."

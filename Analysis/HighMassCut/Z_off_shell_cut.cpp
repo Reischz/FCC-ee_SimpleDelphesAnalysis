@@ -5,6 +5,11 @@
 #include <iostream>
 #include <cstdlib>        // Needed for std::exit
 #include <filesystem>
+#include <vector>
+#include "TFile.h"
+#include "TTree.h"
+#include "TLorentzVector.h" // This is the one currently missing
+// Add any other ROOT headers you use (TH1F.h, TChain.h, etc.)
 
 using namespace std;
 // set beginning time
@@ -449,6 +454,7 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     vector<float> histXMin={0, -3, -5, ZBIN[0], 0};
     vector<float> histXMax={200, 3, 5, ZBIN[1], 160};
      // Create histograms for each cut in the pipeline
+    dummy=0;
     for (auto& step : pipeline) {
             if (step.second) { // If module is active
                 for (int histidx=0; histidx<histNames.size(); histidx++){
