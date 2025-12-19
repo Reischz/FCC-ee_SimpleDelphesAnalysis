@@ -9,6 +9,8 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TLorentzVector.h" // This is the one currently missing
+#include "TH1.h"
+#include "TH2.h"
 // Add any other ROOT headers you use (TH1F.h, TChain.h, etc.)
 
 using namespace std;
@@ -457,7 +459,7 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     dummy=0;
     for (auto& step : pipeline) {
             if (step.second) { // If module is active
-                for (int histidx=0; histidx<histNames.size(); histidx++){
+                for (size_t histidx=0; histidx<histNames.size(); histidx++){
                     TString histName = TString::Format("%02d_%s", dummy, histNames[histidx].Data());
                     TH1F *hist = new TH1F(histName, histName + ";" + histXLabels[histidx] + ";Events",
                         histNBins[histidx], histXMin[histidx], histXMax[histidx]);
@@ -502,7 +504,7 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
         dummy=0;
         for (auto& step : pipeline) {
             if (step.second && currentEvent.CutStatus[dummy]) { // If module is active
-                for (int histidx=0; histidx<histNames.size(); histidx++){
+                for (size_t histidx=0; histidx<histNames.size(); histidx++){
                     TString histName = TString::Format("%02d_%s", dummy, histNames[histidx].Data());
                     TH1F *hist = (TH1F*)histDir->Get(histName);
                     if (hist) {
