@@ -72,8 +72,10 @@ LUMI=1
 COUNT=${#Mass_Points[@]}
 # Expected Limit Band Calculations
 for ((mass_index=0; mass_index<COUNT; mass_index++ )); do
-    mkdir -p Combine_Mass_${Mass_Points[mass_index]}
-    cd Combine_Mass_${Mass_Points[mass_index]}
+    this_dir=Combine_Mass_${Mass_Points[mass_index]}
+    rm -rf ${this_dir}
+    mkdir -p ${this_dir}
+    cd ${this_dir}
 
     # Prepare Data Card
     cp ../Data_Card_Combine.dat .
@@ -98,9 +100,9 @@ for ((mass_index=0; mass_index<COUNT; mass_index++ )); do
                     --mass ${Mass_Points[mass_index]} &
         fi
     done
-    wait
     cd ..
 done
+wait
 echo "All combine jobs Completed."
 
 # Plotting the Test Statistic Distributions and Limits
