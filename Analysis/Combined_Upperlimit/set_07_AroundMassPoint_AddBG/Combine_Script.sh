@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=combine
 #SBATCH --qos=cu_hpc
-#SBATCH --partition=cpu
+#SBATCH --partition=cpugpu
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=6
 #SBATCH --mem=12G
