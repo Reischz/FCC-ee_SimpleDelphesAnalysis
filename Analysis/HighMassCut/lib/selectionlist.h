@@ -1,4 +1,5 @@
-
+#pragma once
+#include "parameter.h"
 // ==========================================
 //  Mother of all analysis modules
 // ==========================================
@@ -160,7 +161,7 @@ class NotZ_dR : public AnalysisModule {
         NotZ_dR() : AnalysisModule("NotZ_dR") {}
 
         void process(EventContext &data, const defaultParameters &params) override {
-            if (!data.CutStatus[data.CurrentCut-1]){
+            if ((!data.CutStatus[data.CurrentCut-1]) && data.CurrentCut>0){
                 return;
             }
             // Identify the not Z pair leptons

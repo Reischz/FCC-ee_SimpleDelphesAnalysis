@@ -1,4 +1,4 @@
-#include "parameter.h"
+#pragma once
 // ==========================================
 //  Data Container Definition
 // ==========================================
