@@ -137,7 +137,6 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     TFile *f_out = TFile::Open(outputfile, "RECREATE");
     f_out->cd();
     TDirectory *histDir = f_out->mkdir("histgramtree");
-    bool mass_hist=false;
     // int dummy=0;
     vector<float> ZBIN={params.Z_MASS-params.Z_WINDOW, params.Z_MASS+params.Z_WINDOW};
     vector<TString> histNames={"Lepton.PT","Lepton.Eta","Lepton.Phi"};
@@ -183,6 +182,7 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
         currentEvent.reset();
         t->GetEntry(i);
         // Check branchMap for the first event
+        dummy=0;
         for (auto& step : pipeline) {
             if (step.second) { // If module is active
                 step.first->process(currentEvent, params);
@@ -190,17 +190,6 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
                     break; // Stop processing further modules
                 }
                 currentEvent.CutStatus[currentEvent.CurrentCut] = currentEvent.PassThisCut ? 1 : 0;
-                currentEvent.CurrentCut++;
-                }
-            }
-        // Fill the output tree
-        t_out->Fill();
-        // Fill histograms based on cut results
-        dummy=0;
-        mass_hist=false;
-         // Create histograms for each cut in the pipeline
-        for (auto& step : pipeline) {
-            if (step.second && currentEvent.CutStatus[dummy]) { // If module is active
                 for (size_t histidx=0; histidx<histNames.size(); histidx++){
                     TString histName = TString::Format("%02d_%s", dummy, histNames[histidx].Data());
                     TH1F *hist = (TH1F*)histDir->Get(histName);
@@ -255,9 +244,12 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
                         vsmass->Fill(currentEvent.NearestZ_Mass, currentEvent.OtherPair_Mass);
                     }
                 }
+                currentEvent.CurrentCut++;
             }
             dummy++;
         }
+        // Fill the output tree
+        t_out->Fill();
         // Find index of 1 in CutStatus
         for (int i=0; i < 10; i++){
             if (currentEvent.CutStatus[i]==1){
