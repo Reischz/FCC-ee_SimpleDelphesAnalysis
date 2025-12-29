@@ -42,7 +42,8 @@ std::vector<AnalysisStep> ConfigurePipeline() {
 // ==========================================
 // Main Execution (ROOT Macro)
 // ==========================================
-void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="HLFV_125GeV_Zoff.root", TString TreeOutput="HLFV_125GeV_AdditionalTree.root") {
+void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="HLFV_125GeV_Zoff.root", 
+    TString TreeOutput="HLFV_125GeV_AdditionalTree.root") {
     
     // ===============================
     // Setting up input (Root) file
@@ -150,10 +151,7 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     size_t histNames_size=histNames.size();
     for (auto& step : pipeline) {
             if (step.second) { // If module is active
-                if (step.first->getName()=="Z_Window"){
-                 mass_hist=true;
-                }
-                if (mass_hist==true){
+                if (currentEvent.readyformasshist){
                     for (size_t histidx=0; histidx<massHistNames.size(); histidx++){
                         TString histName = TString::Format("%02d_%s", dummy, massHistNames[histidx].Data());
                         TH1F *hist = new TH1F(histName, histName + ";" + histXLabels[histidx+histNames_size] + ";Events",
@@ -193,8 +191,8 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
                 }
                 currentEvent.CutStatus[currentEvent.CurrentCut] = currentEvent.PassThisCut ? 1 : 0;
                 currentEvent.CurrentCut++;
+                }
             }
-        }
         // Fill the output tree
         t_out->Fill();
         // Fill histograms based on cut results
@@ -235,10 +233,7 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
                         }
                     }
                 }
-                if (step.first->getName()=="Z_Window"){
-                 mass_hist=true;
-                }
-                if (mass_hist==true){
+                if (currentEvent.readyformasshist){
                     // Fill mass histograms
                     for (size_t histidx=0; histidx<massHistNames.size(); histidx++){
                         TString histName = TString::Format("%02d_%s", dummy, massHistNames[histidx].Data());
@@ -259,16 +254,10 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
                     if (vsmass) {
                         vsmass->Fill(currentEvent.NearestZ_Mass, currentEvent.OtherPair_Mass);
                     }
+                }
             }
             dummy++;
         }
-        // Fill 2D mass histogram
-        if (currentEvent.CutStatus[4]==1){ // Passed Z_Window cut
-            vsmass->Fill(currentEvent.NearestZ_Mass, currentEvent.OtherPair_Mass);
-            NotZdR->Fill(currentEvent.NotZ_dR);
-            NotZdPhi->Fill(currentEvent.NotZ_dPhi);
-        }
-
         // Find index of 1 in CutStatus
         for (int i=0; i < 10; i++){
             if (currentEvent.CutStatus[i]==1){

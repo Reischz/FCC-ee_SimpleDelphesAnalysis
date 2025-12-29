@@ -85,6 +85,7 @@ class Z_Window : public AnalysisModule {
         Z_Window() : AnalysisModule("Z_Window") {}
 
         void process(EventContext &data, const defaultParameters &params) override {
+            data.readyformasshist = true;
             vector<float> leptonPairsMass;
             TLorentzVector lepton1Vector, lepton2Vector, combinedVector;
             vector<int> pairindexes;
@@ -161,6 +162,7 @@ class NotZ_dR : public AnalysisModule {
         NotZ_dR() : AnalysisModule("NotZ_dR") {}
 
         void process(EventContext &data, const defaultParameters &params) override {
+            data.readyformasshist = true;
             if ((!data.CutStatus[data.CurrentCut-1]) && data.CurrentCut>0){
                 return;
             }
@@ -191,6 +193,7 @@ class NotZ_MET_dPhi : public AnalysisModule {
         NotZ_MET_dPhi() : AnalysisModule("NotZ_MET_dPhi") {}
 
         void process(EventContext &data, const defaultParameters &params) override {
+            data.readyformasshist = true;
             // Placeholder for future implementation
             if (!data.CutStatus[data.CurrentCut-1]){
                 return;
@@ -217,6 +220,7 @@ class NotZ_MassThreshold : public AnalysisModule {
         NotZ_MassThreshold() : AnalysisModule("NotZ_MassThreshold") {}
 
         void process(EventContext &data, const defaultParameters &params) override {
+            data.readyformasshist = true;
             if (!data.CutStatus[data.CurrentCut-1]){
                 return;
             }

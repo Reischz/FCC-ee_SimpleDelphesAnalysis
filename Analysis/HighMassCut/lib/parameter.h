@@ -41,6 +41,7 @@ struct EventContext {
     float NotZ_dPhi;
     float NotZ_EleMET_dPhi;
     float NotZ_MuMET_dPhi;
+    bool readyformasshist;
 
     // Constructor to reset values per loop
     void reset() {
@@ -49,6 +50,7 @@ struct EventContext {
         Muon_size = 0;
         CurrentCut = 0;
         PassThisCut = true;
+        readyformasshist = false;
         NearestZ_Mass = -1.0;
         OtherPair_Mass = -1.0;
         Z_PairIndexSum = -1;
