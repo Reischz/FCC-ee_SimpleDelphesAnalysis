@@ -190,7 +190,6 @@ class NotZ_dR : public AnalysisModule {
             }
             return;
         }
-        bool isPairedLepton=true;
 };
 class NotZ_MET_dPhi : public AnalysisModule {
     public:
@@ -219,7 +218,6 @@ class NotZ_MET_dPhi : public AnalysisModule {
             data.NotZ_MuMET_dPhi  = fabs(TVector2::Phi_mpi_pi(data.Muon_Phi[MuIndex] - METPhi));
             return;
         }
-        bool isPairedLepton=true;
 };
 class NotZ_MassThreshold : public AnalysisModule {
     public:
@@ -236,5 +234,4 @@ class NotZ_MassThreshold : public AnalysisModule {
             }
             return;
         }
-        bool isPairedLepton()=true;
 };
