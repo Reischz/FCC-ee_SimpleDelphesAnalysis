@@ -153,16 +153,16 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
             if (step.second) { // If module is active
                 if (step.first->isPairedLepton){
                     for (size_t histidx=0; histidx<massHistNames.size(); histidx++){
-                        TString histName = TString::Format("%02d_%s", dummy, massHistNames[histidx].Data());
+                        TString histName = TString::Format("%02d_%s-%s", dummy, massHistNames[histidx].Data(), step.first->getName().c_str());
                         TH1F *hist = new TH1F(histName, histName + ";" + histXLabels[histidx+histNames_size] + ";Events",
                             histNBins[histidx+histNames_size], histXMin[histidx+histNames_size], histXMax[histidx+histNames_size]);
                         hist->SetDirectory(histDir); // Associate histogram with directory
                     }
-                    TH2F *vsmass = new TH2F(TString::Format("%02d_MassPairHeatmap", dummy), "Mass Map;Pair 1 Mass (GeV);Pair 2 Mass (GeV)", 50, ZBIN[0], ZBIN[1], 160, 0, 160);
+                    TH2F *vsmass = new TH2F(TString::Format("%02d_MassPairHeatmap-%s", dummy, step.first->getName().c_str()), "Mass Map;Pair 1 Mass (GeV);Pair 2 Mass (GeV)", 50, ZBIN[0], ZBIN[1], 160, 0, 160);
                     vsmass->SetDirectory(histDir); // Associate histogram with directory
                 }
                 for (size_t histidx=0; histidx<histNames.size(); histidx++){
-                    TString histName = TString::Format("%02d_%s", dummy, histNames[histidx].Data());
+                    TString histName = TString::Format("%02d_%s-%s", dummy, histNames[histidx].Data(), step.first->getName().c_str());
                     TH1F *hist = new TH1F(histName, histName + ";" + histXLabels[histidx] + ";Events",
                         histNBins[histidx], histXMin[histidx], histXMax[histidx]);
                     hist->SetDirectory(histDir); // Associate histogram with directory
@@ -192,7 +192,7 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
                 }
                 currentEvent.CutStatus[currentEvent.CurrentCut] = currentEvent.PassThisCut ? 1 : 0;
                 for (size_t histidx=0; histidx<histNames.size(); histidx++){
-                    TString histName = TString::Format("%02d_%s", dummy, histNames[histidx].Data());
+                    TString histName = TString::Format("%02d_%s-%s", dummy, histNames[histidx].Data(), step.first->getName().c_str());
                     TH1F *hist = (TH1F*)histDir->Get(histName);
                     if (hist) {
                         if (histNames[histidx]=="Lepton.PT"){
@@ -226,7 +226,7 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
                 if (step.first->isPairedLepton){
                     // Fill mass histograms
                     for (size_t histidx=0; histidx<massHistNames.size(); histidx++){
-                        TString histName = TString::Format("%02d_%s", dummy, massHistNames[histidx].Data());
+                        TString histName = TString::Format("%02d_%s-%s", dummy, massHistNames[histidx].Data(), step.first->getName().c_str());
                         TH1F *hist = (TH1F*)histDir->Get(histName);
                         if (hist) {
                             if (massHistNames[histidx]=="NearestZ_Mass"){
@@ -240,7 +240,7 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
                             }
                         }
                     }
-                    TH2F *vsmass = (TH2F*)histDir->Get(TString::Format("%02d_MassPairHeatmap", dummy));
+                    TH2F *vsmass = (TH2F*)histDir->Get(TString::Format("%02d_MassPairHeatmap-%s", dummy, step.first->getName().c_str()));
                     if (vsmass) {
                         vsmass->Fill(currentEvent.NearestZ_Mass, currentEvent.OtherPair_Mass);
                     }
