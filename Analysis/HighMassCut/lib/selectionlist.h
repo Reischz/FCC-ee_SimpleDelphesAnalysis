@@ -11,6 +11,7 @@ class AnalysisModule {
         virtual ~AnalysisModule() {}
         virtual void process(EventContext &data, const defaultParameters &params) = 0; // Pure virtual
         virtual std::string getName() const { return name; }
+        bool isPairedLepton=false;
 };
 
 // ==========================================
@@ -35,7 +36,6 @@ class Lepton_PT : public AnalysisModule {
             }
             return;
         }
-        bool isPairedLepton=false;
 }; 
 class FinalState_4Leptons : public AnalysisModule {
     public:
@@ -48,7 +48,6 @@ class FinalState_4Leptons : public AnalysisModule {
             }
             return;
         }
-        bool isPairedLepton=false;
 };
 class Lepton_Odd : public AnalysisModule {
     public:
@@ -60,8 +59,7 @@ class Lepton_Odd : public AnalysisModule {
             }
             return;
         }
-        bool isPairedLepton=false;
-};
+}; 
 class Charge_Violation : public AnalysisModule {
     public:
         Charge_Violation() : AnalysisModule("Charge_Violation") {}
@@ -82,11 +80,12 @@ class Charge_Violation : public AnalysisModule {
             }
             return;
         }
-        bool isPairedLepton=false;
 };
 class Z_Window : public AnalysisModule {
     public:
-        Z_Window() : AnalysisModule("Z_Window") {}
+        Z_Window() : AnalysisModule("Z_Window") {
+            isPairedLepton=true;
+        }
 
         void process(EventContext &data, const defaultParameters &params) override {
             vector<float> leptonPairsMass;
@@ -159,11 +158,12 @@ class Z_Window : public AnalysisModule {
             }
             return;
         }
-        bool isPairedLepton=true;
 };
 class NotZ_dR : public AnalysisModule {
     public:
-        NotZ_dR() : AnalysisModule("NotZ_dR") {}
+        NotZ_dR() : AnalysisModule("NotZ_dR") {
+            isPairedLepton=true;
+        }
 
         void process(EventContext &data, const defaultParameters &params) override {
             if ((!data.CutStatus[data.CurrentCut-1]) && data.CurrentCut>0){
@@ -194,7 +194,9 @@ class NotZ_dR : public AnalysisModule {
 };
 class NotZ_MET_dPhi : public AnalysisModule {
     public:
-        NotZ_MET_dPhi() : AnalysisModule("NotZ_MET_dPhi") {}
+        NotZ_MET_dPhi() : AnalysisModule("NotZ_MET_dPhi") {
+            isPairedLepton=true;
+        }
 
         void process(EventContext &data, const defaultParameters &params) override {
             // Placeholder for future implementation
@@ -221,7 +223,9 @@ class NotZ_MET_dPhi : public AnalysisModule {
 };
 class NotZ_MassThreshold : public AnalysisModule {
     public:
-        NotZ_MassThreshold() : AnalysisModule("NotZ_MassThreshold") {}
+        NotZ_MassThreshold() : AnalysisModule("NotZ_MassThreshold") {
+            isPairedLepton=true;
+        }
 
         void process(EventContext &data, const defaultParameters &params) override {
             if (!data.CutStatus[data.CurrentCut-1]){
