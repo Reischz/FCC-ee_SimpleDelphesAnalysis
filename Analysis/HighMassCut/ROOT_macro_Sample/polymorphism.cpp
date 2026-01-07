@@ -13,17 +13,6 @@ public:
     virtual bool atmathory() { return false; }
 };
 
-class Circle : public Shape {
-    double r;
-public:
-    explicit Circle(double radius) : r(radius) {}
-    double area() const override { return M_PI * r * r; }
-    void describe() const override {
-        std::cout << "Circle(radius=" << r << ") area=" << area() << '\n';
-    }
-    bool atmathory() override { return true; }
-};
-
 class Rectangle : public Shape {
     double w, h;
 public:
@@ -40,7 +29,6 @@ public:
 int polymorphism() {
     // Example: treat derived as base and call virtual method
     Shape* s = new Rectangle(5.0, 2.0);
-    s->describe();
     std::cout << "atmathory: " << s->atmathory() << '\n';
     std::cout << "atchildory: " << s->atchildory() << '\n';
     std::cout << "atchildvar: " << s->atchildvar << '\n';
