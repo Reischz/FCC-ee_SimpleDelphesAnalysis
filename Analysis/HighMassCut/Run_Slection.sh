@@ -31,41 +31,28 @@ NUM_FILES=${#FILELIST[@]}
 rm -rf SelectionResults_New
 mkdir SelectionResults_New
 cd SelectionResults_New
-RESULT=(
-    "HLFV_110GeV_SelectionResults.root"
-    "HLFV_115GeV_SelectionResults.root"
-    "HLFV_120GeV_SelectionResults.root"
-    "HLFV_125GeV_SelectionResults.root"
-    "HLFV_130GeV_SelectionResults.root"
-    "HLFV_135GeV_SelectionResults.root"
-    "HLFV_140GeV_SelectionResults.root"
-    "HLFV_145GeV_SelectionResults.root"
-    "ZHTaTa_SelectionResults.root"
-    "ZHWW_SelectionResults.root"
-    "ZZTaTa_SelectionResults.root"
-    "ZWW4l_SelectionResults.root"
+RESULT_NAME=(
+    "HLFV_110GeV"
+    "HLFV_115GeV"
+    "HLFV_120GeV"
+    "HLFV_125GeV"
+    "HLFV_130GeV"
+    "HLFV_135GeV"
+    "HLFV_140GeV"
+    "HLFV_145GeV"
+    "ZHTaTa"
+    "ZHWW"
+    "ZZTaTa"
+    "ZWW4l"
 )
-TREERESULT=(
-    "HLFV_110GeV_AdditionalTree.root"
-    "HLFV_115GeV_AdditionalTree.root"
-    "HLFV_120GeV_AdditionalTree.root"
-    "HLFV_125GeV_AdditionalTree.root"
-    "HLFV_130GeV_AdditionalTree.root"
-    "HLFV_135GeV_AdditionalTree.root"
-    "HLFV_140GeV_AdditionalTree.root"
-    "HLFV_145GeV_AdditionalTree.root"
-    "ZHTaTa_AdditionalTree.root"
-    "ZHWW_AdditionalTree.root"
-    "ZZTaTa_AdditionalTree.root"
-    "ZWW4l_AdditionalTree.root"
-)
+
 for i in "${!FILELIST[@]}"; do
     echo "Processing file ${FILELIST[$i]}"
-    root -l -b -q "../Z_off_shell_cut.cpp(\"${FILELIST[$i]}\", \"${RESULT[$i]}\", \"${TREERESULT[$i]}\")" &
+    root -l -b -q "../Z_off_shell_cut.cpp(\"${FILELIST[$i]}\", \"${RESULT_NAME[$i]}_SelectionResults.root\", \"${RESULT_NAME[$i]}_AdditionalTree.root\")" &
     # Limit the number of concurrent jobs to 6
-    # if (( (i + 1) % 6 == 0 )); then
-    #     wait
-    # fi
+    if (( (i + 1) % 6 == 0 )); then
+        wait
+    fi
 done
 wait
 echo "All selection jobs submitted."
