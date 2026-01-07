@@ -29,14 +29,14 @@ using AnalysisStep = std::pair<AnalysisModule*, bool>;
 std::vector<AnalysisStep> ConfigurePipeline() {
     // Return the list directly!
     return {
-        { new Lepton_PT()           ,    true  },
-        { new FinalState_4Leptons() ,    true  }, 
-        { new Lepton_Odd()          ,    true  },
-        { new Charge_Violation()    ,    true  },
-        { new Z_Window()            ,    true  },
-        { new NotZ_dR()             ,    true  }, // Placeholder for future modules
-        { new NotZ_MET_dPhi()       ,    true  }, // Disabled module example
-        { new NotZ_MassThreshold()  ,    true  }
+        { new Lepton_PT()           ,    true  }, //01
+        { new FinalState_4Leptons() ,    true  }, //02
+        { new Lepton_Odd()          ,    true  }, //03
+        { new Charge_Violation()    ,    true  }, //04
+        { new Z_Window()            ,    true  }, //05
+        { new NotZ_dR()             ,    true  }, //06 Placeholder for future modules
+        { new NotZ_MET_dPhi()       ,    true  }, //07 Disabled module example
+        { new NotZ_MassThreshold()  ,    true  }  //08
     };
 }
 // ==========================================
@@ -150,7 +150,7 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     size_t histNames_size=histNames.size();
     for (auto& step : pipeline) {
             if (step.second) { // If module is active
-                if (currentEvent.readyformasshist){
+                if (step.first->isPairedLepton){
                     for (size_t histidx=0; histidx<massHistNames.size(); histidx++){
                         TString histName = TString::Format("%02d_%s", dummy, massHistNames[histidx].Data());
                         TH1F *hist = new TH1F(histName, histName + ";" + histXLabels[histidx+histNames_size] + ";Events",
@@ -222,7 +222,7 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
                         }
                     }
                 }
-                if (currentEvent.readyformasshist){
+                if (step.first->isPairedLepton){
                     // Fill mass histograms
                     for (size_t histidx=0; histidx<massHistNames.size(); histidx++){
                         TString histName = TString::Format("%02d_%s", dummy, massHistNames[histidx].Data());
@@ -281,6 +281,9 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     cout << "  After Lepton Odd cut: " << selection_counts[2] << endl;
     cout << "  After Charge Violation cut: " << selection_counts[3] << endl;
     cout << "  After Z Window cut: " << selection_counts[4] << endl;
+    cout << "  After NotZ dR cut: " << selection_counts[5] << endl;
+    cout << "  After NotZ MET dPhi cut: " << selection_counts[6] << endl;
+    cout << "  After NotZ Mass Threshold cut: " << selection_counts[7] << endl;
 
     // test loop overhead time without calculation
     auto end_time = std::chrono::high_resolution_clock::now();

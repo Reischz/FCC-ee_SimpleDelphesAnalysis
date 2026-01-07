@@ -35,6 +35,7 @@ class Lepton_PT : public AnalysisModule {
             }
             return;
         }
+        bool isPairedLepton=false;
 }; 
 class FinalState_4Leptons : public AnalysisModule {
     public:
@@ -47,6 +48,7 @@ class FinalState_4Leptons : public AnalysisModule {
             }
             return;
         }
+        bool isPairedLepton=false;
 };
 class Lepton_Odd : public AnalysisModule {
     public:
@@ -58,6 +60,7 @@ class Lepton_Odd : public AnalysisModule {
             }
             return;
         }
+        bool isPairedLepton=false;
 };
 class Charge_Violation : public AnalysisModule {
     public:
@@ -79,6 +82,7 @@ class Charge_Violation : public AnalysisModule {
             }
             return;
         }
+        bool isPairedLepton=false;
 };
 class Z_Window : public AnalysisModule {
     public:
@@ -156,6 +160,7 @@ class Z_Window : public AnalysisModule {
             }
             return;
         }
+        bool isPairedLepton=true;
 };
 class NotZ_dR : public AnalysisModule {
     public:
@@ -187,6 +192,7 @@ class NotZ_dR : public AnalysisModule {
             }
             return;
         }
+        bool isPairedLepton=true;
 };
 class NotZ_MET_dPhi : public AnalysisModule {
     public:
@@ -214,6 +220,7 @@ class NotZ_MET_dPhi : public AnalysisModule {
             data.NotZ_MuMET_dPhi  = fabs(TVector2::Phi_mpi_pi(data.Muon_Phi[MuIndex] - METPhi));
             return;
         }
+        bool isPairedLepton=true;
 };
 class NotZ_MassThreshold : public AnalysisModule {
     public:
@@ -229,4 +236,5 @@ class NotZ_MassThreshold : public AnalysisModule {
             }
             return;
         }
+        bool isPairedLepton=true;
 };
