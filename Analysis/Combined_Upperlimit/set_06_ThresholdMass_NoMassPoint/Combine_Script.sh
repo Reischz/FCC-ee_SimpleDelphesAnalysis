@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=combine
 #SBATCH --qos=cu_hpc
-#SBATCH --partition=cpu
+#SBATCH --partition=cpugpu
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=6
 #SBATCH --mem=12G
@@ -14,36 +14,19 @@ function cmsset() {
 cmsset
 
 # Median Signal Srength Upper Limit Calculation using HybridNew Method
-HZ4l_Yield=(
-    0.005594000000000001
-    0.005594000000000001
-    0.005594000000000001
-    0.005594000000000001
-    0.005594000000000001
-    0.005594000000000001
-    0.005594000000000001
-    0.005594000000000001
-)
-
-ZWW4l_Yield=(
-    0.005634953999999999
-    0.005634953999999999
-    0.005634953999999999
-    0.005634953999999999
-    0.005634953999999999
-    0.005634953999999999
-    0.005634953999999999
-    0.005634953999999999
-)
+ZHTaTa_Yield=0.4157
+ZHWW_Yield=0.5155
+ZZTaTa_Yield=0.2719
+ZWW4l_Yield=0.0056
 LFV_Yield=(
-    0.576983
-    0.575509
-    0.572547
-    0.570358
-    0.568789
-    0.566312
-    0.563238
-    0.559844
+    0.5770
+    0.5755
+    0.5725
+    0.5704
+    0.5688
+    0.5663
+    0.5632
+    0.5598
 )
 
 Mass_Points=(110 115 120 125 130 135 140 145)
@@ -52,14 +35,18 @@ LUMI=1
 COUNT=${#Mass_Points[@]}
 # Expected Limit Band Calculations
 for ((mass_index=0; mass_index<COUNT; mass_index++ )); do
-    mkdir -p Combine_Mass_${Mass_Points[mass_index]}
-    cd Combine_Mass_${Mass_Points[mass_index]}
+    this_dir=Combine_Mass_${Mass_Points[mass_index]}
+    rm -rf ${this_dir}
+    mkdir -p ${this_dir}
+    cd ${this_dir}
 
     # Prepare Data Card
     cp ../Data_Card_Combine.dat .
     sed -i "s/XXXX/${LFV_Yield[mass_index]}/g" Data_Card_Combine.dat
-    sed -i "s/YYYY/${HZ4l_Yield[mass_index]}/g" Data_Card_Combine.dat
-    sed -i "s/ZZZZ/${ZWW4l_Yield[mass_index]}/g" Data_Card_Combine.dat
+    sed -i "s/YYYY/${ZHTaTa_Yield}/g" Data_Card_Combine.dat
+    sed -i "s/ZZZZ/${ZHWW_Yield}/g" Data_Card_Combine.dat
+    sed -i "s/AAAA/${ZZTaTa_Yield}/g" Data_Card_Combine.dat
+    sed -i "s/BBBB/${ZWW4l_Yield}/g" Data_Card_Combine.dat
     CARD=Data_Card_Combine_mh${Mass_Points[mass_index]}.dat
     mv Data_Card_Combine.dat ${CARD}
 
@@ -76,9 +63,9 @@ for ((mass_index=0; mass_index<COUNT; mass_index++ )); do
                     --mass ${Mass_Points[mass_index]} &
         fi
     done
-    wait
     cd ..
 done
+wait
 echo "All combine jobs Completed."
 
 # Plotting the Test Statistic Distributions and Limits
