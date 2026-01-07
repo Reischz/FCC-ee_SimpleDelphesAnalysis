@@ -41,7 +41,7 @@ struct EventContext {
     float NotZ_dPhi;
     float NotZ_EleMET_dPhi;
     float NotZ_MuMET_dPhi;
-    bool readyformasshist;
+    // bool readyformasshist;
 
     // Constructor to reset values per loop
     void reset() {

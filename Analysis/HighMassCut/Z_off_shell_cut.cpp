@@ -177,7 +177,7 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     // variable for summary selection
     vector<int> passcut;
 
-    int selection_counts[5] = {0, 0, 0, 0, 0};
+    int selection_counts[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // Adjust size based on number of cuts
     for (Long64_t i = 0; i < nentries; i++) {
         currentEvent.reset();
         t->GetEntry(i);
