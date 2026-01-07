@@ -17,6 +17,14 @@ class AnalysisModule {
 // ==========================================
 // Analysis Module
 // ==========================================
+class NonSelection : public AnalysisModule {
+    public:
+        NonSelection() : AnalysisModule("NonSelection") {}
+
+        void process(EventContext &data, const defaultParameters &params) override {
+            return;
+        }
+};
 class Lepton_PT : public AnalysisModule {
     public:
         Lepton_PT() : AnalysisModule("Lepton_PT") {}

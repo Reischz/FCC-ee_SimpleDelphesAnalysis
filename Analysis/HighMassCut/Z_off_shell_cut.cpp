@@ -29,6 +29,7 @@ using AnalysisStep = std::pair<AnalysisModule*, bool>;
 std::vector<AnalysisStep> ConfigurePipeline() {
     // Return the list directly!
     return {
+        { new NonSelection()        ,    true  }, //00
         { new Lepton_PT()           ,    true  }, //01
         { new FinalState_4Leptons() ,    true  }, //02
         { new Lepton_Odd()          ,    true  }, //03
@@ -177,7 +178,7 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     // variable for summary selection
     vector<int> passcut;
 
-    int selection_counts[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // Adjust size based on number of cuts
+    int selection_counts[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0}; // Adjust size based on number of cuts
     for (Long64_t i = 0; i < nentries; i++) {
         currentEvent.reset();
         t->GetEntry(i);
@@ -276,14 +277,15 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     cout << "Summary of selection:" << endl;
     cout << " Total events processed: " << nentries << endl;
     cout << " Events passing each cut stage:" << endl;
-    cout << "  After Lepton PT cut: " << selection_counts[0] << endl;
-    cout << "  After Final State 4 Leptons cut: " << selection_counts[1] << endl;
-    cout << "  After Lepton Odd cut: " << selection_counts[2] << endl;
-    cout << "  After Charge Violation cut: " << selection_counts[3] << endl;
-    cout << "  After Z Window cut: " << selection_counts[4] << endl;
-    cout << "  After NotZ dR cut: " << selection_counts[5] << endl;
-    cout << "  After NotZ MET dPhi cut: " << selection_counts[6] << endl;
-    cout << "  After NotZ Mass Threshold cut: " << selection_counts[7] << endl;
+    cout << "  Initial: " << selection_counts[0] << endl;
+    cout << "  After Lepton PT cut: " << selection_counts[1] << endl;
+    cout << "  After Final State 4 Leptons cut: " << selection_counts[2] << endl;
+    cout << "  After Lepton Odd cut: " << selection_counts[3] << endl;
+    cout << "  After Charge Violation cut: " << selection_counts[4] << endl;
+    cout << "  After Z Window cut: " << selection_counts[5] << endl;
+    cout << "  After NotZ dR cut: " << selection_counts[6] << endl;
+    cout << "  After NotZ MET dPhi cut: " << selection_counts[7] << endl;
+    cout << "  After NotZ Mass Threshold cut: " << selection_counts[8] << endl;
 
     // test loop overhead time without calculation
     auto end_time = std::chrono::high_resolution_clock::now();
