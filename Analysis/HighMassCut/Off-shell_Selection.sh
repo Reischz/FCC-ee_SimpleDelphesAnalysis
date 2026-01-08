@@ -15,8 +15,8 @@ cmsset
 
 FILELIST=(
     "/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/EventSample/MassScan_HZ4l_HLFV/HZ4l_HLFV_1M_HMass150_Seed150/HZ4l_HLFV_1M_HMass150_Seed150_IDEA.root"
-    "/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/EventSample/MassScan_HZ4l_HLFV/HZ4l_HLFV_1M_HMass115_Seed155/HZ4l_HLFV_1M_HMass115_Seed155_IDEA.root"
-    "/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/EventSample/MassScan_HZ4l_HLFV/HZ4l_HLFV_1M_HMass120_Seed160/HZ4l_HLFV_1M_HMass160_Seed160_IDEA.root"
+    "/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/EventSample/MassScan_HZ4l_HLFV/HZ4l_HLFV_1M_HMass155_Seed155/HZ4l_HLFV_1M_HMass155_Seed155_IDEA.root"
+    "/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/EventSample/MassScan_HZ4l_HLFV/HZ4l_HLFV_1M_HMass160_Seed160/HZ4l_HLFV_1M_HMass160_Seed160_IDEA.root"
     '/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/Analysis/HighMassCut/zh_ll_tautau.root'
     "/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/Analysis/HighMassCut/zh_ll_ww.root"
     "/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/Analysis/HighMassCut/zz_ll_tautau.root"
