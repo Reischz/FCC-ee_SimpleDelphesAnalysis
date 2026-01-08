@@ -35,9 +35,9 @@ std::vector<AnalysisStep> ConfigurePipeline() {
         { new Lepton_Odd()          ,    true  }, //03
         { new Charge_Violation()    ,    true  }, //04
         { new Z_Window()            ,    true  }//, //05
-        // { new NotZ_dR()             ,    true  }, //06 Placeholder for future modules
-        // { new NotZ_MET_dPhi()       ,    true  }, //07 Disabled module example
-        // { new NotZ_MassThreshold()  ,    true  }  //08
+        { new NotZ_dR()             ,    true  }, //06 Placeholder for future modules
+        { new NotZ_MET_dPhi()       ,    true  }, //07 Disabled module example
+        { new NotZ_MassThreshold()  ,    true  }  //08
     };
 }
 // ==========================================
@@ -139,11 +139,11 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     f_out->cd();
     TDirectory *histDir = f_out->mkdir("histgramtree");
     // int dummy=0;
-    vector<float> ZBIN={params.Z_MASS-params.Z_WINDOW, params.Z_MASS+params.Z_WINDOW};
+    vector<float> ZBIN={0, 200};
     vector<TString> histNames={"Lepton.PT","Lepton.Eta","Lepton.Phi"};
     vector<TString> massHistNames={"NearestZ_Mass","OtherPair_Mass","NotZ_dR","NotZ_dPhi"};
     vector<TString> histXLabels={"GeV"," "," ","GeV","GeV"," "," "};
-    vector<int> histNBins={100,100,100,50,160,50,50};
+    vector<int> histNBins={100,100,100,200,160,50,50};
     vector<float> histXMin={0, -3, -5, ZBIN[0], 0, 0, 0};
     vector<float> histXMax={200, 3, 5, ZBIN[1], 160, 6, 3.5};
      // Create histograms for each cut in the pipeline
