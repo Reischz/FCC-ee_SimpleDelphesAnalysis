@@ -38,7 +38,7 @@ RESULT_NAME=(
 
 for i in "${!FILELIST[@]}"; do
     echo "Processing file ${FILELIST[$i]}"
-    root -l -b -q "../Normal_on_shell_cut.cpp(\"${FILELIST[$i]}\", \"${RESULT_NAME[$i]}_SelectionResults.root\", \"${RESULT_NAME[$i]}_AdditionalTree.root\")" &
+    root -l -b -q "../Z_off_shell_cut.cpp(\"${FILELIST[$i]}\", \"${RESULT_NAME[$i]}_SelectionResults.root\", \"${RESULT_NAME[$i]}_AdditionalTree.root\")" &
     # Limit the number of concurrent jobs to 6
     # if (( (i + 1) % 6 == 0 )); then
     #     wait
