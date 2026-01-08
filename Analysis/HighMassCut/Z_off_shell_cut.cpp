@@ -34,10 +34,10 @@ std::vector<AnalysisStep> ConfigurePipeline() {
         { new FinalState_4Leptons() ,    true  }, //02
         { new Lepton_Odd()          ,    true  }, //03
         { new Charge_Violation()    ,    true  }, //04
-        { new Z_Window()            ,    true  }, //05
-        { new NotZ_dR()             ,    true  }, //06 Placeholder for future modules
-        { new NotZ_MET_dPhi()       ,    true  }, //07 Disabled module example
-        { new NotZ_MassThreshold()  ,    true  }  //08
+        { new Z_Window()            ,    true  }//, //05
+        // { new NotZ_dR()             ,    true  }, //06 Placeholder for future modules
+        // { new NotZ_MET_dPhi()       ,    true  }, //07 Disabled module example
+        // { new NotZ_MassThreshold()  ,    true  }  //08
     };
 }
 // ==========================================
