@@ -311,7 +311,7 @@ class PairSelection_offshell : public AnalysisModule {
                 }
             }
             // cout << "Found candidate pair: Higgs Mass "<< endl;
-            size_count=ZCandidateMass.size();
+            int size_count=ZCandidateMass.size();
             if (size_count == 0) {
                 data.PassThisCut = false;
             } else if (size_count == 1) {
