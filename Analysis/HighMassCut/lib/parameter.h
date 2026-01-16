@@ -11,6 +11,8 @@ struct defaultParameters {
     static constexpr float Min_MuonPT = 10.0; // GeV
     static constexpr float dRCut = 2.0; // dR cut for Not Z lepton pair
     static constexpr float NotZ_MassCut = 75.0; // dPhi cut for Not Z lepton pair and MET
+    static constexpr float LFV_MinPT = 30.0; // GeV
+    static constexpr float Z_Treshold_offShell = 5.0; // GeV
 };
 struct EventContext {
     // --- Inputs (e.g., from TTree) ---

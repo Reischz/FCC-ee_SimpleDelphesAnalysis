@@ -243,3 +243,94 @@ class NotZ_MassThreshold : public AnalysisModule {
             return;
         }
 };
+
+class PairSelection_offshell : public AnalysisModule {
+    public:
+        PairSelection_offshell() : AnalysisModule("PairSelection_offshell") {
+            isPairedLepton=true;
+        }
+
+        void process(EventContext &data, const defaultParameters &params) override {
+            // Placeholder for future implementation
+            vector<float> HiggsCandidateMass;
+            vector<float> ZCandidateMass;
+            TLorentzVector lepton1Vector, lepton2Vector, combinedVector;
+            vector<int> ZindexesSum;
+            vector<float> dRvalues;
+            for (size_t i = 0; i < data.Electron_size; i++) {
+                for (size_t j = 0; j < data.Muon_size; j++) {
+                    if ((data.Electron_Charge[i] * data.Muon_Charge[j]) > 0) {
+                        continue; // Same charge, skip
+                    }
+                    else if ((data.Muon_PT[j]<params.LFV_MinPT) || (data.Electron_PT[i]<params.LFV_MinPT)){
+                        continue; // Below PT cut, skip
+                    }
+                    // Use TLorentzVector to calculate invariant mass
+                    lepton1Vector.SetPtEtaPhiM(data.Electron_PT[i], data.Electron_Eta[i], data.Electron_Phi[i], params.Electron_MASS);
+                    lepton2Vector.SetPtEtaPhiM(data.Muon_PT[j], data.Muon_Eta[j], data.Muon_Phi[j], params.Muon_MASS);
+                    float dR=lepton1Vector.DeltaR(lepton2Vector);
+                    if (dR<2){
+                        continue; // dR cut, skip
+                    }
+                    dRvalues.push_back(dR);
+                    combinedVector = lepton1Vector + lepton2Vector;
+                    float mass = combinedVector.M();
+
+                    HiggsCandidateMass.push_back(mass);
+
+                    TLorentzVector Z_Candidate1Vec, Z_Candidate2Vec;
+                    vector<int> allindexes={0,1,2};
+                    vector<int> thisindexes;
+                    if data.Electron_size>data.Muon_size {
+                        // Calculate Z candidate mass from remaining leptons
+                        for (int idx : allindexes) {
+                            if (idx != i) {
+                                thisindexes.push_back(idx);
+                            }
+                        }
+                        Z_Candidate1Vec.SetPtEtaPhiM(data.Electron_PT[thisindexes[0]], data.Electron_Eta[thisindexes[0]], data.Electron_Phi[thisindexes[0]], params.Electron_MASS);
+                        Z_Candidate2Vec.SetPtEtaPhiM(data.Electron_PT[thisindexes[1]], data.Electron_Eta[thisindexes[1]], data.Electron_Phi[thisindexes[1]], params.Electron_MASS);
+
+                    } else {
+                        // Calculate Z candidate mass from remaining leptons
+                        for (int idx : allindexes) {
+                            if (idx != j) {
+                                thisindexes.push_back(idx);
+                            }
+                        }
+                        Z_Candidate1Vec.SetPtEtaPhiM(data.Muon_PT[thisindexes[0]], data.Muon_Eta[thisindexes[0]], data.Muon_Phi[thisindexes[0]], params.Muon_MASS);
+                        Z_Candidate2Vec.SetPtEtaPhiM(data.Muon_PT[thisindexes[1]], data.Muon_Eta[thisindexes[1]], data.Muon_Phi[thisindexes[1]], params.Muon_MASS);
+
+                    }
+                    float ThisZMass= (Z_Candidate1Vec + Z_Candidate2Vec).M();
+                    if ((ThisZMass > params.Z_MASS) || (ThisZMass < params.Z_Treshold_offShell)) {
+                        continue; // Z mass threshold cut, skip
+                    }
+                    ZCandidateMass.push_back(ThisZMass);
+                    ZindexesSum.push_back(thisindexes[0] + thisindexes[1]);
+                }
+            }
+            if (HiggsCandidateMass.size() == 0) {
+                data.PassThisCut = false;
+            } else if (HiggsCandidateMass.size() == 1) {
+                // Select the candidate with Higgs mass closest to 125 GeV
+                data.OtherPair_Mass = HiggsCandidateMass[0];
+                data.NearestZ_Mass = ZCandidateMass[0];
+            }
+            else {
+                float highHMass = 1e6;
+                int highIndex = -1;
+                for (size_t idx = 0; idx < HiggsCandidateMass.size(); idx++) {
+                    if (HiggsCandidateMass[idx] > highHMass) {
+                        highHMass = HiggsCandidateMass[idx];
+                        highIndex = idx;
+                    }
+                }
+                data.OtherPair_Mass = HiggsCandidateMass[highIndex];
+                data.NearestZ_Mass = ZCandidateMass[highIndex];
+                data.Z_PairIndexSum = ZindexesSum[highIndex];
+                data.NotZ_dR = dRvalues[highIndex];
+            }
+            return;
+        }
+};
