@@ -310,22 +310,22 @@ class PairSelection_offshell : public AnalysisModule {
                     ZindexesSum.push_back(thisindexes[0] + thisindexes[1]);
                 }
             }
-            cout << "Found candidate pair: Higgs Mass "<< endl;
-                
-            if (HiggsCandidateMass.size() == 0) {
+            // cout << "Found candidate pair: Higgs Mass "<< endl;
+            size_count=ZCandidateMass.size();
+            if (size_count == 0) {
                 data.PassThisCut = false;
-            } else if (HiggsCandidateMass.size() == 1) {
-                cout << "data single begin" << endl;
+            } else if (size_count == 1) {
+                // cout << "data single begin" << endl;
                 // Select the candidate with Higgs mass closest to 125 GeV
                 data.OtherPair_Mass = HiggsCandidateMass[0];
                 data.NearestZ_Mass = ZCandidateMass[0];
-                cout << "data single end" << endl;
+                // cout << "data single end" << endl;
             }
             else {
-                cout << "data pair begin" << endl;
+                // cout << "data pair begin" << endl;
                 float highHMass = 0.0;
                 int highIndex = -1;
-                for (size_t idx = 0; idx < HiggsCandidateMass.size(); idx++) {
+                for (size_t idx = 0; idx < size_count; idx++) {
                     if (HiggsCandidateMass[idx] > highHMass) {
                         highHMass = HiggsCandidateMass[idx];
                         highIndex = idx;
@@ -335,7 +335,7 @@ class PairSelection_offshell : public AnalysisModule {
                 data.NearestZ_Mass = ZCandidateMass[highIndex];
                 data.Z_PairIndexSum = ZindexesSum[highIndex];
                 data.NotZ_dR = dRvalues[highIndex];
-                cout << "pair end" << endl;
+                // cout << "pair end" << endl;
             }
             return;
         }
