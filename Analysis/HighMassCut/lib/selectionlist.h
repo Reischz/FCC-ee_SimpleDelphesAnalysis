@@ -281,7 +281,7 @@ class PairSelection_offshell : public AnalysisModule {
                     TLorentzVector Z_Candidate1Vec, Z_Candidate2Vec;
                     vector<int> allindexes={0,1,2};
                     vector<int> thisindexes;
-                    if data.Electron_size>data.Muon_size {
+                    if (data.Electron_size>data.Muon_size) {
                         // Calculate Z candidate mass from remaining leptons
                         for (int idx : allindexes) {
                             if (idx != i) {
