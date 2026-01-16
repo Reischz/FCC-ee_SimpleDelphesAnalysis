@@ -319,6 +319,7 @@ class PairSelection_offshell : public AnalysisModule {
                 // Select the candidate with Higgs mass closest to 125 GeV
                 data.OtherPair_Mass = HiggsCandidateMass[0];
                 data.NearestZ_Mass = ZCandidateMass[0];
+                cout << "data single end" << endl;
             }
             else {
                 cout << "data pair begin" << endl;
