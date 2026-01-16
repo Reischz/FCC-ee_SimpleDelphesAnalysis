@@ -320,6 +320,7 @@ class PairSelection_offshell : public AnalysisModule {
                 data.NearestZ_Mass = ZCandidateMass[0];
             }
             else {
+                cout << "data pair begin" << endl;
                 float highHMass = 0.0;
                 int highIndex = -1;
                 for (size_t idx = 0; idx < HiggsCandidateMass.size(); idx++) {
@@ -332,6 +333,7 @@ class PairSelection_offshell : public AnalysisModule {
                 data.NearestZ_Mass = ZCandidateMass[highIndex];
                 data.Z_PairIndexSum = ZindexesSum[highIndex];
                 data.NotZ_dR = dRvalues[highIndex];
+                cout << "pair end" << endl;
             }
             return;
         }
