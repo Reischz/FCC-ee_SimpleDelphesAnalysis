@@ -308,6 +308,7 @@ class PairSelection_offshell : public AnalysisModule {
                     }
                     ZCandidateMass.push_back(ThisZMass);
                     ZindexesSum.push_back(thisindexes[0] + thisindexes[1]);
+                    cout << "Found candidate pair: Higgs Mass = " << mass << ", Z Mass = " << ThisZMass << ", dR = " << dR << endl;
                 }
             }
             if (HiggsCandidateMass.size() == 0) {
