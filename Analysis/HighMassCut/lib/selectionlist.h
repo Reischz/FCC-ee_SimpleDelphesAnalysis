@@ -318,7 +318,7 @@ class PairSelection_offshell : public AnalysisModule {
                 data.NearestZ_Mass = ZCandidateMass[0];
             }
             else {
-                float highHMass = 1e6;
+                float highHMass = 0.0;
                 int highIndex = -1;
                 for (size_t idx = 0; idx < HiggsCandidateMass.size(); idx++) {
                     if (HiggsCandidateMass[idx] > highHMass) {
