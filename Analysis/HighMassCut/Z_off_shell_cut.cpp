@@ -38,7 +38,7 @@ std::vector<AnalysisStep> ConfigurePipeline() {
         { new NotZ_MassThreshold()  ,    true  }  //06
     };
 }
-AnalysisStep LastVerifyGen= new Verify_Generator();
+AnalysisModule* LastVerifyGen= new Verify_Generator();
 // ==========================================
 // Main Execution (ROOT Macro)
 // ==========================================
