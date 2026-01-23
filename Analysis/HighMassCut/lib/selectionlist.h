@@ -356,6 +356,12 @@ class Verify_Generator : public AnalysisModule {
                 if (data.Particle_PID[ParContentNum]==22 || data.Particle_Status[ParContentNum]!=1){
                     continue;
                 }
+                else if (abs(data.Particle_PID[ParContentNum])!=11 || abs(data.Particle_PID[ParContentNum])!=13){
+                    continue;
+                }
+                else if (data.Particle_M1[ParContentNum]==-1 && data.Particle_M2[ParContentNum]==-1){
+                    continue;
+                }
                 FinalstateMother.push_back(IdentifyOriginLepton(data.Particle_PID[ParContentNum], data, ParContentNum));
                 FinalstateIndexes.push_back(ParContentNum);
             }

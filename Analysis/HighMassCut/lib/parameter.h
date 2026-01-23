@@ -111,10 +111,10 @@ TString IdentifyOriginLepton(int pid, EventContext &data, int index) {
     int mother1_pid = data.Particle_PID[mother1];
     int mother2_pid = data.Particle_PID[mother2];
 
-    if ((mother1 != -1) && (mother2 != -1)) {
-        return continue;
-    }
-    else if ((mother1_pid == pid) || (mother2_pid == pid)) {
+    // if ((mother1 != -1) && (mother2 != -1)) {
+    //     return continue;
+    // }
+    if ((mother1_pid == pid) || (mother2_pid == pid)) {
         return IdentifyOriginLepton(pid, data, index);
     }
     else if ((mother1_pid == 23) || (mother2_pid == 23)) {
