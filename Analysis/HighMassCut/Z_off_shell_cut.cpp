@@ -268,13 +268,13 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
             dummy++;
             if (step.first->getName()=="NotZ_MassThreshold"){
                 LastVerifyGen->process(currentEvent, params);
-                if (currentEvent.MatchedSingleLepSide){
+                if (currentEvent.Matching_SingleLepSide){
                     matchsingellepside=matchsingellepside+1;
                 }
-                if (currentEvent.MatchedThreeLepSide){
+                if (currentEvent.Matching_ThreeLepSide){
                     matchthreelepside=matchthreelepside+1;
                 }
-                if (currentEvent.MatchedPerfect){
+                if (currentEvent.Matching_Perfect){
                     perfectmatch=perfectmatch+1;
                 }
             }
