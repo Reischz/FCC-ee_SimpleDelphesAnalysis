@@ -194,9 +194,9 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
 
     int selection_counts[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0}; // Adjust size based on number of cuts
     int finallpass=0;
-    int matchsingellepside=100;
-    int matchthreelepside=10;
-    int perfectmatch=1;
+    int matchsingellepside=0;
+    int matchthreelepside=0;
+    int perfectmatch=0;
     for (Long64_t i = 0; i < nentries; i++) {
         currentEvent.reset();
         t->GetEntry(i);
