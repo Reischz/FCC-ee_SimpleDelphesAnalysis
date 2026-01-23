@@ -363,7 +363,9 @@ class Verify_Generator : public AnalysisModule {
                 else if (data.Particle_M1[ParContentNum]==-1 && data.Particle_M2[ParContentNum]==-1){
                     continue;
                 }
+                cout << " Finalstate Lepton PID: " << data.Particle_PID[ParContentNum] << ", Index: " << ParContentNum << endl;
                 FinalstateMother.push_back(IdentifyOriginLepton(data.Particle_PID[ParContentNum], data, ParContentNum));
+                cout << " Finalstate Lepton Mother: " << FinalstateMother.back() << endl;
                 FinalstateIndexes.push_back(ParContentNum);
             }
             TLorentzVector generatorLepton, detectorLepton;
