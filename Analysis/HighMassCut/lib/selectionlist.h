@@ -368,9 +368,9 @@ class Verify_Generator : public AnalysisModule {
             TLorentzVector generatorLepton, detectorLepton;
             bool ElectronDominated= (data.Electron_size > data.Muon_size);
             int LFVIndexin3lepside=3-data.Z_PairIndexSum;
-            bool Matching_SingleLepSide=false;
-            bool Matching_ThreeLepSide=false;
-            bool Matching_Perfect=false;
+            bool MatchedSingleLepSide=false;
+            bool MatchedThreeLepSide=false;
+            bool MatchedPerfect=false;
             float dR;
             for (size_t i=0; i<FinalstateMother.size(); i++){
                 if (FinalstateMother[i]=="Other"){
