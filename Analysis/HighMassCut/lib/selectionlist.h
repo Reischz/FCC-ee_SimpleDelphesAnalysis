@@ -373,6 +373,7 @@ class Verify_Generator : public AnalysisModule {
             bool MatchedThreeLepSide=false;
             bool PerfectMatch=false;
             float dR;
+            cout << " FinalstateMother size: " << FinalstateMother.size() << endl;
             for (size_t i=0; i<FinalstateMother.size(); i++){
                 if (FinalstateMother[i]=="Other"){
                     continue;
@@ -443,6 +444,7 @@ class Verify_Generator : public AnalysisModule {
                     }
                 }
             }
+            cout << " Matching Results: Single Lep Side: " << MatchedSingleLepSide << ", Three Lep Side: " << MatchedThreeLepSide << endl;
             if (MatchedSingleLepSide && MatchedThreeLepSide){
                 PerfectMatch=true;
             }
