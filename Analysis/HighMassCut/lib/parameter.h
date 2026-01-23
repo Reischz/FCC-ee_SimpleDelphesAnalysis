@@ -44,6 +44,22 @@ struct EventContext {
     float NotZ_EleMET_dPhi;
     float NotZ_MuMET_dPhi;
 
+    float Particle_PT[100]; // assuming max 100 particles
+    float Particle_Eta[100];
+    float Particle_Phi[100];
+    int Particle_PID[100];
+    int Particle_M1[100];
+    int Particle_M2[100];
+    int Particle_D1[100];
+    int Particle_D2[100];
+    int Particle_Charge[100];
+    int Particle_Status[100];
+    int Particle_size;
+
+    bool Matching_SingleLepSide;
+    bool Matching_ThreeLepSide;
+    bool Matching_Perfect;
+
     // Constructor to reset values per loop
     void reset() {
         Event_size = 0;
@@ -86,3 +102,26 @@ struct EventContext {
         cout << endl;
     }
 };
+
+TString IdentifyOriginLepton(int pid, EventContext &data, int index) {
+    // Identify whether the lepton is from Z, W, or other sources
+    int mother1 = data.Particle_M1[index];
+    int mother2 = data.Particle_M2[index];
+    
+    int mother1_pid = data.Particle_PID[mother1];
+    int mother2_pid = data.Particle_PID[mother2];
+
+    if ((mother1 != -1) && (mother2 != -1)) {
+        return continue;
+    }
+    else if ((mother1_pid == pid) || (mother2_pid == pid)) {
+        return IdentifyOriginLepton(pid, data, index);
+    }
+    else if ((mother1_pid == 23) || (mother2_pid == 23)) {
+        return "Z";
+    } else if ((mother1_pid == 25) || (mother2_pid == 25)) {
+        return "Higgs";
+    } else {
+        return "Other";
+    }
+}

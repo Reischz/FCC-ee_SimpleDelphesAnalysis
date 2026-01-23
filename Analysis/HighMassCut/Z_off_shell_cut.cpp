@@ -38,6 +38,7 @@ std::vector<AnalysisStep> ConfigurePipeline() {
         { new NotZ_MassThreshold()  ,    true  }  //06
     };
 }
+AnalysisStep LastVerifyGen= new Verify_Generator();
 // ==========================================
 // Main Execution (ROOT Macro)
 // ==========================================
@@ -82,8 +83,11 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     t->SetBranchStatus("Event_size", 1);
     t->SetBranchStatus("Electron*", 1); // Enables all branches starting with Electron
     t->SetBranchStatus("Muon*", 1);     // Enables all branches starting with Muon
+    t->SetBranchStatus("Particle.*", 1);// Enables all branches starting with Particle
+    t->SetBranchStatus("Particle_size", 1);
     // t->SetBranchStatus("MissingET.MET", 1);
     t->SetBranchStatus("MissingET.Phi", 1);
+
     // --- SPEED OPTIMIZATION END ---
 
     // Define variables
@@ -104,6 +108,19 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     if (t->GetBranch("Muon.Phi")) t->SetBranchAddress("Muon.Phi", &currentEvent.Muon_Phi);
     if (t->GetBranch("Muon.Charge")) t->SetBranchAddress("Muon.Charge", &currentEvent.Muon_Charge);
     if (t->GetBranch("MissingET.Phi")) t->SetBranchAddress("MissingET.Phi", &currentEvent.MET_Phi);
+
+    // Verify with generator level particles
+    if (t->GetBranch("Particle.PT")) t->SetBranchAddress("Particle.PT", &currentEvent.Particle_PT);
+    if (t->GetBranch("Particle.Eta")) t->SetBranchAddress("Particle.Eta", &currentEvent.Particle_Eta);
+    if (t->GetBranch("Particle.Phi")) t->SetBranchAddress("Particle.Phi", &currentEvent.Particle_Phi);
+    if (t->GetBranch("Particle.PID")) t->SetBranchAddress("Particle.PID", &currentEvent.Particle_PID);
+    if (t->GetBranch("Particle.M1")) t->SetBranchAddress("Particle.M1", &currentEvent.Particle_M1);
+    if (t->GetBranch("Particle.M2")) t->SetBranchAddress("Particle.M2", &currentEvent.Particle_M2);
+    if (t->GetBranch("Particle.D1")) t->SetBranchAddress("Particle.D1", &currentEvent.Particle_D1);
+    if (t->GetBranch("Particle.D2")) t->SetBranchAddress("Particle.D2", &currentEvent.Particle_D2);
+    if (t->GetBranch("Particle.Charge")) t->SetBranchAddress("Particle.Charge", &currentEvent.Particle_Charge);
+    if (t->GetBranch("Particle.Status")) t->SetBranchAddress("Particle.Status", &currentEvent.Particle_Status);
+    if (t->GetBranch("Particle_size")) t->SetBranchAddress("Particle_size", &currentEvent.Particle_size);
 
     //================================
     // Setting up new tree for contains cut results
@@ -168,7 +185,6 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
             }
             dummy++;
         }
-
     // ==============================
     // Loop over events and apply cut
     Long64_t nentries = t->GetEntries();
@@ -177,6 +193,10 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     vector<int> passcut;
 
     int selection_counts[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0}; // Adjust size based on number of cuts
+    int finallpass=0;
+    int matchsingellepside=0;
+    int matchthreelepside=0;
+    int perfectmatch=0;
     for (Long64_t i = 0; i < nentries; i++) {
         currentEvent.reset();
         t->GetEntry(i);
@@ -246,6 +266,18 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
                 currentEvent.CurrentCut++;
             }
             dummy++;
+            if (step.first->getName()=="NotZ_MassThreshold"){
+                LastVerifyGen->process(currentEvent, params);
+                if (currentEvent.MatchedSingleLepSide){
+                    matchsingellepside=matchsingellepside+1;
+                }
+                if (currentEvent.MatchedThreeLepSide){
+                    matchthreelepside=matchthreelepside+1;
+                }
+                if (currentEvent.MatchedPerfect){
+                    perfectmatch=perfectmatch+1;
+                }
+            }
         }
         // Fill the output tree
         t_out->Fill();
@@ -266,6 +298,7 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     for (auto& step : pipeline) {
         delete step.first;
     }
+    delete LastVerifyGen;
     // Close input file
     f->Close();
     // ==============================
@@ -300,6 +333,45 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     // Write output histogram to file
     //==============================
     f_out->cd();
+    //========================================================================================
+    // 1. Create the histogram (3 bins, range 0 to 3)
+    TString histName = "Matching_Bars_chart";
+    TH1F *hist = new TH1F(histName, "Matching Efficiency;Matching Type;Events", 3, 0, 3);
+    
+    // 2. Set the text labels for the X-axis
+    // Note: ROOT bin indexing starts at 1, not 0!
+    hist->GetXaxis()->SetBinLabel(1, "Matched Single Lepton Side");
+    hist->GetXaxis()->SetBinLabel(2, "Matched Three Lepton Side");
+    hist->GetXaxis()->SetBinLabel(3, "Perfect Match");
+
+    // 3. Set the values (Height of the bars)
+    // You can use Fill() inside a loop, or SetBinContent() if you already have the totals
+    hist->SetBinContent(1, matchsingellepside); // Count for Type 1
+    hist->SetBinContent(2, matchthreelepside); // Count for Type 2
+    hist->SetBinContent(3, perfectmatch);  // Count for Type 3
+
+    // 4. Visual Styling (Optional but recommended for categorical charts)
+    
+    // Hide the stats box (Mean/RMS don't make sense for categories)
+    hist->SetStats(0); 
+    
+    // Make labels big enough to read
+    hist->GetXaxis()->SetLabelSize(0.05); 
+    
+    // Center the labels in the bin
+    hist->GetXaxis()->CenterLabels();
+
+    // Set Colors
+    hist->SetFillColor(kAzure+1);
+    hist->SetLineColor(kBlack);
+
+    // 5. Draw
+    // "HIST" draws the outline
+    // "TEXT" writes the specific number on top of the bar
+    hist->Draw("Matching Efficiency"); 
+
+    hist->SetDirectory(histDir);
+    //=========================================================================================================
     histDir->Write(); // Write all histograms in the directory
     // Clean up
     cout << "Done. Output written to: " << outputfile << endl;

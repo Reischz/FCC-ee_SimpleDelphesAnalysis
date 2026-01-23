@@ -340,3 +340,106 @@ class PairSelection_offshell : public AnalysisModule {
             return;
         }
 };
+
+class Verify_Generator : public AnalysisModule {
+    public:
+        Verify_Generator() : AnalysisModule("Verify_Generator") {}
+
+        void process(EventContext &data, const defaultParameters &params) override {
+            // Placeholder for future implementation
+            if (data.Previous == 0) {
+                data.PassThisCut = false;
+            }
+            vector<int> FinalstateIndexes;
+            vector<TString> FinalstateMother;
+            for (auto ParContentNum=0; ParContentNum<data.Particle_size; ParContentNum++){
+                if (data.Particle_PID[ParContentNum]==22 || data.Particle_Status[ParContentNum]!=1){
+                    continue;
+                }
+                FinalstateMother.push_back(IdentifyOriginLepton(data.Particle_PID[ParContentNum], data, ParContentNum));
+                FinalstateIndexes.push_back(ParContentNum);
+            }
+            TLorentzVector generatorLepton, detectorLepton;
+            bool ElectronDominated= (data.Electron_size > data.Muon_size);
+            int LFVIndexin3lepside=3-data.Z_PairIndexSum;
+            bool MatchedSingleLepSide=false, MatchedThreeLepSide=false, PerfectMatch=false;
+            float dR=1e6;
+            for (size_t i=0; i<FinalstateMother.size(); i++){
+                if (FinalstateMother[i]=="Other"){
+                    continue;
+                }
+                else if (FinalstateMother[i]=="Higgs"){
+                    int thisFlavor=data.Particle_PID[FinalstateIndexes[i]];
+                    generatorLepton.SetPtEtaPhiM(
+                        data.Particle_PT[FinalstateIndexes[i]], 
+                        data.Particle_Eta[FinalstateIndexes[i]], 
+                        data.Particle_Phi[FinalstateIndexes[i]], 
+                        (abs(thisFlavor) == 11) ? params.Electron_MASS : params.Muon_MASS
+                    );
+                    // Match to detector level leptons
+                    if (ElectronDominated && (abs(thisFlavor) == 11)){
+                        // Match to Electron
+                        detectorLepton.SetPtEtaPhiM(
+                            data.Electron_PT[LFVIndexin3lepside],
+                            data.Electron_Eta[LFVIndexin3lepside],
+                            data.Electron_Phi[LFVIndexin3lepside],
+                            params.Electron_MASS
+                        );
+                        dR=generatorLepton.DeltaR(detectorLepton);
+                        if (dR<0.1 || dR==0.1){
+                            MatchedThreeLepSide=true;
+                            continue;
+                        }
+                    } else if (!ElectronDominated && (abs(thisFlavor) == 13)){
+                        // Match to Muon
+                        detectorLepton.SetPtEtaPhiM(
+                            data.Muon_PT[LFVIndexin3lepside],
+                            data.Muon_Eta[LFVIndexin3lepside],
+                            data.Muon_Phi[LFVIndexin3lepside],
+                            params.Muon_MASS
+                        );
+                        dR=generatorLepton.DeltaR(detectorLepton);
+                        if (dR<0.1 || dR==0.1){
+                            MatchedThreeLepSide=true;
+                            continue;
+                        }
+                    }
+                    else if (ElectronDominated && (abs(thisFlavor) == 13)){
+                        // Match to Muon
+                        detectorLepton.SetPtEtaPhiM(
+                            data.Muon_PT[0],
+                            data.Muon_Eta[0],
+                            data.Muon_Phi[0],
+                            params.Muon_MASS
+                        );
+                        dR=generatorLepton.DeltaR(detectorLepton);
+                        if (dR<0.1 || dR==0.1){
+                            MatchedSingleLepSide=true;
+                            continue;
+                        }
+                    }
+                    else if (!ElectronDominated && (abs(thisFlavor) == 11)){
+                        // Match to Electron
+                        detectorLepton.SetPtEtaPhiM(
+                            data.Electron_PT[0],
+                            data.Electron_Eta[0],
+                            data.Electron_Phi[0],
+                            params.Electron_MASS
+                        );
+                        dR=generatorLepton.DeltaR(detectorLepton);
+                        if (dR<0.1 || dR==0.1){
+                            MatchedSingleLepSide=true;
+                            continue;
+                        }
+                    }
+                }
+            }
+            if (MatchedSingleLepSide && MatchedThreeLepSide){
+                PerfectMatch=true;
+            }
+            data.Matching_SingleLepSide=MatchedSingleLepSide;
+            data.Matching_ThreeLepSide=MatchedThreeLepSide;
+            data.Matching_Perfect=PerfectMatch;
+            return;
+        }
+};
