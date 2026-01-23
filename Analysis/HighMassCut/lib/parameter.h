@@ -132,7 +132,7 @@ TString IdentifyOriginLepton(int pid, EventContext &data, int index) {
     cout << " Identifying Origin for PID: " << pid << ", Index: " << index << ", Mother1 PID: " << mother1_pid << ", Mother2 PID: " << mother2_pid << endl;
     if ((mother1_pid == pid) || (mother2_pid == pid)) {
         cout << " Tracing back to mother particle." << endl;
-        return IdentifyOriginLepton(pid, data, ((mother1_pid == -1 )? mother1 : mother2));
+        return IdentifyOriginLepton(pid, data, mother1_pid == pid ? mother1 : mother2);
     }
     else if ((mother1_pid == 23) || (mother2_pid == 23)) {
         return "Z";
