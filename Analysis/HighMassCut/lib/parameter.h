@@ -77,6 +77,21 @@ struct EventContext {
         for (int i = 0; i < 10; ++i) {
             CutStatus[i] = 0;
         }
+
+        for (int i = 0; i < 4; ++i) {
+            Electron_PT[i] = 0.0;
+            Electron_Eta[i] = 0.0;
+            Electron_Phi[i] = 0.0;
+            Electron_Charge[i] = 0;
+            Muon_PT[i] = 0.0;
+            Muon_Eta[i] = 0.0;
+            Muon_Phi[i] = 0.0;
+            Muon_Charge[i] = 0;
+        }
+
+        Matching_SingleLepSide = false;
+        Matching_ThreeLepSide = false;
+        Matching_Perfect = false;
     }
     // Function to print current state (for debugging)
     void print() {

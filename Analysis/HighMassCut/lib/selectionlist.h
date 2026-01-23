@@ -356,7 +356,7 @@ class Verify_Generator : public AnalysisModule {
                 if (data.Particle_PID[ParContentNum]==22 || data.Particle_Status[ParContentNum]!=1){
                     continue;
                 }
-                else if (abs(data.Particle_PID[ParContentNum])!=11 || abs(data.Particle_PID[ParContentNum])!=13){
+                else if (abs(data.Particle_PID[ParContentNum])!=11 && abs(data.Particle_PID[ParContentNum])!=13){
                     continue;
                 }
                 else if (data.Particle_M1[ParContentNum]==-1 && data.Particle_M2[ParContentNum]==-1){
@@ -368,8 +368,10 @@ class Verify_Generator : public AnalysisModule {
             TLorentzVector generatorLepton, detectorLepton;
             bool ElectronDominated= (data.Electron_size > data.Muon_size);
             int LFVIndexin3lepside=3-data.Z_PairIndexSum;
-            bool MatchedSingleLepSide=false, MatchedThreeLepSide=false, PerfectMatch=false;
-            float dR=1e6;
+            bool Matching_SingleLepSide=false;
+            bool Matching_ThreeLepSide=false;
+            bool Matching_Perfect=false;
+            float dR;
             for (size_t i=0; i<FinalstateMother.size(); i++){
                 if (FinalstateMother[i]=="Other"){
                     continue;
