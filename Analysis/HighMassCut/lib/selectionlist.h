@@ -350,6 +350,7 @@ class Verify_Generator : public AnalysisModule {
             // if (data.Previous == 0) {
             //     data.PassThisCut = false;
             // }
+            cout << " Starting Generator Level Verification " << endl;
             vector<int> FinalstateIndexes;
             vector<TString> FinalstateMother;
             for (auto ParContentNum=0; ParContentNum<data.Particle_size; ParContentNum++){
