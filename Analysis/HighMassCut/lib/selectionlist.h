@@ -370,7 +370,7 @@ class Verify_Generator : public AnalysisModule {
             int LFVIndexin3lepside=3-data.Z_PairIndexSum;
             bool MatchedSingleLepSide=false;
             bool MatchedThreeLepSide=false;
-            bool MatchedPerfect=false;
+            bool PerfectMatch=false;
             float dR;
             for (size_t i=0; i<FinalstateMother.size(); i++){
                 if (FinalstateMother[i]=="Other"){
