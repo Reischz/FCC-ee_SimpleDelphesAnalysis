@@ -347,9 +347,9 @@ class Verify_Generator : public AnalysisModule {
 
         void process(EventContext &data, const defaultParameters &params) override {
             // Placeholder for future implementation
-            if (data.Previous == 0) {
-                data.PassThisCut = false;
-            }
+            // if (data.Previous == 0) {
+            //     data.PassThisCut = false;
+            // }
             vector<int> FinalstateIndexes;
             vector<TString> FinalstateMother;
             for (auto ParContentNum=0; ParContentNum<data.Particle_size; ParContentNum++){
