@@ -519,6 +519,7 @@ class Verify_Generator : public AnalysisModule {
                     }
                 }
             }
+            cout << "Generator level SFSC dR calculation begin" << endl;
             data.SFSC_GendR=SFSC1_GenVec.DeltaR(SFSC2_GenVec);
             // Find detector level particles that is SFSC
             // We know LFV lepton index in 3 lepton side is LFVIndexin3lepside
