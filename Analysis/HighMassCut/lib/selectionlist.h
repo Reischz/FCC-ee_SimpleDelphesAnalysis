@@ -350,7 +350,6 @@ class Verify_Generator : public AnalysisModule {
             // if (data.Previous == 0) {
             //     data.PassThisCut = false;
             // }
-            cout << " Starting Generator Level Verification " << endl;
             vector<int> FinalstateIndexes;
             vector<TString> FinalstateMother;
             for (auto ParContentNum=0; ParContentNum<data.Particle_size; ParContentNum++){
@@ -363,19 +362,18 @@ class Verify_Generator : public AnalysisModule {
                 else if (data.Particle_M1[ParContentNum]==-1 && data.Particle_M2[ParContentNum]==-1){
                     continue;
                 }
-                cout << " Finalstate Lepton PID: " << data.Particle_PID[ParContentNum] << ", Index: " << ParContentNum << endl;
                 FinalstateMother.push_back(IdentifyOriginLepton(data.Particle_PID[ParContentNum], data, ParContentNum));
-                cout << " Finalstate Lepton Mother: " << FinalstateMother.back() << endl;
                 FinalstateIndexes.push_back(ParContentNum);
             }
             TLorentzVector generatorLepton, detectorLepton;
+            TLorentzVector OppositeGeneratorLepton;
             bool ElectronDominated= (data.Electron_size > data.Muon_size);
             int LFVIndexin3lepside=3-data.Z_PairIndexSum;
             bool MatchedSingleLepSide=false;
             bool MatchedThreeLepSide=false;
+            bool MatchedOppositeLep=false;
             bool PerfectMatch=false;
             float dR;
-            cout << " FinalstateMother size: " << FinalstateMother.size() << endl;
             for (size_t i=0; i<FinalstateMother.size(); i++){
                 if (FinalstateMother[i]=="Other"){
                     continue;
@@ -398,6 +396,24 @@ class Verify_Generator : public AnalysisModule {
                             params.Electron_MASS
                         );
                         dR=generatorLepton.DeltaR(detectorLepton);
+                        // Identify Opposite Candidate
+                        for (int k=0; k<FinalstateIndexes.size(); k++){
+                            if ((k==i) || (data.Particle_PID[FinalstateIndexes[k]]!=thisFlavor) || (data.Particle_Charge[FinalstateIndexes[k]]==data.Particle_Charge[FinalstateIndexes[i]])){
+                                continue;
+                            }
+                            else {
+                                OppositeGeneratorLepton.SetPtEtaPhiM(
+                                    data.Particle_PT[FinalstateIndexes[k]], 
+                                    data.Particle_Eta[FinalstateIndexes[k]], 
+                                    data.Particle_Phi[FinalstateIndexes[k]], 
+                                    params.Electron_MASS
+                                );
+                                float dR_Opposite=OppositeGeneratorLepton.DeltaR(detectorLepton);
+                                if (dR_Opposite<0.1 || dR_Opposite==0.1){
+                                    MatchedOppositeLep=true;
+                                }
+                            }
+                        }
                         if (dR<0.1 || dR==0.1){
                             MatchedThreeLepSide=true;
                             continue;
@@ -425,6 +441,24 @@ class Verify_Generator : public AnalysisModule {
                             params.Muon_MASS
                         );
                         dR=generatorLepton.DeltaR(detectorLepton);
+                        // Identify Opposite Candidate
+                        for (int k=0; k<FinalstateIndexes.size(); k++){
+                            if ((k==i) || (data.Particle_PID[FinalstateIndexes[k]]!=thisFlavor) || (data.Particle_Charge[FinalstateIndexes[k]]==data.Particle_Charge[FinalstateIndexes[i]])){
+                                continue;
+                            }
+                            else {
+                                OppositeGeneratorLepton.SetPtEtaPhiM(
+                                    data.Particle_PT[FinalstateIndexes[k]], 
+                                    data.Particle_Eta[FinalstateIndexes[k]], 
+                                    data.Particle_Phi[FinalstateIndexes[k]], 
+                                    params.Muon_MASS
+                                );
+                                float dR_Opposite=OppositeGeneratorLepton.DeltaR(detectorLepton);
+                                if (dR_Opposite<0.1 || dR_Opposite==0.1){
+                                    MatchedOppositeLep=true;
+                                }
+                            }
+                        }
                         if (dR<0.1 || dR==0.1){
                             MatchedSingleLepSide=true;
                             continue;
@@ -446,13 +480,79 @@ class Verify_Generator : public AnalysisModule {
                     }
                 }
             }
-            cout << " Matching Results: Single Lep Side: " << MatchedSingleLepSide << ", Three Lep Side: " << MatchedThreeLepSide << endl;
             if (MatchedSingleLepSide && MatchedThreeLepSide){
                 PerfectMatch=true;
             }
             data.Matching_SingleLepSide=MatchedSingleLepSide;
             data.Matching_ThreeLepSide=MatchedThreeLepSide;
+            data.Matching_OppositeLep=MatchedOppositeLep;
             data.Matching_Perfect=PerfectMatch;
+            // To Verify if the criteria of using dR is relaiable, utilizing SFSC_GendR and SFSC_RecodR
+            // Find final states particle that is SFSC
+            TLorentzVector SFSC1_GenVec, SFSC2_GenVec,SFSC1_RecVec, SFSC2_RecVec;
+            float ThisPairParticlesMass;
+            for (int j=0; j<FinalstateIndexes.size();j++){
+                for (int l=0; l<data.Particle_size;l++){
+                    if (j==l){
+                        continue;
+                    }
+                    else if ((data.Particle_PID[FinalstateIndexes[j]]==data.Particle_PID[FinalstateIndexes[j]])){
+                        ThisPairParticlesMass= (abs(data.Particle_PID[FinalstateIndexes[j]])==11)? params.Electron_MASS : params.Muon_MASS;
+                        SFSC1_GenVec.SetPtEtaPhiM(
+                            data.Particle_PT[FinalstateIndexes[j]], 
+                            data.Particle_Eta[FinalstateIndexes[j]], 
+                            data.Particle_Phi[FinalstateIndexes[j]], 
+                            ThisPairParticlesMass
+                        );
+                        SFSC2_GenVec.SetPtEtaPhiM(
+                            data.Particle_PT[l], 
+                            data.Particle_Eta[l], 
+                            data.Particle_Phi[l], 
+                            ThisPairParticlesMass
+                        );
+                        break;
+                    }
+                }
+            }
+            data.SFSC_GendR=SFSC1_GenVec.DeltaR(SFSC2_GenVec);
+            // Find detector level particles that is SFSC
+            // We know LFV lepton index in 3 lepton side is LFVIndexin3lepside
+            vector<int> allindexes;
+            for (int m=0; m<3;m++){
+                if (m!=LFVIndexin3lepside){
+                    allindexes.push_back(m);
+                }
+            }
+            // 3E +1Muon
+            if (data.Electron_size>data.Muon_size){
+                SFSC1_RecVec.SetPtEtaPhiM(
+                    data.Electron_PT[allindexes[0]],
+                    data.Electron_Eta[allindexes[0]],
+                    data.Electron_Phi[allindexes[0]],
+                    params.Electron_MASS
+                );
+                SFSC2_RecVec.SetPtEtaPhiM(
+                    data.Electron_PT[allindexes[1]],
+                    data.Electron_Eta[allindexes[1]],
+                    data.Electron_Phi[allindexes[1]],
+                    params.Electron_MASS
+                );
+            }
+            else{
+                SFSC1_RecVec.SetPtEtaPhiM(
+                    data.Muon_PT[allindexes[0]],
+                    data.Muon_Eta[allindexes[0]],
+                    data.Muon_Phi[allindexes[0]],
+                    params.Muon_MASS
+                );
+                SFSC2_RecVec.SetPtEtaPhiM(
+                    data.Muon_PT[allindexes[1]],
+                    data.Muon_Eta[allindexes[1]],
+                    data.Muon_Phi[allindexes[1]],
+                    params.Muon_MASS
+                );
+            }
+            data.SFSC_RecodR=SFSC1_RecVec.DeltaR(SFSC2_RecVec);
             return;
         }
 };

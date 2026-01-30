@@ -59,6 +59,10 @@ struct EventContext {
     bool Matching_SingleLepSide;
     bool Matching_ThreeLepSide;
     bool Matching_Perfect;
+    bool Matching_OppositeLep;
+
+    float SFSC_GendR;
+    float SFSC_RecodR;
 
     // Constructor to reset values per loop
     void reset() {
@@ -92,6 +96,7 @@ struct EventContext {
         Matching_SingleLepSide = false;
         Matching_ThreeLepSide = false;
         Matching_Perfect = false;
+        Matching_OppositeLep = false;
     }
     // Function to print current state (for debugging)
     void print() {

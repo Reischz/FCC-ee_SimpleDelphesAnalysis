@@ -42,8 +42,8 @@ AnalysisModule* LastVerifyGen= new Verify_Generator();
 // ==========================================
 // Main Execution (ROOT Macro)
 // ==========================================
-void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="HLFV_125GeV_Zoff.root", 
-    TString TreeOutput="HLFV_125GeV_AdditionalTree.root") {
+void Z_off_shell_cut(TString inputfile="HLFV_160GeV.root", TString outputfile="HLFV_160GeV_Zoff.root", 
+    TString TreeOutput="HLFV_160GeV_AdditionalTree.root") {
     
     // ===============================
     // Setting up input (Root) file
@@ -185,6 +185,13 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
             }
             dummy++;
         }
+    // Histogram for SFSC dR Heatmap
+    TH2F *SFSC_dR_Heatmap = new TH2F("SFSC_dR_Heatmap", "SFSC dR;Generator Level dR;Reconstructed Level dR", 50, 0, 5, 50, 0, 5);
+    // Histogram for SFSC ratio
+    TH1F *SFSC_dR_Ratio = new TH1F("SFSC_dR_Ratio", "SFSC dR Ratio;Reconstructed dR / Generator dR;Events", 50, 0, 5);
+    // Matching Threelep vs matching opposite heatmap
+    TH2F *Matching_ThreeLep_Opposite_Heatmap = new TH2F("Matching_ThreeLep_Opposite_Heatmap", "Matching Three Lep vs Matching Opposite Lep;Three Lep Matching;Opposite Lep Matching", 2, 0, 2, 2, 0, 2);
+    //=============================
     // ==============================
     // Loop over events and apply cut
     Long64_t nentries = t->GetEntries();
@@ -197,6 +204,7 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     int matchsingellepside=0;
     int matchthreelepside=0;
     int perfectmatch=0;
+    int mathopposite=0;
     for (Long64_t i = 0; i < nentries; i++) {
         currentEvent.reset();
         t->GetEntry(i);
@@ -268,6 +276,8 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
             dummy++;
             if (step.first->getName()=="NotZ_MassThreshold"){
                 LastVerifyGen->process(currentEvent, params);
+                SFSC_dR_Heatmap->Fill(currentEvent.SFSC_GendR, currentEvent.SFSC_RecodR);
+                SFSC_dR_Ratio->Fill(currentEvent.SFSC_RecodR/currentEvent.SFSC_GendR);
                 if (currentEvent.Matching_SingleLepSide){
                     matchsingellepside=matchsingellepside+1;
                 }
@@ -277,6 +287,10 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
                 if (currentEvent.Matching_Perfect){
                     perfectmatch=perfectmatch+1;
                 }
+                if (currentEvent.Matching_OppositeLep){
+                    mathopposite=mathopposite+1;
+                }
+                Matching_ThreeLep_Opposite_Heatmap->Fill(currentEvent.Matching_ThreeLepSide, currentEvent.Matching_OppositeLep);
             }
         }
         // Fill the output tree
@@ -334,21 +348,23 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     //==============================
     f_out->cd();
     //========================================================================================
-    // 1. Create the histogram (3 bins, range 0 to 3)
+    // 1. Create the histogram (4 bins, range 0 to 4)
     TString histName = "Matching_Bars_chart";
-    TH1F *hist = new TH1F(histName, "Matching Efficiency;Matching Type;Events", 3, 0, 3);
+    TH1F *hist = new TH1F(histName, "Matching Efficiency;Matching Type;Events", 4, 0, 4);
     
     // 2. Set the text labels for the X-axis
     // Note: ROOT bin indexing starts at 1, not 0!
     hist->GetXaxis()->SetBinLabel(1, "Matched Single Lepton Side");
     hist->GetXaxis()->SetBinLabel(2, "Matched Three Lepton Side");
     hist->GetXaxis()->SetBinLabel(3, "Perfect Match");
+    hist->GetXaxis()->SetBinLabel(4, "Matched Opposite Lepton Side");
 
     // 3. Set the values (Height of the bars)
     // You can use Fill() inside a loop, or SetBinContent() if you already have the totals
     hist->SetBinContent(1, matchsingellepside); // Count for Type 1
     hist->SetBinContent(2, matchthreelepside); // Count for Type 2
     hist->SetBinContent(3, perfectmatch);  // Count for Type 3
+    hist->SetBinContent(4, mathopposite);  // Count for Type 4
 
     // 4. Visual Styling (Optional but recommended for categorical charts)
     
@@ -371,6 +387,9 @@ void Z_off_shell_cut(TString inputfile="HLFV_125GeV.root", TString outputfile="H
     hist->Draw("Matching Efficiency"); 
 
     hist->SetDirectory(histDir);
+    Matching_ThreeLep_Opposite_Heatmap->SetDirectory(histDir);
+    SFSC_dR_Ratio->SetDirectory(histDir);
+    SFSC_dR_Heatmap->SetDirectory(histDir);
     //=========================================================================================================
     histDir->Write(); // Write all histograms in the directory
     // Clean up
