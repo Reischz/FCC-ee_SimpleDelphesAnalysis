@@ -398,7 +398,7 @@ class Verify_Generator : public AnalysisModule {
                         dR=generatorLepton.DeltaR(detectorLepton);
                         // Identify Opposite Candidate
                         for (int k=0; k<FinalstateIndexes.size(); k++){
-                            if ((k==i) || (data.Particle_PID[FinalstateIndexes[k]]!=thisFlavor) || (data.Particle_Charge[FinalstateIndexes[k]]==data.Particle_Charge[FinalstateIndexes[i]])){
+                            if ((k==i) || (data.Particle_PID[FinalstateIndexes[k]]!=thisFlavor) || (data.Particle_Charge[FinalstateIndexes[k]]!=data.Particle_Charge[FinalstateIndexes[i]])){
                                 continue;
                             }
                             else {
@@ -491,8 +491,9 @@ class Verify_Generator : public AnalysisModule {
             // Find final states particle that is SFSC
             TLorentzVector SFSC1_GenVec, SFSC2_GenVec,SFSC1_RecVec, SFSC2_RecVec;
             float ThisPairParticlesMass;
-            for (int j=0; j<FinalstateIndexes.size();j++){
-                for (int l=0; l<data.Particle_size;l++){
+            int GenFinalStateSize=FinalstateIndexes.size();
+            for (int j=0; j<GenFinalStateSize;j++){
+                for (int l=0; l<GenFinalStateSize;l++){
                     if (j==l){
                         continue;
                     }
