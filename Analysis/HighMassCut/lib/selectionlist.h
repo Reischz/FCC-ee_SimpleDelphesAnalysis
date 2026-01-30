@@ -391,7 +391,7 @@ class Verify_Generator : public AnalysisModule {
                         thisFlavorMass
                     );
                     // Match to detector level leptons
-                    if (ElectronDominated && (abs(thisFlavor) == 11)){
+                    if (ElectronDominated && (abs(thisFlavor) == 13)){
                         // Match to Electron
                         detectorLepton.SetPtEtaPhiM(
                             data.Electron_PT[LFVIndexin3lepside],
@@ -402,12 +402,12 @@ class Verify_Generator : public AnalysisModule {
                         dR=generatorLepton.DeltaR(detectorLepton);
                         // Identify Opposite Candidate
                         for (int k=0; k<FinalstateIndexes.size(); k++){
-                            if ((k!=i) && (data.Particle_PID[FinalstateIndexes[k]]==thisFlavor)){
+                            if ((k!=i) && (abs(data.Particle_PID[FinalstateIndexes[k]])==11)){
                                 OppositeGeneratorLepton.SetPtEtaPhiM(
                                     data.Particle_PT[FinalstateIndexes[k]], 
                                     data.Particle_Eta[FinalstateIndexes[k]], 
                                     data.Particle_Phi[FinalstateIndexes[k]], 
-                                    thisFlavorMass
+                                    params.Electron_MASS
                                 );
                                 dR_Opposite=OppositeGeneratorLepton.DeltaR(detectorLepton);
                                 if (dR_Opposite<0.1 || dR_Opposite==0.1){
@@ -419,13 +419,13 @@ class Verify_Generator : public AnalysisModule {
                             MatchedThreeLepSide=true;
                             continue;
                         }
-                    } else if (!ElectronDominated && (abs(thisFlavor) == 13)){
+                    } else if (!ElectronDominated && (abs(thisFlavor) == 11)){
                         // Match to Muon
                         detectorLepton.SetPtEtaPhiM(
                             data.Muon_PT[LFVIndexin3lepside],
                             data.Muon_Eta[LFVIndexin3lepside],
                             data.Muon_Phi[LFVIndexin3lepside],
-                            thisFlavorMass
+                            params.Muon_MASS
                         );
                         dR=generatorLepton.DeltaR(detectorLepton);
                         if (dR<0.1 || dR==0.1){
@@ -433,7 +433,7 @@ class Verify_Generator : public AnalysisModule {
                             continue;
                         }
                     }
-                    else if (ElectronDominated && (abs(thisFlavor) == 13)){
+                    else if (ElectronDominated && (abs(thisFlavor) == 11)){
                         // Match to Muon
                         detectorLepton.SetPtEtaPhiM(
                             data.Muon_PT[0],
@@ -444,7 +444,7 @@ class Verify_Generator : public AnalysisModule {
                         dR=generatorLepton.DeltaR(detectorLepton);
                         // Identify Opposite Candidate
                         for (int k=0; k<FinalstateIndexes.size(); k++){
-                            if ((k==i) || (data.Particle_PID[FinalstateIndexes[k]]!=thisFlavor)){
+                            if ((k==i) || (abs(data.Particle_PID[FinalstateIndexes[k]])!=13)){
                                 continue;
                             }
                             else {
@@ -465,7 +465,7 @@ class Verify_Generator : public AnalysisModule {
                             continue;
                         }
                     }
-                    else if (!ElectronDominated && (abs(thisFlavor) == 11)){
+                    else if (!ElectronDominated && (abs(thisFlavor) == 13)){
                         // Match to Electron
                         detectorLepton.SetPtEtaPhiM(
                             data.Electron_PT[0],
