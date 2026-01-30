@@ -497,7 +497,7 @@ class Verify_Generator : public AnalysisModule {
                     if (j==l){
                         continue;
                     }
-                    else if ((data.Particle_PID[FinalstateIndexes[j]]==data.Particle_PID[FinalstateIndexes[j]])){
+                    else if (data.Particle_PID[FinalstateIndexes[j]]==data.Particle_PID[FinalstateIndexes[j]]){
                         ThisPairParticlesMass= (abs(data.Particle_PID[FinalstateIndexes[j]])==11)? params.Electron_MASS : params.Muon_MASS;
                         SFSC1_GenVec.SetPtEtaPhiM(
                             data.Particle_PT[FinalstateIndexes[j]], 
