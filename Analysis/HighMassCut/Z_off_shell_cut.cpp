@@ -188,7 +188,7 @@ void Z_off_shell_cut(TString inputfile="HLFV_160GeV.root", TString outputfile="H
     // Histogram for SFSC dR Heatmap
     TH2F *SFSC_dR_Heatmap = new TH2F("SFSC_dR_Heatmap", "SFSC dR;Generator Level dR;Reconstructed Level dR", 50, 0, 5, 50, 0, 5);
     // Histogram for SFSC ratio
-    TH1F *SFSC_dR_Ratio = new TH1F("SFSC_dR_Ratio", "SFSC dR Ratio;Reconstructed dR / Generator dR;Events", 50, 0, 5);
+    TH1F *SFSC_dR_Ratio = new TH1F("SFSC_dR_Ratio", "SFSC dR Ratio;Reconstructed dR / Generator dR;Events", 200, 0, 1);
     // Matching Threelep vs matching opposite heatmap
     TH2F *Matching_ThreeLep_Opposite_Heatmap = new TH2F("Matching_ThreeLep_Opposite_Heatmap", "Matching Three Lep vs Matching Opposite Lep;Three Lep Matching;Opposite Lep Matching", 2, 0, 2, 2, 0, 2);
     //=============================
