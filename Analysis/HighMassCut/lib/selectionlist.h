@@ -529,6 +529,7 @@ class Verify_Generator : public AnalysisModule {
                 for (int m=0; m< data.Electron_size; m++){
                     if ((m!=LFVIndexin3lepside) && (data.Electron_Charge[m]==data.Electron_Charge[LFVIndexin3lepside])){
                         allindexes.push_back(m);
+                        cout << "Found same flavor lepton index: " << m << endl;
                         break;
                     }
                 }
