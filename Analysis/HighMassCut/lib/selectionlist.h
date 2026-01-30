@@ -374,17 +374,21 @@ class Verify_Generator : public AnalysisModule {
             bool MatchedOppositeLep=false;
             bool PerfectMatch=false;
             float dR;
+            int thisFlavor;
+            float thisFlavorMass;
+            float dR_Opposite;
             for (size_t i=0; i<FinalstateMother.size(); i++){
                 if (FinalstateMother[i]=="Other"){
                     continue;
                 }
                 else if (FinalstateMother[i]=="Higgs"){
-                    int thisFlavor=data.Particle_PID[FinalstateIndexes[i]];
+                    thisFlavor=data.Particle_PID[FinalstateIndexes[i]];
+                    thisFlavorMass=(abs(thisFlavor)==11)? params.Electron_MASS : params.Muon_MASS;
                     generatorLepton.SetPtEtaPhiM(
                         data.Particle_PT[FinalstateIndexes[i]], 
                         data.Particle_Eta[FinalstateIndexes[i]], 
                         data.Particle_Phi[FinalstateIndexes[i]], 
-                        (abs(thisFlavor) == 11) ? params.Electron_MASS : params.Muon_MASS
+                        thisFlavorMass
                     );
                     // Match to detector level leptons
                     if (ElectronDominated && (abs(thisFlavor) == 11)){
@@ -406,9 +410,9 @@ class Verify_Generator : public AnalysisModule {
                                     data.Particle_PT[FinalstateIndexes[k]], 
                                     data.Particle_Eta[FinalstateIndexes[k]], 
                                     data.Particle_Phi[FinalstateIndexes[k]], 
-                                    params.Electron_MASS
+                                    thisFlavorMass
                                 );
-                                float dR_Opposite=OppositeGeneratorLepton.DeltaR(detectorLepton);
+                                dR_Opposite=OppositeGeneratorLepton.DeltaR(detectorLepton);
                                 if (dR_Opposite<0.1 || dR_Opposite==0.1){
                                     MatchedOppositeLep=true;
                                 }
@@ -424,7 +428,7 @@ class Verify_Generator : public AnalysisModule {
                             data.Muon_PT[LFVIndexin3lepside],
                             data.Muon_Eta[LFVIndexin3lepside],
                             data.Muon_Phi[LFVIndexin3lepside],
-                            params.Muon_MASS
+                            thisFlavorMass
                         );
                         dR=generatorLepton.DeltaR(detectorLepton);
                         if (dR<0.1 || dR==0.1){
@@ -518,14 +522,15 @@ class Verify_Generator : public AnalysisModule {
             data.SFSC_GendR=SFSC1_GenVec.DeltaR(SFSC2_GenVec);
             // Find detector level particles that is SFSC
             // We know LFV lepton index in 3 lepton side is LFVIndexin3lepside
-            vector<int> allindexes;
-            for (int m=0; m<3;m++){
-                if (m!=LFVIndexin3lepside){
-                    allindexes.push_back(m);
-                }
-            }
+            vector<int> allindexes={LFVIndexin3lepside};
             // 3E +1Muon
             if (data.Electron_size>data.Muon_size){
+                for (int m=0; m< data.Electron_size; m++){
+                    if ((m!=LFVIndexin3lepside) && (data.Electron_Charge[m]==data.Electron_Charge[LFVIndexin3lepside])){
+                        allindexes.push_back(m);
+                        break;
+                    }
+                }
                 SFSC1_RecVec.SetPtEtaPhiM(
                     data.Electron_PT[allindexes[0]],
                     data.Electron_Eta[allindexes[0]],
@@ -540,6 +545,12 @@ class Verify_Generator : public AnalysisModule {
                 );
             }
             else{
+                for (int m=0; m< data.Muon_size; m++){
+                    if ((m!=LFVIndexin3lepside) && (data.Muon_Charge[m]==data.Muon_Charge[LFVIndexin3lepside])){
+                        allindexes.push_back(m);
+                        break;
+                    }
+                }
                 SFSC1_RecVec.SetPtEtaPhiM(
                     data.Muon_PT[allindexes[0]],
                     data.Muon_Eta[allindexes[0]],
