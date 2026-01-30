@@ -387,10 +387,10 @@ void Z_off_shell_cut(TString inputfile="HLFV_160GeV.root", TString outputfile="H
     hist->Draw("HIST TEXT"); 
 
     hist->SetDirectory(histDir);
-    Matching_ThreeLep_Opposite_Heatmap->Draw("COLZ");
+    Matching_ThreeLep_Opposite_Heatmap->SetOption("COLZ");
     Matching_ThreeLep_Opposite_Heatmap->SetDirectory(histDir);
     SFSC_dR_Ratio->SetDirectory(histDir);
-    SFSC_dR_Heatmap->Draw("COLZ");
+    SFSC_dR_Heatmap->SetOption("COLZ");
     SFSC_dR_Heatmap->SetDirectory(histDir);
     //=========================================================================================================
     histDir->Write(); // Write all histograms in the directory
