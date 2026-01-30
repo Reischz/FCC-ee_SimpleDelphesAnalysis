@@ -519,7 +519,6 @@ class Verify_Generator : public AnalysisModule {
                     }
                 }
             }
-            cout << "Generator level SFSC dR calculation begin" << endl;
             data.SFSC_GendR=SFSC1_GenVec.DeltaR(SFSC2_GenVec);
             // Find detector level particles that is SFSC
             // We know LFV lepton index in 3 lepton side is LFVIndexin3lepside
@@ -529,9 +528,12 @@ class Verify_Generator : public AnalysisModule {
                 for (int m=0; m< data.Electron_size; m++){
                     if ((m!=LFVIndexin3lepside) && (data.Electron_Charge[m]==data.Electron_Charge[LFVIndexin3lepside])){
                         allindexes.push_back(m);
-                        cout << "Found same flavor lepton index: " << m << endl;
                         break;
                     }
+                }
+                if (allindexes.size()<2){
+                    // Safety check
+                    return;
                 }
                 SFSC1_RecVec.SetPtEtaPhiM(
                     data.Electron_PT[allindexes[0]],
@@ -552,6 +554,10 @@ class Verify_Generator : public AnalysisModule {
                         allindexes.push_back(m);
                         break;
                     }
+                }
+                if (allindexes.size()<2){
+                    // Safety check
+                    return;
                 }
                 SFSC1_RecVec.SetPtEtaPhiM(
                     data.Muon_PT[allindexes[0]],
