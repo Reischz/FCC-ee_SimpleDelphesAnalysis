@@ -97,6 +97,9 @@ struct EventContext {
         Matching_ThreeLepSide = false;
         Matching_Perfect = false;
         Matching_OppositeLep = false;
+
+        float SFSC_GendR = -1.0;
+        float SFSC_RecodR = -1.0;
     }
     // Function to print current state (for debugging)
     void print() {
