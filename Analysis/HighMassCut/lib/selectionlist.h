@@ -402,10 +402,7 @@ class Verify_Generator : public AnalysisModule {
                         dR=generatorLepton.DeltaR(detectorLepton);
                         // Identify Opposite Candidate
                         for (int k=0; k<FinalstateIndexes.size(); k++){
-                            if ((k==i) || (data.Particle_PID[FinalstateIndexes[k]]!=thisFlavor) || (data.Particle_Charge[FinalstateIndexes[k]]!=data.Particle_Charge[FinalstateIndexes[i]])){
-                                continue;
-                            }
-                            else {
+                            if ((k!=i) && (data.Particle_PID[FinalstateIndexes[k]]==thisFlavor)){
                                 OppositeGeneratorLepton.SetPtEtaPhiM(
                                     data.Particle_PT[FinalstateIndexes[k]], 
                                     data.Particle_Eta[FinalstateIndexes[k]], 
@@ -447,7 +444,7 @@ class Verify_Generator : public AnalysisModule {
                         dR=generatorLepton.DeltaR(detectorLepton);
                         // Identify Opposite Candidate
                         for (int k=0; k<FinalstateIndexes.size(); k++){
-                            if ((k==i) || (data.Particle_PID[FinalstateIndexes[k]]!=thisFlavor) || (data.Particle_Charge[FinalstateIndexes[k]]==data.Particle_Charge[FinalstateIndexes[i]])){
+                            if ((k==i) || (data.Particle_PID[FinalstateIndexes[k]]!=thisFlavor)){
                                 continue;
                             }
                             else {
