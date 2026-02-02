@@ -244,9 +244,43 @@ class NotZ_MassThreshold : public AnalysisModule {
         }
 };
 
+class HighMass_PT : public AnalysisModule {
+    public:
+        HighMass_PT() : AnalysisModule("HighMass_PT") {
+            isPairedLepton=true;
+        }
+        void process(EventContext &data, const defaultParameters &params) override {
+            // =======================Defined Varibles==========================
+            return;
+        }
+};
+
 class PairSelection_offshell : public AnalysisModule {
     public:
         PairSelection_offshell() : AnalysisModule("PairSelection_offshell") {
+            isPairedLepton=true;
+        }
+        void process(EventContext &data, const defaultParameters &params) override {
+            // Defined Varibles
+            return;
+        }
+};
+
+class Verify_Generator : public AnalysisModule {
+    public:
+        Verify_Generator() : AnalysisModule("Verify_Generator") {}
+        void process(EventContext &data, const defaultParameters &params) override {
+            return;
+        }
+};
+
+
+//===================================================================================================
+// Lagacy
+//===================================================================================================
+class PairSelection_offshell_VO : public AnalysisModule {
+    public:
+        PairSelection_offshell_VO() : AnalysisModule("PairSelection_offshell_VO") {
             isPairedLepton=true;
         }
 
@@ -341,9 +375,9 @@ class PairSelection_offshell : public AnalysisModule {
         }
 };
 
-class Verify_Generator : public AnalysisModule {
+class Verify_Generator_VO : public AnalysisModule {
     public:
-        Verify_Generator() : AnalysisModule("Verify_Generator") {}
+        Verify_Generator_VO() : AnalysisModule("Verify_Generator_VO") {}
 
         void process(EventContext &data, const defaultParameters &params) override {
             // Placeholder for future implementation

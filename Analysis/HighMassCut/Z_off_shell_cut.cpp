@@ -1,49 +1,40 @@
 #include <TFile.h>
 #include <TTree.h>
 #include <TString.h>
-#include <TApplication.h> // Needed for clean ROOT termination
+#include <TApplication.h> 
 #include <iostream>
-#include <cstdlib>        // Needed for std::exit
+#include <cstdlib>        
 #include <filesystem>
 #include <vector>
-#include "TLorentzVector.h" // This is the one currently missing
+#include "TLorentzVector.h" 
 #include "TH1.h"
 #include "TH2.h"
 #include "lib/selectionlist.h"
-// #include <lib/parameter.h>
-// Add any other ROOT headers you use (TH1F.h, TChain.h, etc.)
+#include <chrono>
 
 using namespace std;
-// set beginning time
+// =====================Setting up timer to test loop overhead time=====================
 auto start_time = std::chrono::high_resolution_clock::now();
 
-// First Cut: All leptons PT > 10 GeV
-// Second Cut: 4 leptons in the event
-// Third Cut: Each lepton is odd numbered (1,3,5...) in the collection
-// Fourth Cut: No Charge violation in the event
-// Fifth cut: Z windows +- 10 GeV around Z mass (91.1876 GeV)
-// ==========================================
-// Workflow Modular Design
-// ==========================================
+
+// ==========================Selection Pipeline Configuration===========================
 using AnalysisStep = std::pair<AnalysisModule*, bool>;
 std::vector<AnalysisStep> ConfigurePipeline() {
     // Return the list directly!
     return {
-        { new NonSelection()        ,    true  }, //00
-        { new Lepton_PT()           ,    true  }, //01
-        { new FinalState_4Leptons() ,    true  }, //02
-        { new Lepton_Odd()          ,    true  }, //03
-        { new Charge_Violation()    ,    true  }, //04
-        { new PairSelection_offshell(),    true  }, //05
-        { new NotZ_MassThreshold()  ,    true  }  //06
+        { new NonSelection()            ,    true  }, //00
+        { new Lepton_PT()               ,    true  }, //01
+        { new FinalState_4Leptons()     ,    true  }, //02
+        { new Lepton_Odd()              ,    true  }, //03
+        { new Charge_Violation()        ,    true  }, //04
+        { new PairSelection_offshell()  ,    true  }, //05
+        { new NotZ_MassThreshold()      ,    true  }  //06
     };
 }
 AnalysisModule* LastVerifyGen= new Verify_Generator();
-// ==========================================
-// Main Execution (ROOT Macro)
-// ==========================================
-void Z_off_shell_cut(TString inputfile="HLFV_160GeV.root", TString outputfile="HLFV_160GeV_Zoff.root", 
-    TString TreeOutput="HLFV_160GeV_AdditionalTree.root") {
+// ==========================Main Execution (ROOT Macro)===========================
+void Z_off_shell_cut(TString inputfile="Prelim_sample/HLFV_160GeV.root", TString outputfile="Prelim_result/HLFV_160GeV_Zoff.root", 
+    TString TreeOutput="Prelim_result/HLFV_160GeV_AdditionalTree.root") {
     
     // ===============================
     // Setting up input (Root) file
@@ -83,9 +74,7 @@ void Z_off_shell_cut(TString inputfile="HLFV_160GeV.root", TString outputfile="H
     t->SetBranchStatus("Event_size", 1);
     t->SetBranchStatus("Electron*", 1); // Enables all branches starting with Electron
     t->SetBranchStatus("Muon*", 1);     // Enables all branches starting with Muon
-    t->SetBranchStatus("Particle.*", 1);// Enables all branches starting with Particle
-    t->SetBranchStatus("Particle_size", 1);
-    // t->SetBranchStatus("MissingET.MET", 1);
+    t->SetBranchStatus("Particle*", 1); // Enables all branches starting with Particle
     t->SetBranchStatus("MissingET.Phi", 1);
 
     // --- SPEED OPTIMIZATION END ---
