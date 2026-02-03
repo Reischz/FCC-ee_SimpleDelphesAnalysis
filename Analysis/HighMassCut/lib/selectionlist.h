@@ -273,7 +273,7 @@ class PairSelection_offshell : public AnalysisModule {
             float* SingleLep_Eta=   EMore ? data.Muon_Eta : data.Electron_Eta;
             float* SingleLep_Phi=   EMore ? data.Muon_Phi : data.Electron_Phi;
             int* SingleLep_Charge=EMore ? data.Muon_Charge : data.Electron_Charge;
-            float& SingleLep_MASS=   EMore ? params.Muon_MASS : params.Electron_MASS;
+            const float& SingleLep_MASS=   EMore ? params.Muon_MASS : params.Electron_MASS;
             // ========================================================Processing==========================
             TLorentzVector SgleVec, HCandLep1Vec, HCandLep2Vec;
             SgleVec.SetPtEtaPhiM(
