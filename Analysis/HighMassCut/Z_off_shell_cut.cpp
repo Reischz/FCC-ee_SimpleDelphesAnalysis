@@ -1,392 +1,349 @@
 #include <TFile.h>
 #include <TTree.h>
+#include <TLeaf.h>
 #include <TString.h>
 #include <TApplication.h> 
 #include <iostream>
 #include <cstdlib>        
 #include <filesystem>
 #include <vector>
+#include <map>
+#include <chrono>
 #include "TLorentzVector.h" 
 #include "TH1.h"
 #include "TH2.h"
-#include "lib/selectionlist.h"
-#include <chrono>
+#include "lib/selectionlist.h" // Defines EventContext (using Arrays)
 
 using namespace std;
-// =====================Setting up timer to test loop overhead time=====================
 auto start_time = std::chrono::high_resolution_clock::now();
 
+// =========================================================================
+// 1. LEAF READER ADAPTER
+// Reads raw values directly, bypassing missing Class Dictionaries
+// =========================================================================
+struct LeafReader {
+    // Pointers to the raw leaves in the TTree
+    TLeaf *Event_size = nullptr;
+    TLeaf *Electron_size = nullptr;
+    TLeaf *Muon_size = nullptr;
+    TLeaf *Particle_size = nullptr;
+    TLeaf *MET_Phi = nullptr;
 
-// ==========================Selection Pipeline Configuration===========================
+    TLeaf *Ele_PT = nullptr;
+    TLeaf *Ele_Eta = nullptr;
+    TLeaf *Ele_Phi = nullptr;
+    TLeaf *Ele_Chg = nullptr;
+
+    TLeaf *Mu_PT = nullptr;
+    TLeaf *Mu_Eta = nullptr;
+    TLeaf *Mu_Phi = nullptr;
+    TLeaf *Mu_Chg = nullptr;
+
+    TLeaf *Par_PT = nullptr;
+    TLeaf *Par_Eta = nullptr;
+    TLeaf *Par_Phi = nullptr;
+    TLeaf *Par_PID = nullptr;
+
+    // Connects leaves to the tree
+    void Init(TTree* t) {
+        // Helper to get leaf safely
+        auto get = [&](const char* name) { 
+            TLeaf* l = t->GetLeaf(name);
+            if (!l) cout << "Warning: Leaf '" << name << "' not found." << endl;
+            return l;
+        };
+
+        Event_size = get("Event_size");
+        Electron_size = get("Electron_size");
+        Muon_size = get("Muon_size");
+        Particle_size = get("Particle_size");
+        MET_Phi = get("MissingET.Phi");
+
+        Ele_PT = get("Electron.PT");
+        Ele_Eta = get("Electron.Eta");
+        Ele_Phi = get("Electron.Phi");
+        Ele_Chg = get("Electron.Charge");
+
+        Mu_PT = get("Muon.PT");
+        Mu_Eta = get("Muon.Eta");
+        Mu_Phi = get("Muon.Phi");
+        Mu_Chg = get("Muon.Charge");
+
+        Par_PT = get("Particle.PT");
+        Par_Eta = get("Particle.Eta");
+        Par_Phi = get("Particle.Phi");
+        Par_PID = get("Particle.PID");
+    }
+
+    // Reads current entry from Leaves into the EventContext
+    void ReadEntry(EventContext& ev) {
+        // Scalars
+        if(Event_size) ev.Event_size = (int)Event_size->GetValue();
+        if(MET_Phi)    ev.MET_Phi = (float)MET_Phi->GetValue();
+        
+        // Electrons
+        if(Electron_size) {
+            ev.Electron_size = (int)Electron_size->GetValue();
+            // Safety clamp to 20 (assuming EventContext array size is 20)
+            int count = std::min(ev.Electron_size, 20); 
+            for(int i=0; i<count; ++i) {
+                if(Ele_PT)  ev.Electron_PT[i]  = (float)Ele_PT->GetValue(i);
+                if(Ele_Eta) ev.Electron_Eta[i] = (float)Ele_Eta->GetValue(i);
+                if(Ele_Phi) ev.Electron_Phi[i] = (float)Ele_Phi->GetValue(i);
+                if(Ele_Chg) ev.Electron_Charge[i] = (int)Ele_Chg->GetValue(i);
+            }
+        }
+
+        // Muons
+        if(Muon_size) {
+            ev.Muon_size = (int)Muon_size->GetValue();
+            int count = std::min(ev.Muon_size, 20);
+            for(int i=0; i<count; ++i) {
+                if(Mu_PT)  ev.Muon_PT[i]  = (float)Mu_PT->GetValue(i);
+                if(Mu_Eta) ev.Muon_Eta[i] = (float)Mu_Eta->GetValue(i);
+                if(Mu_Phi) ev.Muon_Phi[i] = (float)Mu_Phi->GetValue(i);
+                if(Mu_Chg) ev.Muon_Charge[i] = (int)Mu_Chg->GetValue(i);
+            }
+        }
+
+        // Particles
+        if(Particle_size) {
+            ev.Particle_size = (int)Particle_size->GetValue();
+            int count = std::min(ev.Particle_size, 50); // Assumes Particle array size is larger
+            for(int i=0; i<count; ++i) {
+                if(Par_PT)  ev.Particle_PT[i]  = (float)Par_PT->GetValue(i);
+                if(Par_Eta) ev.Particle_Eta[i] = (float)Par_Eta->GetValue(i);
+                if(Par_Phi) ev.Particle_Phi[i] = (float)Par_Phi->GetValue(i);
+                if(Par_PID) ev.Particle_PID[i] = (int)Par_PID->GetValue(i);
+            }
+        }
+    }
+};
+
+// =========================================================================
+// 2. HELPER: Histogram Manager
+// =========================================================================
+struct HistManager {
+    std::map<TString, TH1*> h1;
+    std::map<TString, TH2*> h2;
+    TDirectory* dir = nullptr;
+
+    void SetDirectory(TDirectory* d) { dir = d; }
+
+    TH1F* Book1D(TString name, TString title, int nbins, double min, double max) {
+        if (dir) dir->cd();
+        TH1F* h = new TH1F(name, title, nbins, min, max);
+        h->SetDirectory(dir);
+        h1[name] = h;
+        return h;
+    }
+
+    TH2F* Book2D(TString name, TString title, int nxbins, double xmin, double xmax, int nybins, double ymin, double ymax) {
+        if (dir) dir->cd();
+        TH2F* h = new TH2F(name, title, nxbins, xmin, xmax, nybins, ymin, ymax);
+        h->SetDirectory(dir);
+        h2[name] = h;
+        return h;
+    }
+
+    void Fill1D(TString name, double val) {
+        if (h1.count(name)) h1[name]->Fill(val);
+    }
+
+    void Fill2D(TString name, double valx, double valy) {
+        if (h2.count(name)) h2[name]->Fill(valx, valy);
+    }
+};
+
+// =========================================================================
+// 3. PIPELINE CONFIGURATION
+// =========================================================================
 using AnalysisStep = std::pair<AnalysisModule*, bool>;
+
 std::vector<AnalysisStep> ConfigurePipeline() {
-    // Return the list directly!
     return {
-        { new NonSelection()            ,    true  }, //00
-        { new Lepton_PT()               ,    true  }, //01
-        { new FinalState_4Leptons()     ,    true  }, //02
-        { new Lepton_Odd()              ,    true  }, //03
-        { new Charge_Violation()        ,    true  }, //04
-        { new PairSelection_offshell()  ,    true  }, //05
-        { new NotZ_MassThreshold()      ,    true  }  //06
+        { new NonSelection()          , true },
+        { new Lepton_PT()             , true },
+        { new FinalState_4Leptons()   , true },
+        { new Lepton_Odd()            , true },
+        { new Charge_Violation()      , true },
+        { new PairSelection_offshell(), true },
+        { new NotZ_MassThreshold()    , true }
     };
 }
-AnalysisModule* LastVerifyGen= new Verify_Generator();
-// ==========================Main Execution (ROOT Macro)===========================
-void Z_off_shell_cut(TString inputfile="Prelim_sample/HLFV_160GeV.root", TString outputfile="Prelim_result/HLFV_160GeV_Zoff.root", 
-    TString TreeOutput="Prelim_result/HLFV_160GeV_AdditionalTree.root") {
-    
-    // ===============================
-    // Setting up input (Root) file
-    // ===============================
-    // check input file existence
+
+// =========================================================================
+// 4. MAIN MACRO
+// =========================================================================
+void Z_off_shell_cut(
+    TString inputfile = "Prelim_sample/HLFV_160GeV.root", 
+    TString outputfile = "Prelim_result/HLFV_160GeV_Zoff.root", 
+    TString TreeOutput = "Prelim_result/HLFV_160GeV_AdditionalTree.root"
+) { 
+    auto start_time = std::chrono::high_resolution_clock::now();
+
+    // --- Input Validation ---
     if (!std::filesystem::exists(inputfile.Data())) {
-        cerr << "Input file does not exist: " << inputfile << endl;
-        // It is safer to use simple return in interactive ROOT, 
-        // but exit(1) works for batch jobs.
-        exit(1); 
+        cerr << "Input file missing: " << inputfile << endl; exit(1);
     }
 
-    // check input file content is zombie
-    TFile *f = TFile::Open(inputfile);
-    if (!f || f->IsZombie()) {
-        cerr << "Input file is corrupted (zombie): " << inputfile << endl;
-        exit(1);
-    }
+    TFile *fIn = TFile::Open(inputfile);
+    if (!fIn || fIn->IsZombie()) { cerr << "File corrupted." << endl; exit(1); }
     
-    cout << "Applying Z off-shell cut on file: " << inputfile << endl;
+    TTree *tIn = (TTree*)fIn->Get("Delphes");
+    if (!tIn) { cerr << "Tree 'Delphes' not found." << endl; exit(1); }
     
-    // Get the tree
-    TTree *t = (TTree*)f->Get("Delphes");
-    
-    // Safety check: ensure tree exists
-    if (!t) {
-        cerr << "Error: Tree 'Delphes' not found in file!" << endl;
-        f->Close();
-        exit(1);
-    }
-    
-    // --- SPEED OPTIMIZATION START ---
-    // 1. Disable ALL branches first
-    t->SetBranchStatus("*", 0);
-    
-    // 2. Enable ONLY the branches you actually use
-    t->SetBranchStatus("Event_size", 1);
-    t->SetBranchStatus("Electron*", 1); // Enables all branches starting with Electron
-    t->SetBranchStatus("Muon*", 1);     // Enables all branches starting with Muon
-    t->SetBranchStatus("Particle*", 1); // Enables all branches starting with Particle
-    t->SetBranchStatus("MissingET.Phi", 1);
+    // --- Setup Leaf Reader (No SetBranchAddress!) ---
+    // Note: We do NOT define SetBranchAddress here. 
+    // We rely on TLeaf which works even without dictionaries.
+    tIn->SetBranchStatus("*", 1); // Enable all for Leaf access
+    LeafReader reader;
+    reader.Init(tIn);
 
-    // --- SPEED OPTIMIZATION END ---
-
-    // Define variables
-    EventContext currentEvent;
+    // --- Output Setup ---
+    TFile *fTreeOut = TFile::Open(TreeOutput, "RECREATE");
+    TTree *tOut = new TTree("Selection Results", "Z off-shell results");
+    
+    EventContext ev; // This comes from lib/selectionlist.h
     defaultParameters params;
-    auto pipeline=ConfigurePipeline();
-    
-    // Make sure these branches actually exist before setting address
-    if (t->GetBranch("Event_size"))  t->SetBranchAddress("Event_size", &currentEvent.Event_size);
-    if (t->GetBranch("Electron_size")) t->SetBranchAddress("Electron_size", &currentEvent.Electron_size);
-    if (t->GetBranch("Electron.PT")) t->SetBranchAddress("Electron.PT", &currentEvent.Electron_PT);
-    if (t->GetBranch("Electron.Eta")) t->SetBranchAddress("Electron.Eta", &currentEvent.Electron_Eta);
-    if (t->GetBranch("Electron.Phi")) t->SetBranchAddress("Electron.Phi", &currentEvent.Electron_Phi);
-    if (t->GetBranch("Electron.Charge")) t->SetBranchAddress("Electron.Charge", &currentEvent.Electron_Charge);
-    if (t->GetBranch("Muon_size")) t->SetBranchAddress("Muon_size", &currentEvent.Muon_size);
-    if (t->GetBranch("Muon.PT")) t->SetBranchAddress("Muon.PT", &currentEvent.Muon_PT);
-    if (t->GetBranch("Muon.Eta")) t->SetBranchAddress("Muon.Eta", &currentEvent.Muon_Eta);
-    if (t->GetBranch("Muon.Phi")) t->SetBranchAddress("Muon.Phi", &currentEvent.Muon_Phi);
-    if (t->GetBranch("Muon.Charge")) t->SetBranchAddress("Muon.Charge", &currentEvent.Muon_Charge);
-    if (t->GetBranch("MissingET.Phi")) t->SetBranchAddress("MissingET.Phi", &currentEvent.MET_Phi);
+    auto pipeline = ConfigurePipeline();
+    AnalysisModule* LastVerifyGen = new Verify_Generator();
 
-    // Verify with generator level particles
-    if (t->GetBranch("Particle.PT")) t->SetBranchAddress("Particle.PT", &currentEvent.Particle_PT);
-    if (t->GetBranch("Particle.Eta")) t->SetBranchAddress("Particle.Eta", &currentEvent.Particle_Eta);
-    if (t->GetBranch("Particle.Phi")) t->SetBranchAddress("Particle.Phi", &currentEvent.Particle_Phi);
-    if (t->GetBranch("Particle.PID")) t->SetBranchAddress("Particle.PID", &currentEvent.Particle_PID);
-    if (t->GetBranch("Particle.M1")) t->SetBranchAddress("Particle.M1", &currentEvent.Particle_M1);
-    if (t->GetBranch("Particle.M2")) t->SetBranchAddress("Particle.M2", &currentEvent.Particle_M2);
-    if (t->GetBranch("Particle.D1")) t->SetBranchAddress("Particle.D1", &currentEvent.Particle_D1);
-    if (t->GetBranch("Particle.D2")) t->SetBranchAddress("Particle.D2", &currentEvent.Particle_D2);
-    if (t->GetBranch("Particle.Charge")) t->SetBranchAddress("Particle.Charge", &currentEvent.Particle_Charge);
-    if (t->GetBranch("Particle.Status")) t->SetBranchAddress("Particle.Status", &currentEvent.Particle_Status);
-    if (t->GetBranch("Particle_size")) t->SetBranchAddress("Particle_size", &currentEvent.Particle_size);
-
-    //================================
-    // Setting up new tree for contains cut results
-    //================================
-    TFile *tfile_out = TFile::Open(TreeOutput, "RECREATE");
-    tfile_out->cd();
-    TTree *t_out = new TTree("Selection Results", "Tree with Z off-shell cut results");
     int dummy = 0;
-     // Create branches for each cut in the pipeline
     for (auto& step : pipeline) {
-        if (step.second) { // If module is active
-            TString branchName = TString::Format("Status_%02d_%s", dummy, step.first->getName().c_str()); 
-            // e.g., Cut_00_Lepton_PT, Cut_1_FinalState_4Leptons, etc.
-            t_out->Branch(branchName, &currentEvent.CutStatus[dummy], (branchName + "/I"));
+        if (step.second) {
+            TString bName = TString::Format("Status_%02d_%s", dummy, step.first->getName().c_str());
+            tOut->Branch(bName, &ev.CutStatus[dummy], bName + "/I");
             dummy++;
         }
     }
-    t_out->Branch("NearestZ_Mass", &currentEvent.NearestZ_Mass, "NearestZ_Mass/F");
-    t_out->Branch("OtherPair_Mass", &currentEvent.OtherPair_Mass, "OtherPair_Mass/F");
-    t_out->Branch("Z_PairIndexSum", &currentEvent.Z_PairIndexSum, "Z_PairIndexSum/I");
-    t_out->Branch("NotZ_dR", &currentEvent.NotZ_dR, "NotZ_dR/F");
-    t_out->Branch("NotZ_dPhi", &currentEvent.NotZ_dPhi, "NotZ_dPhi/F");
-    t_out->Branch("NotZ_EleMET_dPhi", &currentEvent.NotZ_EleMET_dPhi, "NotZ_EleMET_dPhi/F");
-    t_out->Branch("NotZ_MuMET_dPhi", &currentEvent.NotZ_MuMET_dPhi, "NotZ_MuMET_dPhi/F");
-    // ==============================
-    
-    //=============================
-    // Histogram Definition
-    //=============================
-    TFile *f_out = TFile::Open(outputfile, "RECREATE");
-    f_out->cd();
-    TDirectory *histDir = f_out->mkdir("histgramtree");
-    // int dummy=0;
-    vector<float> ZBIN={0, 200};
-    vector<TString> histNames={"Lepton.PT","Lepton.Eta","Lepton.Phi"};
-    vector<TString> massHistNames={"NearestZ_Mass","OtherPair_Mass","NotZ_dR","NotZ_dPhi"};
-    vector<TString> histXLabels={"GeV"," "," ","GeV","GeV"," "," "};
-    vector<int> histNBins={100,100,100,200,160,50,50};
-    vector<float> histXMin={0, -3, -5, ZBIN[0], 0, 0, 0};
-    vector<float> histXMax={200, 3, 5, ZBIN[1], 160, 6, 3.5};
-     // Create histograms for each cut in the pipeline
-    dummy=0;
-    size_t histNames_size=histNames.size();
+    tOut->Branch("NearestZ_Mass", &ev.NearestZ_Mass, "NearestZ_Mass/F");
+    tOut->Branch("OtherPair_Mass", &ev.OtherPair_Mass, "OtherPair_Mass/F");
+
+    // --- Histogram Setup ---
+    TFile *fHistOut = TFile::Open(outputfile, "RECREATE");
+    TDirectory *histDir = fHistOut->mkdir("histgramtree");
+    HistManager hm;
+    hm.SetDirectory(histDir);
+
+    dummy = 0;
     for (auto& step : pipeline) {
-            if (step.second) { // If module is active
-                if (step.first->isPairedLepton){
-                    for (size_t histidx=0; histidx<massHistNames.size(); histidx++){
-                        TString histName = TString::Format("%02d_%s-%s", dummy, massHistNames[histidx].Data(), step.first->getName().c_str());
-                        TH1F *hist = new TH1F(histName, histName + ";" + histXLabels[histidx+histNames_size] + ";Events",
-                            histNBins[histidx+histNames_size], histXMin[histidx+histNames_size], histXMax[histidx+histNames_size]);
-                        hist->SetDirectory(histDir); // Associate histogram with directory
-                    }
-                    TH2F *vsmass = new TH2F(TString::Format("%02d_MassPairHeatmap-%s", dummy, step.first->getName().c_str()), "Mass Map;Pair 1 Mass (GeV);Pair 2 Mass (GeV)", 50, ZBIN[0], ZBIN[1], 160, 0, 160);
-                    vsmass->SetDirectory(histDir); // Associate histogram with directory
-                }
-                for (size_t histidx=0; histidx<histNames.size(); histidx++){
-                    TString histName = TString::Format("%02d_%s-%s", dummy, histNames[histidx].Data(), step.first->getName().c_str());
-                    TH1F *hist = new TH1F(histName, histName + ";" + histXLabels[histidx] + ";Events",
-                        histNBins[histidx], histXMin[histidx], histXMax[histidx]);
-                    hist->SetDirectory(histDir); // Associate histogram with directory
-                }
-            }
-            dummy++;
+        if (!step.second) continue;
+        TString stepName = step.first->getName();
+        TString prefix = TString::Format("%02d_", dummy);
+        
+        hm.Book1D(prefix + "Lepton.PT-" + stepName, "PT;GeV", 100, 0, 200);
+        hm.Book1D(prefix + "Lepton.Eta-" + stepName, "Eta", 100, -3, 3);
+        hm.Book1D(prefix + "Lepton.Phi-" + stepName, "Phi", 100, -5, 5);
+
+        if (step.first->isPairedLepton) {
+            hm.Book1D(prefix + "NearestZ_Mass-" + stepName, "M_Z1;GeV", 100, 0, 200);
+            hm.Book1D(prefix + "OtherPair_Mass-" + stepName, "M_Z2;GeV", 100, 0, 160);
+            hm.Book1D(prefix + "NotZ_dR-" + stepName, "dR", 50, 0, 6);
+            hm.Book1D(prefix + "NotZ_dPhi-" + stepName, "dPhi", 50, 0, 3.5);
+            hm.Book2D(prefix + "MassPairHeatmap-" + stepName, "Mass Map", 50, 0, 200, 160, 0, 160);
         }
-    // Histogram for SFSC dR Heatmap
-    TH2F *SFSC_dR_Heatmap = new TH2F("SFSC_dR_Heatmap", "SFSC dR;Generator Level dR;Reconstructed Level dR", 100, 0, 10, 50, 0, 10);
-    // Histogram for SFSC ratio
-    TH1F *SFSC_dR_Ratio = new TH1F("SFSC_dR_Ratio", "SFSC dR Ratio;Reconstructed dR / Generator dR;Events", 300, 0, 3);
-    // Matching Threelep vs matching opposite heatmap
-    TH2F *Matching_ThreeLep_Opposite_Heatmap = new TH2F("Matching_ThreeLep_Opposite_Heatmap", "Matching Three Lep vs Matching Opposite Lep;Three Lep Matching;Opposite Lep Matching", 2, 0, 2, 2, 0, 2);
-    //=============================
-    // ==============================
-    // Loop over events and apply cut
-    Long64_t nentries = t->GetEntries();
+        dummy++;
+    }
+
+    hm.Book2D("SFSC_dR_Heatmap", "Gen vs Reco dR", 100, 0, 10, 50, 0, 10);
+    hm.Book1D("SFSC_dR_Ratio", "Reco/Gen dR Ratio", 300, 0, 3);
+    hm.Book2D("Matching_ThreeLep_Opposite_Heatmap", "Matching Check", 2, 0, 2, 2, 0, 2);
+
+    // --- Event Loop ---
+    Long64_t nentries = tIn->GetEntries();
     cout << "Processing " << nentries << " entries..." << endl;
-    // variable for summary selection
-    vector<int> passcut;
+    
+    vector<int> selection_counts(10, 0);
+    int stats_single=0, stats_three=0, stats_perf=0, stats_opp=0;
 
-    int selection_counts[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0}; // Adjust size based on number of cuts
-    int finallpass=0;
-    int matchsingellepside=0;
-    int matchthreelepside=0;
-    int perfectmatch=0;
-    int mathopposite=0;
     for (Long64_t i = 0; i < nentries; i++) {
-        currentEvent.reset();
-        t->GetEntry(i);
-        // Check branchMap for the first event
-        dummy=0;
+        if (i % 100000 == 0) cout << " Processed " << i << " events..." << endl;
+        
+        // 1. Get Entry (Loads Leaves)
+        tIn->GetEntry(i);
+        ev.reset();
+
+        // 2. Read Leaves into EventContext (Array)
+        reader.ReadEntry(ev);
+
+        // 3. Run Pipeline
+        dummy = 0;
         for (auto& step : pipeline) {
-            if (step.second) { // If module is active
-                step.first->process(currentEvent, params);
-                if (currentEvent.PassThisCut == false) {
-                    break; // Stop processing further modules
-                }
-                currentEvent.CutStatus[currentEvent.CurrentCut] = currentEvent.PassThisCut ? 1 : 0;
-                for (size_t histidx=0; histidx<histNames.size(); histidx++){
-                    TString histName = TString::Format("%02d_%s-%s", dummy, histNames[histidx].Data(), step.first->getName().c_str());
-                    TH1F *hist = (TH1F*)histDir->Get(histName);
-                    if (hist) {
-                        if (histNames[histidx]=="Lepton.PT"){
-                            for (int e=0; e<currentEvent.Electron_size; e++){
-                                hist->Fill(currentEvent.Electron_PT[e]);
-                            }
-                            for (int m=0; m<currentEvent.Muon_size; m++){
-                                hist->Fill(currentEvent.Muon_PT[m]);
-                            }
-                        } else if (histNames[histidx]=="Lepton.Eta"){
-                            for (int e=0; e<currentEvent.Electron_size; e++){
-                                hist->Fill(currentEvent.Electron_Eta[e]);
-                            }
-                            for (int m=0; m<currentEvent.Muon_size; m++){
-                                hist->Fill(currentEvent.Muon_Eta[m]);
-                            }
-                        } else if (histNames[histidx]=="Lepton.Phi"){
-                            for (int e=0; e<currentEvent.Electron_size; e++){
-                                hist->Fill(currentEvent.Electron_Phi[e]);
-                            }
-                            for (int m=0; m<currentEvent.Muon_size; m++){
-                                hist->Fill(currentEvent.Muon_Phi[m]);
-                            }
-                        } else if (histNames[histidx]=="NearestZ_Mass"){
-                            hist->Fill(currentEvent.NearestZ_Mass);
-                        } else if (histNames[histidx]=="OtherPair_Mass"){
-                            hist->Fill(currentEvent.OtherPair_Mass);
-                        }
-                    }
-                }
-                if (step.first->isPairedLepton){
-                    // Fill mass histograms
-                    for (size_t histidx=0; histidx<massHistNames.size(); histidx++){
-                        TString histName = TString::Format("%02d_%s-%s", dummy, massHistNames[histidx].Data(), step.first->getName().c_str());
-                        TH1F *hist = (TH1F*)histDir->Get(histName);
-                        if (hist) {
-                            if (massHistNames[histidx]=="NearestZ_Mass"){
-                                hist->Fill(currentEvent.NearestZ_Mass);
-                            } else if (massHistNames[histidx]=="OtherPair_Mass"){
-                                hist->Fill(currentEvent.OtherPair_Mass);
-                            } else if (massHistNames[histidx]=="NotZ_dR"){
-                                hist->Fill(currentEvent.NotZ_dR);
-                            } else if (massHistNames[histidx]=="NotZ_dPhi"){
-                                hist->Fill(currentEvent.NotZ_dPhi);
-                            }
-                        }
-                    }
-                    TH2F *vsmass = (TH2F*)histDir->Get(TString::Format("%02d_MassPairHeatmap-%s", dummy, step.first->getName().c_str()));
-                    if (vsmass) {
-                        vsmass->Fill(currentEvent.NearestZ_Mass, currentEvent.OtherPair_Mass);
-                    }
-                }
-                currentEvent.CurrentCut++;
+            if (!step.second) continue;
+
+            step.first->process(ev, params);
+
+            ev.CutStatus[ev.CurrentCut] = ev.PassThisCut ? 1 : 0;
+            if (ev.PassThisCut) selection_counts[dummy]++;
+            if (!ev.PassThisCut) break; 
+
+            TString stepName = step.first->getName();
+            TString prefix = TString::Format("%02d_", dummy);
+
+            // Fill Histograms using the EventContext (which now has valid data)
+            for(int k=0; k<ev.Electron_size; k++) hm.Fill1D(prefix + "Lepton.PT-" + stepName, ev.Electron_PT[k]);
+            for(int k=0; k<ev.Muon_size; k++) hm.Fill1D(prefix + "Lepton.PT-" + stepName, ev.Muon_PT[k]);
+            
+            for(int k=0; k<ev.Electron_size; k++) hm.Fill1D(prefix + "Lepton.Eta-" + stepName, ev.Electron_Eta[k]);
+            for(int k=0; k<ev.Muon_size; k++) hm.Fill1D(prefix + "Lepton.Eta-" + stepName, ev.Muon_Eta[k]);
+
+            for(int k=0; k<ev.Electron_size; k++) hm.Fill1D(prefix + "Lepton.Phi-" + stepName, ev.Electron_Phi[k]);
+            for(int k=0; k<ev.Muon_size; k++) hm.Fill1D(prefix + "Lepton.Phi-" + stepName, ev.Muon_Phi[k]);
+
+            if (step.first->isPairedLepton) {
+                hm.Fill1D(prefix + "NearestZ_Mass-" + stepName, ev.NearestZ_Mass);
+                hm.Fill1D(prefix + "OtherPair_Mass-" + stepName, ev.OtherPair_Mass);
+                hm.Fill1D(prefix + "NotZ_dR-" + stepName, ev.NotZ_dR);
+                hm.Fill1D(prefix + "NotZ_dPhi-" + stepName, ev.NotZ_dPhi);
+                hm.Fill2D(prefix + "MassPairHeatmap-" + stepName, ev.NearestZ_Mass, ev.OtherPair_Mass);
             }
+            
+            ev.CurrentCut++;
             dummy++;
-            if (step.first->getName()=="NotZ_MassThreshold"){
-                LastVerifyGen->process(currentEvent, params);
-                SFSC_dR_Heatmap->Fill(currentEvent.SFSC_GendR, currentEvent.SFSC_RecodR);
-                SFSC_dR_Ratio->Fill(currentEvent.SFSC_RecodR/currentEvent.SFSC_GendR);
-                if (currentEvent.Matching_SingleLepSide){
-                    matchsingellepside=matchsingellepside+1;
-                }
-                if (currentEvent.Matching_ThreeLepSide){
-                    matchthreelepside=matchthreelepside+1;
-                }
-                if (currentEvent.Matching_Perfect){
-                    perfectmatch=perfectmatch+1;
-                }
-                if (currentEvent.Matching_OppositeLep){
-                    mathopposite=mathopposite+1;
-                }
-                Matching_ThreeLep_Opposite_Heatmap->Fill(currentEvent.Matching_ThreeLepSide, currentEvent.Matching_OppositeLep);
+
+            if (stepName == "NotZ_MassThreshold") {
+                LastVerifyGen->process(ev, params);
+                hm.Fill2D("SFSC_dR_Heatmap", ev.SFSC_GendR, ev.SFSC_RecodR);
+                if (ev.SFSC_GendR > 0) hm.Fill1D("SFSC_dR_Ratio", ev.SFSC_RecodR / ev.SFSC_GendR);
+                hm.Fill2D("Matching_ThreeLep_Opposite_Heatmap", ev.Matching_ThreeLepSide, ev.Matching_OppositeLep);
+                
+                if (ev.Matching_SingleLepSide) stats_single++;
+                if (ev.Matching_ThreeLepSide) stats_three++;
+                if (ev.Matching_Perfect) stats_perf++;
+                if (ev.Matching_OppositeLep) stats_opp++;
             }
         }
-        // Fill the output tree
-        t_out->Fill();
-        // Find index of 1 in CutStatus
-        for (int i=0; i < 10; i++){
-            if (currentEvent.CutStatus[i]==1){
-                selection_counts[i]=selection_counts[i]+1;
-            }
-        }
-        // report processed status every 100k events
-        if (i % 100000 == 0) {
-            cout << " Processed " << i << " events..." << endl;
-        }
+        tOut->Fill();
     }
-    // ==============================
-    // Cleanup
-    // ==============================
-    for (auto& step : pipeline) {
-        delete step.first;
-    }
+
+    // --- Cleanup & Summary ---
+    for (auto& step : pipeline) delete step.first;
     delete LastVerifyGen;
-    // Close input file
-    f->Close();
-    // ==============================
-    // Summary of selection
-    // ==============================
 
-    cout << "Summary of selection:" << endl;
-    cout << " Total events processed: " << nentries << endl;
-    cout << " Events passing each cut stage:" << endl;
-    cout << "  Initial: " << selection_counts[0] << endl;
-    cout << "  After Lepton PT cut: " << selection_counts[1] << endl;
-    cout << "  After Final State 4 Leptons cut: " << selection_counts[2] << endl;
-    cout << "  After Lepton Odd cut: " << selection_counts[3] << endl;
-    cout << "  After Charge Violation cut: " << selection_counts[4] << endl;
-    cout << "  After Z Window cut: " << selection_counts[5] << endl;
-    cout << "  After NotZ dR cut: " << selection_counts[6] << endl;
-    cout << "  After NotZ MET dPhi cut: " << selection_counts[7] << endl;
-    cout << "  After NotZ Mass Threshold cut: " << selection_counts[8] << endl;
+    cout << "\nSelection Summary:" << endl;
+    for(int k=0; k<pipeline.size(); k++) cout << " Stage " << k << ": " << selection_counts[k] 
+                                            << ", " << pipeline[k].first->getName() << endl;
 
-    // test loop overhead time without calculation
+    fTreeOut->cd();
+    tOut->Write();
+    fTreeOut->Close();
+
+    fHistOut->cd();
+    TH1F *hStats = new TH1F("Matching_Bars_chart", "Matching Stats", 4, 0, 4);
+    hStats->SetBinContent(1, stats_single); hStats->GetXaxis()->SetBinLabel(1, "Single");
+    hStats->SetBinContent(2, stats_three);  hStats->GetXaxis()->SetBinLabel(2, "Three");
+    hStats->SetBinContent(3, stats_perf);   hStats->GetXaxis()->SetBinLabel(3, "Perfect");
+    hStats->SetBinContent(4, stats_opp);    hStats->GetXaxis()->SetBinLabel(4, "Opposite");
+    hStats->SetDirectory(histDir);
+    
+    histDir->Write();
+    fHistOut->Close();
+    fIn->Close();
+
+    cout << "Done." << endl;
     auto end_time = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end_time - start_time;
-    cout << "Loop overhead time: " << elapsed.count() << " seconds" << endl;
-    //==============================
-    // Write Tree Output
-    //==============================
-    tfile_out->cd();
-    t_out->Write();
-    tfile_out->Close();
-
-    //==============================
-    // Write output histogram to file
-    //==============================
-    f_out->cd();
-    //========================================================================================
-    // 1. Create the histogram (4 bins, range 0 to 4)
-    TString histName = "Matching_Bars_chart";
-    TH1F *hist = new TH1F(histName, "Matching Efficiency;Matching Type;Events", 4, 0, 4);
-    
-    // 2. Set the text labels for the X-axis
-    // Note: ROOT bin indexing starts at 1, not 0!
-    hist->GetXaxis()->SetBinLabel(1, "Matched Single Lepton Side");
-    hist->GetXaxis()->SetBinLabel(2, "Matched Three Lepton Side");
-    hist->GetXaxis()->SetBinLabel(3, "Perfect Match");
-    hist->GetXaxis()->SetBinLabel(4, "Matched Opposite Lepton Side");
-
-    // 3. Set the values (Height of the bars)
-    // You can use Fill() inside a loop, or SetBinContent() if you already have the totals
-    hist->SetBinContent(1, matchsingellepside); // Count for Type 1
-    hist->SetBinContent(2, matchthreelepside); // Count for Type 2
-    hist->SetBinContent(3, perfectmatch);  // Count for Type 3
-    hist->SetBinContent(4, mathopposite);  // Count for Type 4
-
-    // 4. Visual Styling (Optional but recommended for categorical charts)
-    
-    // Hide the stats box (Mean/RMS don't make sense for categories)
-    hist->SetStats(0); 
-    
-    // Make labels big enough to read
-    hist->GetXaxis()->SetLabelSize(0.05); 
-    
-    // Center the labels in the bin
-    hist->GetXaxis()->CenterLabels();
-
-    // Set Colors
-    hist->SetFillColor(kAzure+1);
-    hist->SetLineColor(kBlack);
-
-    // 5. Draw
-    // "HIST" draws the outline
-    // "TEXT" writes the specific number on top of the bar
-    hist->Draw("HIST TEXT"); 
-
-    hist->SetDirectory(histDir);
-    Matching_ThreeLep_Opposite_Heatmap->SetOption("COLZ");
-    Matching_ThreeLep_Opposite_Heatmap->SetDirectory(histDir);
-    SFSC_dR_Ratio->SetDirectory(histDir);
-    SFSC_dR_Heatmap->SetOption("COLZ");
-    SFSC_dR_Heatmap->SetDirectory(histDir);
-    //=========================================================================================================
-    histDir->Write(); // Write all histograms in the directory
-    // Clean up
-    cout << "Done. Output written to: " << outputfile << endl;
-    f_out->Close();
-    // t_out->Close();
-    //==============================
-    gApplication->Terminate(); // Clean ROOT termination
+    cout << "Total execution time: " << elapsed.count() << " seconds" << endl;
+    gApplication->Terminate();
 }

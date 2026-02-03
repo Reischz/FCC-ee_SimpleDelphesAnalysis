@@ -261,7 +261,34 @@ class PairSelection_offshell : public AnalysisModule {
             isPairedLepton=true;
         }
         void process(EventContext &data, const defaultParameters &params) override {
-            // Defined Varibles
+            // ========================================================Defined Varibles==========================
+            bool EMore= (data.Electron_size > data.Muon_size);
+            TString ThreeLepFlavour=  EMore ? "E" : "Mu";
+            TString SingleLepFlavour= EMore ? "Mu" : "E";
+            float& ThreeLep_PT=     EMore ? data.Electron_PT : data.Muon_PT;
+            float& ThreeLep_Eta=    EMore ? data.Electron_Eta : data.Muon_Eta;
+            float& ThreeLep_Phi=    EMore ? data.Electron_Phi : data.Muon_Phi;
+            float& ThreeLep_Charge= EMore ? data.Electron_Charge : data.Muon_Charge;
+            float& SingleLep_PT=    EMore ? data.Muon_PT : data.Electron_PT;
+            float& SingleLep_Eta=   EMore ? data.Muon_Eta : data.Electron_Eta;
+            float& SingleLep_Phi=   EMore ? data.Muon_Phi : data.Electron_Phi;
+            float& SingleLep_Charge=EMore ? data.Muon_Charge : data.Electron_Charge;
+            float& SingleLep_MASS=   EMore ? params.Muon_MASS : params.Electron_MASS;
+            // ========================================================Processing==========================
+            TLorentzVector SgleVec, HCandLep1Vec, HCandLep2Vec;
+            SgleVec.SetPtEtaPhiM(
+                SingleLep_PT[0],
+                SingleLep_Eta[0],
+                SingleLep_Phi[0],
+                SingleLep_MASS
+            );
+            vector<int> NotHLepIdxLst={};
+            for (int i=0; i<3; i++) ((ThreeLep_Charge[i]==SingleLep_Charge[0]) ? NotHLepIdxLst.push_back(i) : void());
+            // Not Passing Condition 1: Charge Violation
+            if (NotHLepIdxLst.size()!=1){
+                data.PassThisCut = false;
+                return;}
+            throw runtime_error("Charge Violation Check is Compromised");
             return;
         }
 };
