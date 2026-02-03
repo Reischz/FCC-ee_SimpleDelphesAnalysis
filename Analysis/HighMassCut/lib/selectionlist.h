@@ -287,8 +287,7 @@ class PairSelection_offshell : public AnalysisModule {
             // Not Passing Condition 1: Charge Violation
             if (NotHLepIdxLst.size()!=1){
                 data.PassThisCut = false;
-                return;}
-            throw runtime_error("Charge Violation Check is Compromised");
+                throw runtime_error("Charge Violation Check is Compromised");}
             return;
         }
 };
