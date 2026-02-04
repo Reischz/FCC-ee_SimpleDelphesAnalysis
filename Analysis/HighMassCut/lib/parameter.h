@@ -39,7 +39,7 @@ struct EventContext {
     float NearestZ_Mass;
     float OtherPair_Mass;
     int Z_PairIndexSum;
-    vector<int> Z_PairIndexes;
+    vector<TString> Z_PairIndexes,NotZ_PairIndexes;
     float NotZ_dR;
     float NotZ_dPhi;
     float NotZ_EleMET_dPhi;
@@ -76,6 +76,7 @@ struct EventContext {
         OtherPair_Mass = -1.0;
         Z_PairIndexSum = -1;
         Z_PairIndexes.clear();
+        NotZ_PairIndexes.clear();
         NotZ_EleMET_dPhi = -1.0;
         NotZ_MuMET_dPhi = -1.0;
         NotZ_dR = -1.0;

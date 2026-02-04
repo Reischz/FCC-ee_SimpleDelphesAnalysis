@@ -262,7 +262,7 @@ class PairSelection_offshell : public AnalysisModule {
         }
         void process(EventContext &data, const defaultParameters &params) override {
             // ========================================================Defined Varibles==========================
-            bool EMore= (data.Electron_size > data.Muon_size);
+            bool EMore= (data.Electron_size > data.Muon_size), ChangeVal=false;
             TString ThreeLepFlavour=  EMore ? "E" : "Mu";
             TString SingleLepFlavour= EMore ? "Mu" : "E";
             float* ThreeLep_PT=     EMore ? data.Electron_PT : data.Muon_PT;
@@ -274,23 +274,66 @@ class PairSelection_offshell : public AnalysisModule {
             float* SingleLep_Phi=   EMore ? data.Muon_Phi : data.Electron_Phi;
             int* SingleLep_Charge=EMore ? data.Muon_Charge : data.Electron_Charge;
             const float& SingleLep_MASS=   EMore ? params.Muon_MASS : params.Electron_MASS;
-            // ========================================================Processing==========================
-            TLorentzVector SgleVec, HCandLep1Vec, HCandLep2Vec;
+            const float& ThreeLep_Mass=    EMore ? params.Electron_MASS : params.Muon_MASS;
+            TLorentzVector SgleVec, NotHLepVec;
+            vector<TLorentzVector> HCandLep(2);
+            vector<int> NotHLepIdxLst,HCanIdxLst;
+            vector<float> PairdR(2), PairMass(2);
+            vector<bool> PairPassStat={false, false};
+            int ThisEvntIdx, OtherEvntIdx;
+
+            // ========================================================Process Begin==========================
+            for (int i=0; i<3; i++) (
+                (ThreeLep_Charge[i]==SingleLep_Charge[0]) ? NotHLepIdxLst.push_back(i) : HCanIdxLst.push_back(i));
+        
+            // Not Passing Condition 1: Charge Violation
+            if ((NotHLepIdxLst.size()!=1) && (HCanIdxLst.size()!=2)){
+                data.PassThisCut = false;
+                cout << "This Event E size: " << data.Electron_size << ", Mu size: " << data.Muon_size << endl;
+                throw runtime_error("Charge Violation Check is Compromised");}
+            // ===================================================Setting Four Vectors========================
             SgleVec.SetPtEtaPhiM(
                 SingleLep_PT[0],
                 SingleLep_Eta[0],
                 SingleLep_Phi[0],
                 SingleLep_MASS
             );
-            vector<int> NotHLepIdxLst={};
-            for (int i=0; i<3; i++) ((ThreeLep_Charge[i]==SingleLep_Charge[0]) ? NotHLepIdxLst.push_back(i) : void());
-            // Not Passing Condition 1: Charge Violation
-            if (NotHLepIdxLst.size()!=1){
-                data.PassThisCut = false;
-                cout << "This Event E size: " << data.Electron_size << ", Mu size: " << data.Muon_size << endl;
-                throw runtime_error("Charge Violation Check is Compromised");}
+            NotHLepVec.SetPtEtaPhiM(
+                ThreeLep_PT[NotHLepIdxLst[0]],
+                ThreeLep_Eta[NotHLepIdxLst[0]],
+                ThreeLep_Phi[NotHLepIdxLst[0]],
+                ThreeLep_Mass);
+            for (auto order=0; order<2; order++){
+                // ===============================================Calculating Pair Variables==========================
+                HCandLep[order].SetPtEtaPhiM(
+                    ThreeLep_PT[HCanIdxLst[order]],
+                    ThreeLep_Eta[HCanIdxLst[order]],
+                    ThreeLep_Phi[HCanIdxLst[order]],
+                    ThreeLep_Mass);
+                PairdR[order] = SgleVec.DeltaR(HCandLep[order]);
+                PairMass[order] = (SgleVec + HCandLep[order]).M();
+                PairPassStat[order] = (HCandLep[order].Pt() > params.LFV_MinPT) && (PairdR[order] > params.dRCut);
+                // ===============================================Selecting the Best Candidate==========================
+                if (PairPassStat[order]){
+                    ChangeVal= (data.OtherPair_Mass < PairMass[order]);
+                    if (ChangeVal){
+                        data.NotZ_dR = PairdR[order];
+                        data.OtherPair_Mass = PairMass[order];
+                        data.NearestZ_Mass = (NotHLepVec + HCandLep[order]).M();
+                        // The index of threelepton
+                        ThisEvntIdx = HCanIdxLst[order];
+                        OtherEvntIdx = 3-(NotHLepIdxLst[0] + ThisEvntIdx);
+                        data.Z_PairIndexes = {  TString::Format("%s_%i", ThreeLepFlavour, OtherEvntIdx), 
+                                                TString::Format("%s_%i", ThreeLepFlavour, NotHLepIdxLst[0])};
+                        data.NotZ_PairIndexes={ TString::Format("%s_%i", ThreeLepFlavour, ThisEvntIdx),
+                                                TString::Format("%s_%i", SingleLepFlavour, 0)};
+                    }
+                }
+            }
+            // ===============================================Final Selection Decision==========================
+            if ((SgleVec.Pt() <= params.LFV_MinPT) || (PairPassStat[0] && PairPassStat[1])) {data.PassThisCut = false; return; };
             return;
-        }
+        };
 };
 
 class Verify_Generator : public AnalysisModule {
