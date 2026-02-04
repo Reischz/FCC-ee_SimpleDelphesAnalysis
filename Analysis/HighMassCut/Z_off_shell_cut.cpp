@@ -178,7 +178,8 @@ std::vector<AnalysisStep> ConfigurePipeline() {
 void Z_off_shell_cut(
     TString inputfile = "Prelim_sample/HLFV_160GeV.root", 
     TString outputfile = "Prelim_result/HLFV_160GeV_Zoff.root", 
-    TString TreeOutput = "Prelim_result/HLFV_160GeV_AdditionalTree.root"
+    TString TreeOutput = "Prelim_result/HLFV_160GeV_AdditionalTree.root",
+    bool testMode = true
 ) { 
     auto start_time = std::chrono::high_resolution_clock::now();
 
@@ -257,6 +258,7 @@ void Z_off_shell_cut(
     vector<int> selection_counts(10, 0);
     int stats_single=0, stats_three=0, stats_perf=0, stats_opp=0;
 
+    if (testMode) nentries = 10000; // For quick tests
     for (Long64_t i = 0; i < nentries; i++) {
         if (i % 100000 == 0) cout << " Processed " << i << " events..." << endl;
         
@@ -318,12 +320,12 @@ void Z_off_shell_cut(
     }
 
     // --- Cleanup & Summary ---
-    for (auto& step : pipeline) delete step.first;
-    delete LastVerifyGen;
-
     cout << "\nSelection Summary:" << endl;
     for(int k=0; k<pipeline.size(); k++) cout << " Stage " << k << ": " << selection_counts[k] 
                                             << ", " << pipeline[k].first->getName() << endl;
+    for (auto& step : pipeline) delete step.first;
+    delete LastVerifyGen;
+
 
     fTreeOut->cd();
     tOut->Write();

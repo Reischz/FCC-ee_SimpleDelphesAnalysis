@@ -287,6 +287,7 @@ class PairSelection_offshell : public AnalysisModule {
             // Not Passing Condition 1: Charge Violation
             if (NotHLepIdxLst.size()!=1){
                 data.PassThisCut = false;
+                cout << "This Event E size: " << data.Electron_size << ", Mu size: " << data.Muon_size << endl;
                 throw runtime_error("Charge Violation Check is Compromised");}
             return;
         }
