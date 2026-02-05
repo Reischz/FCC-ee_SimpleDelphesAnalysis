@@ -278,7 +278,7 @@ void Z_off_shell_cut(
     vector<int> selection_counts(10, 0);
     int stats_single=0, stats_three=0, stats_perf=0, stats_opp=0, stats_FA=0;
 
-    if (testMode) nentries = 1; // For quick tests
+    if (testMode) nentries = 10000; // For quick tests
     for (Long64_t i = 0; i < nentries; i++) {
         if (i % 100000 == 0) cout << " Processed " << i << " events..." << endl;
         
@@ -340,6 +340,7 @@ void Z_off_shell_cut(
                     hm.Fill1D("FreeAllLep_dRtoGen", ev.FreeAllLep_dRtoGen[k]);
                     if (ev.FreeAllLep_MatchStatus[k]) stats_FA++;
                 }
+                break; // End of pipeline after this step
             }
         }
         tOut->Fill();
