@@ -62,6 +62,10 @@ struct EventContext {
     bool Matching_Perfect;
     bool Matching_OppositeLep;
 
+    float SingleLep_dRtoGen, ThreeLep_dRtoGen;
+    vector<float> FreeAllLep_dRtoGen;
+    vector<bool> FreeAllLep_MatchStatus;
+
     float SFSC_GendR;
     float SFSC_RecodR;
 
@@ -103,6 +107,10 @@ struct EventContext {
 
         SFSC_GendR = -1.0;
         SFSC_RecodR = -1.0;
+        SingleLep_dRtoGen = -1.0;
+        ThreeLep_dRtoGen = -1.0;
+        FreeAllLep_dRtoGen.clear();
+        FreeAllLep_MatchStatus.clear();
     }
     // Function to print current state (for debugging)
     void print() {

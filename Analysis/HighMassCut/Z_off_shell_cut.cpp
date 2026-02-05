@@ -239,10 +239,10 @@ void Z_off_shell_cut(
 
         if (step.first->isPairedLepton) {
             hm.Book1D(prefix + "NearestZ_Mass-" + stepName, "M_Z1;GeV", 100, 0, 200);
-            hm.Book1D(prefix + "OtherPair_Mass-" + stepName, "M_Z2;GeV", 100, 0, 160);
+            hm.Book1D(prefix + "OtherPair_Mass-" + stepName, "M_Z2;GeV", 100, 0, 200);
             hm.Book1D(prefix + "NotZ_dR-" + stepName, "dR", 50, 0, 6);
             hm.Book1D(prefix + "NotZ_dPhi-" + stepName, "dPhi", 50, 0, 3.5);
-            hm.Book2D(prefix + "MassPairHeatmap-" + stepName, "Mass Map", 50, 0, 200, 160, 0, 160);
+            hm.Book2D(prefix + "MassPairHeatmap-" + stepName, "Mass Map", 200, 0, 200, 200, 0, 200);
         }
         dummy++;
     }
@@ -250,13 +250,17 @@ void Z_off_shell_cut(
     hm.Book2D("SFSC_dR_Heatmap", "Gen vs Reco dR", 100, 0, 10, 50, 0, 10);
     hm.Book1D("SFSC_dR_Ratio", "Reco/Gen dR Ratio", 300, 0, 3);
     hm.Book2D("Matching_ThreeLep_Opposite_Heatmap", "Matching Check", 2, 0, 2, 2, 0, 2);
+    hm.Book1D("Matching_SingleLep_dRtoGen", "Single Lep dR to Gen", 100, 0, 10);
+    hm.Book1D("Matching_ThreeLep_dRtoGen", "Three Lep dR to Gen", 100, 0, 10);
+    hm.Book1D("FreeAllLep_dRtoGen", "All Lep dR to Gen", 100, 0, 10);
+    // =========================================================================
 
     // --- Event Loop ---
     Long64_t nentries = tIn->GetEntries();
     cout << "Processing " << nentries << " entries..." << endl;
     
     vector<int> selection_counts(10, 0);
-    int stats_single=0, stats_three=0, stats_perf=0, stats_opp=0;
+    int stats_single=0, stats_three=0, stats_perf=0, stats_opp=0, stats_FA=0;
 
     if (testMode) nentries = 10000; // For quick tests
     for (Long64_t i = 0; i < nentries; i++) {
@@ -309,11 +313,17 @@ void Z_off_shell_cut(
                 hm.Fill2D("SFSC_dR_Heatmap", ev.SFSC_GendR, ev.SFSC_RecodR);
                 if (ev.SFSC_GendR > 0) hm.Fill1D("SFSC_dR_Ratio", ev.SFSC_RecodR / ev.SFSC_GendR);
                 hm.Fill2D("Matching_ThreeLep_Opposite_Heatmap", ev.Matching_ThreeLepSide, ev.Matching_OppositeLep);
+                hm.Fill1D("Matching_SingleLep_dRtoGen", ev.SingleLep_dRtoGen);
+                hm.Fill1D("Matching_ThreeLep_dRtoGen", ev.ThreeLep_dRtoGen);
                 
                 if (ev.Matching_SingleLepSide) stats_single++;
                 if (ev.Matching_ThreeLepSide) stats_three++;
                 if (ev.Matching_Perfect) stats_perf++;
                 if (ev.Matching_OppositeLep) stats_opp++;
+                for (int k=0; k<ev.FreeAllLep_dRtoGen.size(); k++) {
+                    hm.Fill1D("FreeAllLep_dRtoGen", ev.FreeAllLep_dRtoGen[k]);
+                    if (ev.FreeAllLep_MatchStatus[k]) stats_FA++;
+                }
             }
         }
         tOut->Fill();
@@ -336,7 +346,7 @@ void Z_off_shell_cut(
     hStats->SetBinContent(1, stats_single); hStats->GetXaxis()->SetBinLabel(1, "Single");
     hStats->SetBinContent(2, stats_three);  hStats->GetXaxis()->SetBinLabel(2, "Three");
     hStats->SetBinContent(3, stats_perf);   hStats->GetXaxis()->SetBinLabel(3, "Perfect");
-    hStats->SetBinContent(4, stats_opp);    hStats->GetXaxis()->SetBinLabel(4, "Opposite");
+    hStats->SetBinContent(4, stats_FA);     hStats->GetXaxis()->SetBinLabel(4, "FreeAll");
     hStats->SetDirectory(histDir);
     
     histDir->Write();
