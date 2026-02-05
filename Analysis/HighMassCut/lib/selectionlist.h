@@ -347,8 +347,9 @@ map<TString, vector<int>> IdentifyImediateLepton(EventContext &data){
                 ImediateLepLst["Index"].push_back(DaughterIdx[d]);
                 ImediateLepLst["PID"].push_back(data.Particle_PID[DaughterIdx[d]]);
                 ImediateLepLst["MotherIPID"].push_back(ThisMotherPID);
-                if (abs(data.Particle_PID[DaughterIdx[d]])==11){ GenLepFnLst["EIdx"].push_back(DaughterIdx[d]); }
-                else { GenLepFnLst["MuIdx"].push_back(DaughterIdx[d]); }
+                if (abs(data.Particle_PID[DaughterIdx[d]])==11){ ImediateLepLst["EIdx"].push_back(DaughterIdx[d]); }
+                else { ImediateLepLst["MuIdx"].push_back(DaughterIdx[d]); }
+            }
         }
     }
     return ImediateLepLst;
@@ -377,6 +378,8 @@ class Verify_Generator : public AnalysisModule {
             // ========================================================Prepare Info==========================
             // Particle level
             GenLepFnLst = IdentifyImediateLepton(data);
+            cout << GenLepFnLst << endl;
+            return;
             // Reco Level
             for (auto LepRecoIdx:data.Z_PairIndexes){
                 UnderScorePos = LepRecoIdx.Index("_");

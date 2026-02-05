@@ -278,7 +278,7 @@ void Z_off_shell_cut(
     vector<int> selection_counts(10, 0);
     int stats_single=0, stats_three=0, stats_perf=0, stats_opp=0, stats_FA=0;
 
-    if (testMode) nentries = 10000; // For quick tests
+    if (testMode) nentries = 10; // For quick tests
     for (Long64_t i = 0; i < nentries; i++) {
         if (i % 100000 == 0) cout << " Processed " << i << " events..." << endl;
         
