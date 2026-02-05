@@ -340,7 +340,6 @@ void Z_off_shell_cut(
                     hm.Fill1D("FreeAllLep_dRtoGen", ev.FreeAllLep_dRtoGen[k]);
                     if (ev.FreeAllLep_MatchStatus[k]) stats_FA++;
                 }
-                break; // End of pipeline after this step
             }
         }
         tOut->Fill();

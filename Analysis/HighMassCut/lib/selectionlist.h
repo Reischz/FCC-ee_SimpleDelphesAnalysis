@@ -389,8 +389,7 @@ class Verify_Generator : public AnalysisModule {
             // ========================================================Prepare Info==========================
             // Particle level
             GenLepFnLst = IdentifyImediateLepton(data);
-            ShowTheDataMap(GenLepFnLst);
-            return;
+            
             // Reco Level
             for (auto LepRecoIdx:data.Z_PairIndexes){
                 UnderScorePos = LepRecoIdx.Index("_");
