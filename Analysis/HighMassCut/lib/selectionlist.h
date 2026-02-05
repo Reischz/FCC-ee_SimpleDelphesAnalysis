@@ -334,6 +334,26 @@ class PairSelection_offshell : public AnalysisModule {
         };
 };
 
+map<TString, vector<int>> IdentifyImediateLepton(EventContext &data){
+    map<TString, vector<int>> ImediateLepLst;
+    int DaughterIdx[2], ThisMotherPID;
+    
+    for (auto GenIdx=0; GenIdx<data.Particle_size; GenIdx++){
+        ThisMotherPID = data.Particle_PID[GenIdx];
+        if ((data.Particle_PID[GenIdx]==23) || (data.Particle_PID[GenIdx]==25)){
+            DaughterIdx[0] = data.Particle_D1[GenIdx];
+            DaughterIdx[1] = data.Particle_D2[GenIdx];
+            for (auto d=0; d<2; d++){
+                ImediateLepLst["Index"].push_back(DaughterIdx[d]);
+                ImediateLepLst["PID"].push_back(data.Particle_PID[DaughterIdx[d]]);
+                ImediateLepLst["MotherIPID"].push_back(ThisMotherPID);
+                if (abs(data.Particle_PID[DaughterIdx[d]])==11){ GenLepFnLst["EIdx"].push_back(DaughterIdx[d]); }
+                else { GenLepFnLst["MuIdx"].push_back(DaughterIdx[d]); }
+        }
+    }
+    return ImediateLepLst;
+}
+
 int FindMothorPID(int pid, EventContext &data, int index) {
     int motherIndex = data.Particle_M1[index];
     if (data.Particle_PID[motherIndex] == pid) {
@@ -356,19 +376,7 @@ class Verify_Generator : public AnalysisModule {
             float ThisLepMass,MindR, ThisdR;
             // ========================================================Prepare Info==========================
             // Particle level
-            for (auto GenIdx=0; GenIdx<data.Particle_size; GenIdx++){
-                cout << "GenIdx: " << GenIdx << endl;
-                cout << "Particle PID: " << data.Particle_PID[GenIdx] << ", Status: " << data.Particle_Status[GenIdx] << endl;
-                cout << "Mother 1 PID: " << data.Particle_M1[GenIdx] << ", Mothor 2 PID: " << data.Particle_M1[GenIdx] << endl;
-                cout << "------------------------" << endl;
-                if (data.Particle_Status[GenIdx]==1 && (abs(data.Particle_PID[GenIdx])==11 || abs(data.Particle_PID[GenIdx])==13)){
-                    GenLepFnLst["PID"].push_back(data.Particle_PID[GenIdx]);
-                    GenLepFnLst["MothorPID"].push_back(FindMothorPID(data.Particle_PID[GenIdx], data, GenIdx));
-                    GenLepFnLst["Index"].push_back(GenIdx);
-                    if (abs(data.Particle_PID[GenIdx])==11){ GenLepFnLst["EIdx"].push_back(GenIdx); }
-                    else { GenLepFnLst["MuIdx"].push_back(GenIdx); }
-                }
-            }
+            GenLepFnLst = IdentifyImediateLepton(data);
             // Reco Level
             for (auto LepRecoIdx:data.Z_PairIndexes){
                 UnderScorePos = LepRecoIdx.Index("_");
