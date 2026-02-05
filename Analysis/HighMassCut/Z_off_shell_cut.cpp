@@ -43,6 +43,8 @@ struct LeafReader {
     TLeaf *Par_Eta = nullptr;
     TLeaf *Par_Phi = nullptr;
     TLeaf *Par_PID = nullptr;
+    TLeaf *Par_Status = nullptr;
+    TLeaf *Par_M1 = nullptr;
 
     // Connects leaves to the tree
     void Init(TTree* t) {
