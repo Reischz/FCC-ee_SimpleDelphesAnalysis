@@ -376,7 +376,7 @@ class Verify_Generator : public AnalysisModule {
             RecoLepSize = data.Electron_size + data.Muon_size;
             if (GenLepFnLst["PID"].size()!=RecoLepSize){
                 data.PassThisCut = false;
-                errortxt.Form("Lepton Number Mismatch : Gen %d vs Reco %d", GenLepFnLst["PID"].size(), RecoLepSize);
+                errortxt.Form("Lepton Number Mismatch : Gen %zu vs Reco %d", GenLepFnLst["PID"].size(), RecoLepSize);
                 throw runtime_error(errortxt.Data());
             }
             else if ((GenLepFnLst["EIdx"].size()!=data.Electron_size) || (GenLepFnLst["MuIdx"].size()!=data.Muon_size)){
