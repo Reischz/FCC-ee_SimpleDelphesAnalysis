@@ -349,7 +349,7 @@ class Verify_Generator : public AnalysisModule {
         void process(EventContext &data, const defaultParameters &params) override {
             // =======================================================Defined Varibles==========================
             map<TString, vector<int>> GenLepFnLst, HCandLepLst;
-            TString LepType;
+            TString LepType, errortxt;
             int UnderScorePos, RecoLepSize, HCandLepSize, ThisLepPID;
             bool ThisLepElec, ElectronDominated;
             TLorentzVector GenLepVec, RecoLepVec;
@@ -376,7 +376,8 @@ class Verify_Generator : public AnalysisModule {
             RecoLepSize = data.Electron_size + data.Muon_size;
             if (GenLepFnLst["PID"].size()!=RecoLepSize){
                 data.PassThisCut = false;
-                throw runtime_error("Lepton Number Mismatch : Gen %d vs Reco %d", GenLepFnLst["PID"].size(), RecoLepSize);
+                errortxt.Form("Lepton Number Mismatch : Gen %d vs Reco %d", GenLepFnLst["PID"].size(), RecoLepSize);
+                throw runtime_error(errortxt.Data());
             }
             else if ((GenLepFnLst["EIdx"].size()!=data.Electron_size) || (GenLepFnLst["MuIdx"].size()!=data.Muon_size)){
                 data.PassThisCut = false;
