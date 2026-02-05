@@ -418,6 +418,7 @@ class Verify_Generator : public AnalysisModule {
             HCandLepLst["FAdRtoGen"].reserve(HCandLepSize);
             ElectronDominated = (data.Electron_size > data.Muon_size);
             // 1st Mode, Check PID First
+            cout << " Beginning PID Matching..." << endl;
             for (auto RecoID=0; RecoID<HCandLepSize; RecoID++){
                 ThisLepElec = (abs(HCandLepLst["PID"][RecoID])==11);
                 ThisLepMass = ThisLepElec ? params.Electron_MASS : params.Muon_MASS;
@@ -427,6 +428,7 @@ class Verify_Generator : public AnalysisModule {
                     ThisLepElec ? data.Electron_Phi[HCandLepLst["Index"][RecoID]] : data.Muon_Phi[HCandLepLst["Index"][RecoID]],
                     ThisLepMass);
                 MindR = 1e6;
+                cout << " Matching Reco Lepton PID: " << HCandLepLst["PID"][RecoID] << endl;
                 for (auto GenID=0; GenID<GenLepFnLst["PID"].size(); GenID++){
                     if (HCandLepLst["PID"][RecoID]==GenLepFnLst["PID"][GenID]){
                         GenLepVec.SetPtEtaPhiM(
