@@ -334,6 +334,15 @@ class PairSelection_offshell : public AnalysisModule {
         };
 };
 
+int FindMothorPID(int pid, EventContext &data, int index) {
+    int motherIndex = data.Particle_M1[index];
+    if (data.Particle_PID[motherIndex] == pid) {
+        return FindMothorPID(pid, data, motherIndex);
+    } else {
+        return data.Particle_PID[motherIndex];
+    }
+}
+
 class Verify_Generator : public AnalysisModule {
     public:
         Verify_Generator() : AnalysisModule("Verify_Generator") {}
@@ -457,14 +466,6 @@ class Verify_Generator : public AnalysisModule {
         }
 };
 
-int FindMothorPID(int pid, EventContext &data, int index) {
-    int motherIndex = data.Particle_M1[index];
-    if (data.Particle_PID[motherIndex] == pid) {
-        return FindMothorPID(pid, data, motherIndex);
-    } else {
-        return data.Particle_PID[motherIndex];
-    }
-}
 
 
 //===================================================================================================
