@@ -374,6 +374,7 @@ class Verify_Generator : public AnalysisModule {
             }
             // Check Lepton Number Consistency
             RecoLepSize = data.Electron_size + data.Muon_size;
+            cout << "Gen Lepton Size: " << GenLepFnLst["PID"].size() << ", Reco Lepton Size: " << RecoLepSize << endl;
             if (GenLepFnLst["PID"].size()!=RecoLepSize){
                 data.PassThisCut = false;
                 errortxt.Form("Lepton Number Mismatch : Gen %zu vs Reco %d", GenLepFnLst["PID"].size(), RecoLepSize);
