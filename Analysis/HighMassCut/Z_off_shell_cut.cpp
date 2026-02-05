@@ -157,7 +157,6 @@ struct HistManager {
     TH1F* Book1DLogX(TString name, TString title, int nbins, double min, double max) {
         if (dir) dir->cd();
         TH1F* h = new TH1F(name, title, nbins, min, max);
-        gPad->SetLogx(1);
         h->SetDirectory(dir);
         h1[name] = h;
         return h;
