@@ -346,7 +346,7 @@ map<TString, vector<int>> IdentifyImediateLepton(EventContext &data){
             for (auto d=0; d<2; d++){
                 ImediateLepLst["Index"].push_back(DaughterIdx[d]);
                 ImediateLepLst["PID"].push_back(data.Particle_PID[DaughterIdx[d]]);
-                ImediateLepLst["MotherIPID"].push_back(ThisMotherPID);
+                ImediateLepLst["MotherPID"].push_back(ThisMotherPID);
                 if (abs(data.Particle_PID[DaughterIdx[d]])==11){ ImediateLepLst["EIdx"].push_back(DaughterIdx[d]); }
                 else { ImediateLepLst["MuIdx"].push_back(DaughterIdx[d]); }
             }
