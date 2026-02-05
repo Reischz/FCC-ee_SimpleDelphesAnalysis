@@ -444,19 +444,19 @@ class Verify_Generator : public AnalysisModule {
                             MindR=ThisdR;
                             if (ElectronDominated && (abs(GenLepFnLst["PID"][GenID])==11)){
                                 data.ThreeLep_dRtoGen=ThisdR;
-                                if ((ThisdR<0.1) && (abs(GenLepFnLst["MothorPID"][GenID])==25)) {data.Matching_ThreeLepSide=true;}
+                                if ((ThisdR<0.1) && (abs(GenLepFnLst["MotherPID"][GenID])==25)) {data.Matching_ThreeLepSide=true;}
                             }
                             else if ((ElectronDominated) && (abs(GenLepFnLst["PID"][GenID])==13)){
                                 data.SingleLep_dRtoGen=ThisdR;
-                                if ((ThisdR<0.1) && (abs(GenLepFnLst["MothorPID"][GenID])==25)) {data.Matching_SingleLepSide=true;}
+                                if ((ThisdR<0.1) && (abs(GenLepFnLst["MotherPID"][GenID])==25)) {data.Matching_SingleLepSide=true;}
                             }
                             else if ((!ElectronDominated) && (abs(GenLepFnLst["PID"][GenID])==13)){
                                 data.ThreeLep_dRtoGen=ThisdR;
-                                if ((ThisdR<0.1) && (abs(GenLepFnLst["MothorPID"][GenID])==25)) {data.Matching_ThreeLepSide=true;}
+                                if ((ThisdR<0.1) && (abs(GenLepFnLst["MotherPID"][GenID])==25)) {data.Matching_ThreeLepSide=true;}
                             }
                             else if ((!ElectronDominated) && (abs(GenLepFnLst["PID"][GenID])==11)){
                                 data.SingleLep_dRtoGen=ThisdR;
-                                if ((ThisdR<0.1) && (abs(GenLepFnLst["MothorPID"][GenID])==25)) {data.Matching_SingleLepSide=true;}
+                                if ((ThisdR<0.1) && (abs(GenLepFnLst["MotherPID"][GenID])==25)) {data.Matching_SingleLepSide=true;}
                             }
                         }
                         cout << "    Current MindR: " << MindR << endl;
@@ -489,7 +489,7 @@ class Verify_Generator : public AnalysisModule {
                     }
                 }
                 data.FreeAllLep_dRtoGen.push_back(MindR);
-                if ((MindR<0.1) && (abs(GenLepFnLst["MothorPID"][HCandLepLst["FAMatchedGenIdx"][FreeAllRecoIdx]])==25) &&
+                if ((MindR<0.1) && (abs(GenLepFnLst["MotherPID"][HCandLepLst["FAMatchedGenIdx"][FreeAllRecoIdx]])==25) &&
                     (ThisLepPID == GenLepFnLst["PID"][HCandLepLst["FAMatchedGenIdx"][FreeAllRecoIdx]])){
                     data.FreeAllLep_MatchStatus.push_back(true);
                 } else {
