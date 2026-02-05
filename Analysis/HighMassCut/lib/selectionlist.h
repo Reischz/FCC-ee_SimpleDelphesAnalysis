@@ -459,6 +459,7 @@ class Verify_Generator : public AnalysisModule {
                                 if ((ThisdR<0.1) && (abs(GenLepFnLst["MothorPID"][GenID])==25)) {data.Matching_SingleLepSide=true;}
                             }
                         }
+                        cout << "    Current MindR: " << MindR << endl;
                     }
                 }
             }
