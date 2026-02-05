@@ -355,6 +355,17 @@ map<TString, vector<int>> IdentifyImediateLepton(EventContext &data){
     return ImediateLepLst;
 }
 
+void ShowTheDataMap(map<TString, vector<int>> &dataMap){
+    cout << " Showing Data Map Content: " << endl;
+    for (auto const& [key, vec] : dataMap) {
+        cout << " Key: " << key << ", Values: ";
+        for (const auto& val : vec) {
+            cout << val << " ";
+        }
+        cout << endl;
+    }
+}
+
 int FindMothorPID(int pid, EventContext &data, int index) {
     int motherIndex = data.Particle_M1[index];
     if (data.Particle_PID[motherIndex] == pid) {
@@ -378,7 +389,7 @@ class Verify_Generator : public AnalysisModule {
             // ========================================================Prepare Info==========================
             // Particle level
             GenLepFnLst = IdentifyImediateLepton(data);
-            cout << GenLepFnLst << endl;
+            ShowTheDataMap(GenLepFnLst);
             return;
             // Reco Level
             for (auto LepRecoIdx:data.Z_PairIndexes){
