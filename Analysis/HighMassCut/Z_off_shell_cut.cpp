@@ -275,9 +275,9 @@ void Z_off_shell_cut(
     hm.Book2D("SFSC_dR_Heatmap", "Gen vs Reco dR", 100, 0, 10, 50, 0, 10);
     hm.Book1D("SFSC_dR_Ratio", "Reco/Gen dR Ratio", 300, 0, 3);
     hm.Book2D("Matching_ThreeLep_Opposite_Heatmap", "Matching Check", 2, 0, 2, 2, 0, 2);
-    hm.Book1D("Matching_SingleLep_dRtoGen", "Single Lep dR to Gen", 200, 0, 2);
-    hm.Book1D("Matching_ThreeLep_dRtoGen", "Three Lep dR to Gen", 200, 0, 2);
-    hm.Book1D("FreeAllLep_dRtoGen", "All Lep dR to Gen", 200, 0, 2);
+    hm.Book1DLogX("Matching_SingleLep_dRtoGen", "Single Lep dR to Gen", 200, 0, 2);
+    hm.Book1DLogX("Matching_ThreeLep_dRtoGen", "Three Lep dR to Gen", 200, 0, 2);
+    hm.Book1DLogX("FreeAllLep_dRtoGen", "All Lep dR to Gen", 200, 0, 2);
     // =========================================================================
 
     // --- Event Loop ---
