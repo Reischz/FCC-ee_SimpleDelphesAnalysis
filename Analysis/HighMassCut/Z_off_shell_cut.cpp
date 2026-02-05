@@ -154,6 +154,15 @@ struct HistManager {
         return h;
     }
 
+    TH1F* Book1DLogX(TString name, TString title, int nbins, double min, double max) {
+        if (dir) dir->cd();
+        TH1F* h = new TH1F(name, title, nbins, min, max);
+        h->SetXaxis(new TLogAxis());
+        h->SetDirectory(dir);
+        h1[name] = h;
+        return h;
+    }
+
     TH2F* Book2D(TString name, TString title, int nxbins, double xmin, double xmax, int nybins, double ymin, double ymax) {
         if (dir) dir->cd();
         TH2F* h = new TH2F(name, title, nxbins, xmin, xmax, nybins, ymin, ymax);
