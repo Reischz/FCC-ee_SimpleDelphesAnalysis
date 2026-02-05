@@ -357,7 +357,7 @@ class Verify_Generator : public AnalysisModule {
             // ========================================================Prepare Info==========================
             // Particle level
             for (auto GenIdx=0; GenIdx<data.Particle_size; GenIdx++){
-                cout << "Particle PID: " << data.Particle_PID[GenIdx] << ", Status: " << data.Particle_Status[GenIdx] << endl;
+                // cout << "Particle PID: " << data.Particle_PID[GenIdx] << ", Status: " << data.Particle_Status[GenIdx] << endl;
                 if (data.Particle_Status[GenIdx]==1 && (abs(data.Particle_PID[GenIdx])==11 || abs(data.Particle_PID[GenIdx])==13)){
                     GenLepFnLst["PID"].push_back(data.Particle_PID[GenIdx]);
                     GenLepFnLst["MothorPID"].push_back(FindMothorPID(data.Particle_PID[GenIdx], data, GenIdx));
@@ -375,7 +375,7 @@ class Verify_Generator : public AnalysisModule {
             }
             // Check Lepton Number Consistency
             RecoLepSize = data.Electron_size + data.Muon_size;
-            cout << "Gen Lepton Size: " << GenLepFnLst["PID"].size() << ", Reco Lepton Size: " << RecoLepSize << endl;
+            // cout << "Gen Lepton Size: " << GenLepFnLst["PID"].size() << ", Reco Lepton Size: " << RecoLepSize << endl;
             if (GenLepFnLst["PID"].size()!=RecoLepSize){
                 data.PassThisCut = false;
                 errortxt.Form("Lepton Number Mismatch : Gen %zu vs Reco %d", GenLepFnLst["PID"].size(), RecoLepSize);
