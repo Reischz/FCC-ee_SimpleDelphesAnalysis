@@ -73,6 +73,8 @@ struct LeafReader {
         Par_Eta = get("Particle.Eta");
         Par_Phi = get("Particle.Phi");
         Par_PID = get("Particle.PID");
+        Par_Status = get("Particle.Status");
+        Par_M1 = get("Particle.M1");
     }
 
     // Reads current entry from Leaves into the EventContext
@@ -115,6 +117,8 @@ struct LeafReader {
                 if(Par_Eta) ev.Particle_Eta[i] = (float)Par_Eta->GetValue(i);
                 if(Par_Phi) ev.Particle_Phi[i] = (float)Par_Phi->GetValue(i);
                 if(Par_PID) ev.Particle_PID[i] = (int)Par_PID->GetValue(i);
+                if(Par_Status) ev.Particle_Status[i] = (int)Par_Status->GetValue(i);
+                if(Par_M1) ev.Particle_M1[i] = (int)Par_M1->GetValue(i);
             }
         }
     }
