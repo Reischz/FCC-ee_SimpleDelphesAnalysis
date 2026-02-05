@@ -45,6 +45,7 @@ struct LeafReader {
     TLeaf *Par_PID = nullptr;
     TLeaf *Par_Status = nullptr;
     TLeaf *Par_M1 = nullptr;
+    TLeaf *Par_M2 = nullptr;
 
     // Connects leaves to the tree
     void Init(TTree* t) {
@@ -77,6 +78,7 @@ struct LeafReader {
         Par_PID = get("Particle.PID");
         Par_Status = get("Particle.Status");
         Par_M1 = get("Particle.M1");
+        Par_M2 = get("Particle.M2");
     }
 
     // Reads current entry from Leaves into the EventContext
@@ -121,6 +123,7 @@ struct LeafReader {
                 if(Par_PID) ev.Particle_PID[i] = (int)Par_PID->GetValue(i);
                 if(Par_Status) ev.Particle_Status[i] = (int)Par_Status->GetValue(i);
                 if(Par_M1) ev.Particle_M1[i] = (int)Par_M1->GetValue(i);
+                if(Par_M2) ev.Particle_M2[i] = (int)Par_M2->GetValue(i);
             }
         }
     }
