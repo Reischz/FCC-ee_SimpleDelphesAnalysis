@@ -450,7 +450,8 @@ class Verify_Generator : public AnalysisModule {
                 // cout << " Matching Reco Lepton PID: " << HCandLepLst["PID"][RecoID] << endl;
                 for (auto GenID=0; GenID<GenLepFnLst["PID"].size(); GenID++){
                     if (HCandLepLst["PID"][RecoID]==GenLepFnLst["PID"][GenID]){
-                        // cout << "  Found Gen Lepton PID: " << GenLepFnLst["PID"][GenID] << endl;
+                        cout << "  Found Gen Lepton PID: " << GenLepFnLst["PID"][GenID] << endl;
+                        cout << "  Found Reco Lepton Index: " << HCandLepLst["Index"][RecoID] << endl;
                         GenLepVec.SetPtEtaPhiM(
                             data.Particle_PT[GenLepFnLst["Index"][GenID]],
                             data.Particle_Eta[GenLepFnLst["Index"][GenID]],
