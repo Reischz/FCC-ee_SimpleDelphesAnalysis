@@ -107,7 +107,7 @@ struct EventContext {
         ZC_NotZdR = -1.0;
         ZC_ZPairIndexes.clear();
         ZC_NotZPairIndexes.clear();
-        
+
         for (int i = 0; i < 10; ++i) {
             CutStatus[i] = 0;
         }
@@ -134,29 +134,6 @@ struct EventContext {
         ThreeLep_dRtoGen = -1.0;
         FreeAllLep_dRtoGen.clear();
         FreeAllLep_MatchStatus.clear();
-    }
-    // Function to print current state (for debugging)
-    void print() {
-        cout << " Event_size: " << Event_size << endl;
-        cout << " Electron_size: " << Electron_size << endl;
-        cout << " Muon_size: " << Muon_size << endl;
-        cout << " NearestZ_Mass: " << NearestZ_Mass << endl;
-        cout << " OtherPair_Mass: " << OtherPair_Mass << endl;
-        cout << " Z_PairIndexSum: " << Z_PairIndexSum << endl;
-        cout << " CutStatus: ";
-        for (int i = 0; i < 10; ++i) {
-            cout << CutStatus[i] << " ";
-        }
-        // PT, Eta, Phi, Charge of Electrons
-        cout << "\n Electrons: ";
-        for (int i = 0; i < Electron_size; ++i) {
-            cout << "(PT: " << Electron_PT[i] << ", Eta: " << Electron_Eta[i] << ", Phi: " << Electron_Phi[i] << ", Charge: " << Electron_Charge[i] << ") ";
-        }
-        cout << "\n Muons: ";
-        for (int i = 0; i < Muon_size; ++i) {
-            cout << "(PT: " << Muon_PT[i] << ", Eta: " << Muon_Eta[i] << ", Phi: " << Muon_Phi[i] << ", Charge: " << Muon_Charge[i] << ") ";
-        }
-        cout << endl;
     }
 };
 

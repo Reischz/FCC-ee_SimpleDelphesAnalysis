@@ -254,10 +254,10 @@ void Z_off_shell_cut(
         hm.Book1D(prefix + "Lepton.Phi-" + stepName, "Phi", 100, -5, 5);
 
         if (step.first->isPairedLepton) {
-            hm.Book1D(prefix + "NearestZ_Mass-" + stepName, "M_Z1;GeV", 100, 0, 200);
-            hm.Book1D(prefix + "OtherPair_Mass-" + stepName, "M_Z2;GeV", 100, 0, 200);
-            hm.Book1D(prefix + "NotZ_dR-" + stepName, "dR", 50, 0, 6);
-            hm.Book1D(prefix + "NotZ_dPhi-" + stepName, "dPhi", 50, 0, 3.5);
+            hm.Book1D(prefix + "HH_ZMass-" + stepName, "M_Z1;GeV", 100, 0, 200);
+            hm.Book1D(prefix + "HH_NotZMass-" + stepName, "M_Z2;GeV", 100, 0, 200);
+            hm.Book1D(prefix + "HH_NotZdR-" + stepName, "dR", 50, 0, 6);
+            hm.Book1D(prefix + "HH_NotZdPhi-" + stepName, "dPhi", 50, 0, 3.5);
             hm.Book2D(prefix + "MassPairHeatmap-" + stepName, "Mass Map", 200, 0, 200, 200, 0, 200);
         }
         dummy++;
@@ -314,11 +314,11 @@ void Z_off_shell_cut(
             for(int k=0; k<ev.Muon_size; k++) hm.Fill1D(prefix + "Lepton.Phi-" + stepName, ev.Muon_Phi[k]);
 
             if (step.first->isPairedLepton) {
-                hm.Fill1D(prefix + "NearestZ_Mass-" + stepName, ev.NearestZ_Mass);
-                hm.Fill1D(prefix + "OtherPair_Mass-" + stepName, ev.OtherPair_Mass);
-                hm.Fill1D(prefix + "NotZ_dR-" + stepName, ev.NotZ_dR);
-                hm.Fill1D(prefix + "NotZ_dPhi-" + stepName, ev.NotZ_dPhi);
-                hm.Fill2D(prefix + "MassPairHeatmap-" + stepName, ev.NearestZ_Mass, ev.OtherPair_Mass);
+                hm.Fill1D(prefix + "HH_ZMass-" + stepName, ev.HH_ZPair_Mass);
+                hm.Fill1D(prefix + "HH_NotZMass-" + stepName, ev.HH_NotZPair_Mass);
+                hm.Fill1D(prefix + "HH_NotZdR-" + stepName, ev.HH_NotZ_dR);
+                hm.Fill1D(prefix + "HH_NotZdPhi-" + stepName, ev.HH_NotZ_dPhi);
+                hm.Fill2D(prefix + "HH_MassPairHeatmap-" + stepName, ev.HH_ZPair_Mass, ev.HH_NotZPair_Mass);
             }
             
             ev.CurrentCut++;
