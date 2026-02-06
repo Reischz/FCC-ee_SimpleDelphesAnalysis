@@ -366,12 +366,14 @@ void Z_off_shell_cut(
 
     fHistOut->cd();
     TH1F *hStats = new TH1F("Matching_Bars_chart", "Matching Stats", 4, 0, 4);
-    hStats->SetBinContent(1, stats_single); hStats->GetXaxis()->SetBinLabel(1, "Single");
-    hStats->SetBinContent(2, stats_three);  hStats->GetXaxis()->SetBinLabel(2, "Three");
-    hStats->SetBinContent(3, stats_perf);   hStats->GetXaxis()->SetBinLabel(3, "Perfect");
-    hStats->SetBinContent(4, stats_FA);     hStats->GetXaxis()->SetBinLabel(4, "FreeAll");
+    hStats->SetBinContent(1, (float)stats_single/selection_counts[temp]* 100); hStats->GetXaxis()->SetBinLabel(1, "SingleLepside");
+    hStats->SetBinContent(2, (float)stats_three/selection_counts[temp]* 100);  hStats->GetXaxis()->SetBinLabel(2, "ThreeLepside");
+    hStats->SetBinContent(3, (float)stats_perf/selection_counts[temp]* 100);   hStats->GetXaxis()->SetBinLabel(3, "Perfect");
+    hStats->SetBinContent(4, (float)stats_FA/(selection_counts[temp]*2)* 100);     hStats->GetXaxis()->SetBinLabel(4, "FreeAll");
+    hStats->GetXaxis()->SetTitle("Matching Category");
+    hStats->GetYaxis()->SetTitle("Efficiency [%]");
     hStats->SetDirectory(histDir);
-    
+
     histDir->Write();
     fHistOut->Close();
     fIn->Close();
