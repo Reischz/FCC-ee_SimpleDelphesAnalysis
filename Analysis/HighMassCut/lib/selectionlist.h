@@ -556,10 +556,10 @@ void GenMassIDentify(EventContext &data, const defaultParameters &params){
     data.Gen_Z_Mass = (GenLepVecs[Zindex[0]] + GenLepVecs[Zindex[1]]).M();
     for (int i=0; i< data.Particle_size; i++){
         if (abs(data.Particle_PID[i])==25){
-            data.Gen_Higgs_Mass = data.Particle_Mass[i];
+            data.Gen_DirectHMass = data.Particle_Mass[i];
         }
         else if (abs(data.Particle_PID[i])==23){
-            data.Gen_Z_Mass = data.Particle_Mass[i];
+            data.Gen_DirectZMass = data.Particle_Mass[i];
     }
     }
     // Placeholder for future implementation
