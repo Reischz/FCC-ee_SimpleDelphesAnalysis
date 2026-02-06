@@ -259,6 +259,9 @@ void Z_off_shell_cut(
             hm.Book1D(prefix + "HH_NotZdR-" + stepName, "dR", 50, 0, 6);
             hm.Book1D(prefix + "HH_NotZdPhi-" + stepName, "dPhi", 50, 0, 3.5);
             hm.Book2D(prefix + "HH_MassPairHeatmap-" + stepName, "Mass Map", 200, 0, 200, 200, 0, 200);
+            hm.Book2D(prefix + "HH_MassPairAntiHeatmap-" + stepName, "Anti-NotZ High Masspair;Z [GeV];Not Z [GeV]", 200, 0, 200, 200, 0, 200);
+            hm.Book2D(prefix + "ZC_MassPairAntiHeatmap-" + stepName, "Anti-NotZ High Masspair;Z [GeV];Not Z [GeV]", 200, 0, 200, 200, 0, 200);
+            hm.Book2D(prefix + "ZC_MassPairHeatmap-" + stepName, "ZC-Mass Map", 200, 0, 200, 200, 0, 200);
         }
         dummy++;
     }
@@ -319,6 +322,9 @@ void Z_off_shell_cut(
                 hm.Fill1D(prefix + "HH_NotZdR-" + stepName, ev.HH_NotZ_dR);
                 hm.Fill1D(prefix + "HH_NotZdPhi-" + stepName, ev.HH_NotZ_dPhi);
                 hm.Fill2D(prefix + "HH_MassPairHeatmap-" + stepName, ev.HH_ZPair_Mass, ev.HH_NotZPair_Mass);
+                hm.Fill2D(prefix + "HH_MassPairAntiHeatmap-" + stepName, ev.HH_Ant_ZPair_Mass, ev.HH_Ant_NotZPair_Mass);
+                hm.Fill2D(prefix + "ZC_MassPairHeatmap-" + stepName, ev.ZC_ZPairMass, ev.ZC_NotZdR);
+                hm.Fill2D(prefix + "ZC_MassPairAntiHeatmap-" + stepName, ev.ZC_Ant_ZPairMass, ev.ZC_Ant_NotZPairMass);
             }
             
             ev.CurrentCut++;

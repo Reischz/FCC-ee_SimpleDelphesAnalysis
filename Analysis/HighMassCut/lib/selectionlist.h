@@ -325,6 +325,9 @@ class PairSelection_offshell : public AnalysisModule {
                         OtherEvntIdx = 3-(NotHLepIdxLst[0] + ThisEvntIdx);
                         data.HH_ZPairIndexes = {ThreeLepFlavour+"_"+OtherEvntIdx, ThreeLepFlavour+"_"+NotHLepIdxLst[0]};
                         data.HH_NotZPairIndexes={ThreeLepFlavour+"_"+ThisEvntIdx, SingleLepFlavour+"_"+0};
+                        // Anti H Pair Mass
+                        data.HH_Ant_NotZPair_Mass= PairMass[1-order];
+                        data.HH_Ant_ZPair_Mass= (NotHLepVec + HCandLep[1-order]).M();
                     }
                 }
                 // ===============================================Z as citeria indentify==========================
@@ -342,6 +345,9 @@ class PairSelection_offshell : public AnalysisModule {
                         OtherEvntIdx = 3-(NotHLepIdxLst[0] + ThisEvntIdx);
                         data.ZC_ZPairIndexes = {ThreeLepFlavour+"_"+OtherEvntIdx, ThreeLepFlavour+"_"+NotHLepIdxLst[0]};
                         data.ZC_NotZPairIndexes={ThreeLepFlavour+"_"+ThisEvntIdx, SingleLepFlavour+"_"+0};
+                        // Anti H Pair Mass
+                        data.ZC_Ant_NotZPairMass= ZC_PairMass[1-order];
+                        data.ZC_Ant_ZPairMass= (NotHLepVec + HCandLep[1-order]).M();
                     }
                 }
             }
