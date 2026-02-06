@@ -461,6 +461,7 @@ class Verify_Generator : public AnalysisModule {
                             MindR=ThisdR;
                             if (ElectronDominated && (abs(GenLepFnLst["PID"][GenID])==11)){
                                 data.ThreeLep_dRtoGen=ThisdR;
+                                cout << "EDom" << endl;
                                 if ((ThisdR<0.1) && (abs(GenLepFnLst["MotherPID"][GenID])==25)) {data.Matching_ThreeLepSide=true;}
                             }
                             else if ((ElectronDominated) && (abs(GenLepFnLst["PID"][GenID])==13)){
@@ -470,6 +471,7 @@ class Verify_Generator : public AnalysisModule {
                             }
                             else if ((!ElectronDominated) && (abs(GenLepFnLst["PID"][GenID])==13)){
                                 data.ThreeLep_dRtoGen=ThisdR;
+                                cout << "MuDom" << endl;
                                 if ((ThisdR<0.1) && (abs(GenLepFnLst["MotherPID"][GenID])==25)) {data.Matching_ThreeLepSide=true;}
                             }
                             else if ((!ElectronDominated) && (abs(GenLepFnLst["PID"][GenID])==11)){
