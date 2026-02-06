@@ -35,6 +35,14 @@ rm -rf SelectionResults/CombineAll
 mkdir -p SelectionResults/CombineAll
 cd SelectionResults/CombineAll
 RESULT_NAME=(
+    "HLFV_110GeV"
+    "HLFV_115GeV"
+    "HLFV_120GeV"
+    "HLFV_125GeV"
+    "HLFV_130GeV"
+    "HLFV_135GeV"
+    "HLFV_140GeV"
+    "HLFV_145GeV"
     "HLFV_150GeV"
     "HLFV_155GeV"
     "HLFV_160GeV"
