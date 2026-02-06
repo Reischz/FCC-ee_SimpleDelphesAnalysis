@@ -262,10 +262,10 @@ void Z_off_shell_cut(
             hm.Book1D(prefix + "HH_NotZMass-" + stepName, "M_Z2;GeV", 100, 0, 200);
             hm.Book1D(prefix + "HH_NotZdR-" + stepName, "dR", 50, 0, 6);
             hm.Book1D(prefix + "HH_NotZdPhi-" + stepName, "dPhi", 50, 0, 3.5);
-            hm.Book2D(prefix + "HH_MassPairHeatmap-" + stepName, "Mass Map", 200, 0, 200, 200, 0, 200);
+            hm.Book2D(prefix + "HH_MassPairHeatmap-" + stepName, "HH-Mass Map;Z [GeV];Not Z [GeV]", 200, 0, 200, 200, 0, 200);
             hm.Book2D(prefix + "HH_MassPairAntiHeatmap-" + stepName, "Anti-NotZ High Masspair;Z [GeV];Not Z [GeV]", 200, 0, 200, 200, 0, 200);
             hm.Book2D(prefix + "ZC_MassPairAntiHeatmap-" + stepName, "Anti-NotZ High Masspair;Z [GeV];Not Z [GeV]", 200, 0, 200, 200, 0, 200);
-            hm.Book2D(prefix + "ZC_MassPairHeatmap-" + stepName, "ZC-Mass Map", 200, 0, 200, 200, 0, 200);
+            hm.Book2D(prefix + "ZC_MassPairHeatmap-" + stepName, "ZC-Mass Map;Z [GeV];Not Z [GeV]", 200, 0, 200, 200, 0, 200);
         }
         dummy++;
     }
@@ -276,6 +276,7 @@ void Z_off_shell_cut(
     hm.Book1D("Matching_SingleLep_dRtoGen", "Single Lep dR to Gen", 200, 0, 2);
     hm.Book1D("Matching_ThreeLep_dRtoGen", "Three Lep dR to Gen", 200, 0, 2);
     hm.Book1D("FreeAllLep_dRtoGen", "All Lep dR to Gen", 200, 0, 2);
+    hm.Book2D("GenReco_MassHeatmap", "GentoReco INV Mass;Z [GeV];Higgs [GeV]", 200, 0, 200, 200, 0, 200);
     // =========================================================================
 
     // --- Event Loop ---
@@ -341,11 +342,13 @@ void Z_off_shell_cut(
 
             if (stepName == "NotZ_MassThreshold") {
                 LastVerifyGen->process(ev, params);
+                GentoRecoMassIdentify(ev,params);
                 hm.Fill2D("SFSC_dR_Heatmap", ev.SFSC_GendR, ev.SFSC_RecodR);
                 if (ev.SFSC_GendR > 0) hm.Fill1D("SFSC_dR_Ratio", ev.SFSC_RecodR / ev.SFSC_GendR);
                 hm.Fill2D("Matching_ThreeLep_Opposite_Heatmap", ev.Matching_ThreeLepSide, ev.Matching_OppositeLep);
                 hm.Fill1D("Matching_SingleLep_dRtoGen", ev.SingleLep_dRtoGen);
                 hm.Fill1D("Matching_ThreeLep_dRtoGen", ev.ThreeLep_dRtoGen);
+                hm.Fill2D("GenReco_MassHeatmap", ev.GentoReco_ZMass, ev.GentoReco_HMass);
                 
                 if (ev.Matching_SingleLepSide) stats_single++;
                 if (ev.Matching_ThreeLepSide) stats_three++;

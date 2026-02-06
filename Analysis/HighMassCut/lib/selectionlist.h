@@ -565,6 +565,64 @@ void GenMassIDentify(EventContext &data, const defaultParameters &params){
     // Placeholder for future implementation
 }
 
+void GentoRecoMassIdentify(EventContext &data, const defaultParameters &params){
+    // ========================================================Defined Varibles==========================
+    map<TString, vector<int>> GenLepFnLst = IdentifyImediateLepton(data);
+    vector<TLorentzVector> GenRecoLepVecs, selectedRecoLepVecs;
+    TLorentzVector RecoLepVec;
+    int LeptonSize = GenLepFnLst["Index"].size(), ThisLepPID, MindR;
+    float ThisLepMass;
+    vector<int> HiggsIndex,Zindex;
+    GenRecoLepVecs.reserve(LeptonSize);
+    selectedRecoLepVecs.reserve(LeptonSize);
+    // ========================================================Mass Calculation==========================
+    for (auto LepIdx=0; LepIdx<LeptonSize; LepIdx++){
+        ThisLepPID = GenLepFnLst["PID"][LepIdx];
+        ThisLepMass = (abs(ThisLepPID)==11) ? params.Electron_MASS : params.Muon_MASS;
+        GenRecoLepVecs[LepIdx].SetPtEtaPhiM(
+            data.Particle_PT[GenLepFnLst["Index"][LepIdx]],
+            data.Particle_Eta[GenLepFnLst["Index"][LepIdx]],
+            data.Particle_Phi[GenLepFnLst["Index"][LepIdx]],
+            ThisLepMass);
+        MindR = 1e6;
+        for (auto RecoEIdx=0; RecoEIdx<data.Electron_size; RecoEIdx++){
+            ThisLepMass = params.Electron_MASS;
+            RecoLepVec.SetPtEtaPhiM(
+                data.Electron_PT[RecoEIdx],
+                data.Electron_Eta[RecoEIdx],
+                data.Electron_Phi[RecoEIdx],
+                ThisLepMass);
+            float ThisdR = GenRecoLepVecs[LepIdx].DeltaR(RecoLepVec);
+            if (ThisdR<MindR){
+                MindR=ThisdR;
+                selectedRecoLepVecs[LepIdx]=RecoLepVec;
+            }
+        }
+        for (auto RecoMuIdx=0; RecoMuIdx<data.Muon_size; RecoMuIdx++){
+            ThisLepMass = params.Muon_MASS;
+            RecoLepVec.SetPtEtaPhiM(
+                data.Muon_PT[RecoMuIdx],
+                data.Muon_Eta[RecoMuIdx],
+                data.Muon_Phi[RecoMuIdx],
+                ThisLepMass);
+            float ThisdR = GenRecoLepVecs[LepIdx].DeltaR(RecoLepVec);
+            if (ThisdR<MindR){
+                MindR=ThisdR;
+                selectedRecoLepVecs[LepIdx]=RecoLepVec;
+            }  
+        }
+        if (abs(GenLepFnLst["MotherPID"][LepIdx])==25){
+            HiggsIndex.push_back(LepIdx);
+        } else if (abs(GenLepFnLst["MotherPID"][LepIdx])==23){
+            Zindex.push_back(LepIdx);
+        }
+    }
+    data.GentoReco_HMass = (selectedRecoLepVecs[HiggsIndex[0]] + selectedRecoLepVecs[HiggsIndex[1]]).M();
+    data.GentoReco_ZMass = (selectedRecoLepVecs[Zindex[0]] + selectedRecoLepVecs[Zindex[1]]).M();
+    // Placeholder for future implementation
+    return;
+}
+
 
 //===================================================================================================
 // Lagacy

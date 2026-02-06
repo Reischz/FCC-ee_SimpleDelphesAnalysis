@@ -79,6 +79,8 @@ struct EventContext {
     float Gen_Z_Mass;
     float Gen_DirectHMass;
     float Gen_DirectZMass;
+    float GentoReco_HMass;
+    float GentoReco_ZMass;
 
     float SingleLep_dRtoGen, ThreeLep_dRtoGen;
     vector<float> FreeAllLep_dRtoGen;
