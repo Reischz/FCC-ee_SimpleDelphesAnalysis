@@ -191,8 +191,8 @@ class NotZ_dR : public AnalysisModule {
             EleVector.SetPtEtaPhiM(data.Electron_PT[EleIndex], data.Electron_Eta[EleIndex], data.Electron_Phi[EleIndex], params.Electron_MASS);
             float dR = MuVector.DeltaR(EleVector);
             float dPhi = fabs(MuVector.DeltaPhi(EleVector));
-            data.NotZ_dR = dR;
-            data.NotZ_dPhi = dPhi;
+            data.HH_NotZ_dR = dR;
+            data.HH_NotZ_dPhi = dPhi;
             if (dR < params.dRCut) {
                 data.PassThisCut = false;
             }
@@ -315,7 +315,7 @@ class PairSelection_offshell : public AnalysisModule {
                 PairPassStat[order] = (HCandLep[order].Pt() > params.LFV_MinPT) && (PairdR[order] > params.dRCut);
                 // ===============================================Selecting the Best Candidate==========================
                 if (PairPassStat[order]){
-                    ChangeVal= (data.OtherPair_Mass < PairMass[order]);
+                    ChangeVal= (data.HH_NotZPair_Mass < PairMass[order]);
                     if (ChangeVal){
                         data.HH_NotZ_dR = PairdR[order];
                         data.HH_NotZPair_Mass = PairMass[order];
