@@ -408,7 +408,7 @@ class Verify_Generator : public AnalysisModule {
             GenLepFnLst = IdentifyImediateLepton(data);
 
             // Reco Level
-            for (auto LepRecoIdx:data.HH_ZPairIndexes){
+            for (auto LepRecoIdx:data.HH_NotZPairIndexes){
                 UnderScorePos = LepRecoIdx.Index("_");
                 LepType = LepRecoIdx(0, UnderScorePos);
                 HCandLepLst["Index"].push_back(TString(LepRecoIdx(UnderScorePos+1, LepRecoIdx.Length()-UnderScorePos-1)).Atoi());
