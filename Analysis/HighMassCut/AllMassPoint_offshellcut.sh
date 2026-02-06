@@ -31,9 +31,9 @@ FILELIST=(
     "/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/EventSample/ZWWFourLepton_1M_Seed30/ZWWFourLepton_1M_Seed30.root"
     )
 NUM_FILES=${#FILELIST[@]}
-rm -rf SelectionResults_Ofs
-mkdir SelectionResults_Ofs
-cd SelectionResults_Ofs
+rm -rf SelectionResults/CombineAll
+mkdir -p SelectionResults/CombineAll
+cd SelectionResults/CombineAll
 RESULT_NAME=(
     "HLFV_150GeV"
     "HLFV_155GeV"
