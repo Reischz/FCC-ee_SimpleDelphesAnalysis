@@ -67,12 +67,18 @@ struct EventContext {
     int Particle_D2[100];
     int Particle_Charge[100];
     int Particle_Status[100];
+    float Particle_Mass[100];
     int Particle_size;
 
     bool Matching_SingleLepSide;
     bool Matching_ThreeLepSide;
     bool Matching_Perfect;
     bool Matching_OppositeLep;
+
+    float Gen_Higgs_Mass;
+    float Gen_Z_Mass;
+    float Gen_DirectHMass;
+    float Gen_DirectZMass;
 
     float SingleLep_dRtoGen, ThreeLep_dRtoGen;
     vector<float> FreeAllLep_dRtoGen;
@@ -134,6 +140,11 @@ struct EventContext {
         ThreeLep_dRtoGen = -1.0;
         FreeAllLep_dRtoGen.clear();
         FreeAllLep_MatchStatus.clear();
+
+        Gen_Higgs_Mass = -1.0;
+        Gen_Z_Mass = -1.0;
+        Gen_DirectHMass = -1.0;
+        Gen_DirectZMass = -1.0;
     }
 };
 

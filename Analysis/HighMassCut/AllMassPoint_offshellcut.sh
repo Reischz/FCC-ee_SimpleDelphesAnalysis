@@ -54,3 +54,6 @@ for i in "${!FILELIST[@]}"; do
 done
 wait
 echo "All selection jobs submitted."
+
+# testcode
+# root -l -b -q 'Z_off_shell_cut.cpp("Prelim_sample/HLFV_125GeV.root", "Prelim_result/HLFV_125GeV_SelectionResults.root", "Prelim_result/HLFV_125GeV_AdditionalTree.root")'

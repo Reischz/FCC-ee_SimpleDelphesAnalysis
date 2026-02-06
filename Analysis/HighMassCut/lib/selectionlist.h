@@ -530,6 +530,39 @@ class Verify_Generator : public AnalysisModule {
         }
 };
 
+void GenMassIDentify(EventContext &data, const defaultParameters &params){
+    map<string, vector<int>> GenLepFnLst = IdentifyImediateLepton(data);
+    vector<TLorentzVector> GenLepVecs;
+    int LeptonSize = GenLepFnLst["Index"].size();
+    vector<int> HiggsIndex,Zindex;
+    GenLepVecs.reserve(LeptonSize);
+    // ========================================================Mass Calculation==========================
+    for (auto LepIdx=0; LepIdx<LeptonSize; LepIdx++){
+        ThisLepPID = GenLepFnLst["PID"][LepIdx];
+        ThisLepMass = (abs(ThisLepPID)==11) ? params.Electron_MASS : params.Muon_MASS;
+        GenLepVec.SetPtEtaPhiM(
+            data.Particle_PT[GenLepFnLst["Index"][LepIdx]],
+            data.Particle_Eta[GenLepFnLst["Index"][LepIdx]],
+            data.Particle_Phi[GenLepFnLst["Index"][LepIdx]],
+            ThisLepMass);
+        if (abs(GenLepFnLst["MotherPID"][LepIdx])==25){
+            HiggsIndex.push_back(LepIdx);
+        } else if (abs(GenLepFnLst["MotherPID"][LepIdx])==23){
+            Zindex.push_back(LepIdx);
+        }
+    }
+    data.Gen_Higgs_Mass = (GenLepVecs[HiggsIndex[0]] + GenLepVecs[HiggsIndex[1]]).M();
+    data.Gen_Z_Mass = (GenLepVecs[Zindex[0]] + GenLepVecs[Zindex[1]]).M();
+    for (int i=0; i< data.Particle_size; i++){
+        if (abs(data.Particle_PID[i])==25){
+            data.Gen_Higgs_Mass = data.Particle_Mass[i];
+        }
+        else if (abs(data.Particle_PID[i])==23){
+            data.Gen_Z_Mass = data.Particle_Mass[i];
+    }
+    }
+    // Placeholder for future implementation
+}
 
 
 //===================================================================================================

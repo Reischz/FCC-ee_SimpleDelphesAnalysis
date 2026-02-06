@@ -48,6 +48,7 @@ struct LeafReader {
     TLeaf *Par_M2 = nullptr;
     TLeaf *Par_D1 = nullptr;
     TLeaf *Par_D2 = nullptr;
+    TLeaf *Par_Mass = nullptr;
 
     // Connects leaves to the tree
     void Init(TTree* t) {
@@ -83,7 +84,7 @@ struct LeafReader {
         Par_M2 = get("Particle.M2");
         Par_D1 = get("Particle.D1");
         Par_D2 = get("Particle.D2");
-
+        Par_Mass = get("Particle.Mass");
     }
 
     // Reads current entry from Leaves into the EventContext
@@ -131,6 +132,7 @@ struct LeafReader {
                 if(Par_M2) ev.Particle_M2[i] = (int)Par_M2->GetValue(i);
                 if(Par_D1) ev.Particle_D1[i] = (int)Par_D1->GetValue(i);
                 if(Par_D2) ev.Particle_D2[i] = (int)Par_D2->GetValue(i);
+                if(Par_Mass) ev.Particle_Mass[i] = (float)Par_Mass->GetValue(i);
             }
         }
     }
@@ -244,6 +246,8 @@ void Z_off_shell_cut(
     hm.SetDirectory(histDir);
 
     dummy = 0;
+    hm.Book2D("GenBosonHeatmap", "Gen Boson Heatmap;Z [GeV];Higgs [GeV]", 200, 0, 200, 200, 0, 200);
+    hm.Book2D("GenPairLepHeatmap", "Gen Lepton pair INV mass Heatmap;Z [GeV];Higgs [GeV]", 200, 0, 200, 200, 0, 200);
     for (auto& step : pipeline) {
         if (!step.second) continue;
         TString stepName = step.first->getName();
@@ -294,6 +298,11 @@ void Z_off_shell_cut(
 
         // 3. Run Pipeline
         dummy = 0;
+        
+        GenMassIDentify(ev,params);
+        hm.Fill2D("GenPairLepHeatmap", ev.Gen_Z_Mass, ev.Gen_Higgs_Mass);
+        hm.Fill2D("GenBosonHeatmap", ev.Gen_DirectZMass, ev.Gen_DirectHMass);
+        
         for (auto& step : pipeline) {
             if (!step.second) continue;
 
