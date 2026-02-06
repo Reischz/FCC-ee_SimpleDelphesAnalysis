@@ -349,6 +349,11 @@ void Z_off_shell_cut(
     cout << "\nSelection Summary:" << endl;
     for(int k=0; k<pipeline.size(); k++) cout << " Stage " << k << ": " << selection_counts[k] 
                                             << ", " << pipeline[k].first->getName() << endl;
+    cout << " Matching Summary:" << endl;
+    cout << "  Single Lep Side Matches: " << stats_single/selection_counts[k]* 100 << "%" << endl;
+    cout << "  Three Lep Side Matches: " << stats_three/selection_counts[k]* 100 << "%" << endl;
+    cout << "  Perfect Matches: " << stats_perf/selection_counts[k]* 100 << "%" << endl;
+    cout << "  Free All Matches: " << stats_FA/(selection_counts[k]*2)* 100 << "%" << endl;
     for (auto& step : pipeline) delete step.first;
     delete LastVerifyGen;
 
