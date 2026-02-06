@@ -356,7 +356,7 @@ void Z_off_shell_cut(
     cout << "  Three Lep Side Matches: " << stats_three/selection_counts[temp]* 100 << "%" << endl;
     cout << "  Perfect Matches: " << stats_perf/selection_counts[temp]* 100 << "%" << endl;
     cout << "  Free All Matches: " << stats_FA/(selection_counts[temp]*2)* 100 << "%" << endl;
-    cout << "test" << stats_single << endl;
+    cout << "test" << stats_single << " " << selection_counts[temp] << endl;
     for (auto& step : pipeline) delete step.first;
     delete LastVerifyGen;
 
