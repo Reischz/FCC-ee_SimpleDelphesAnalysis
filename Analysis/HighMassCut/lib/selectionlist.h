@@ -494,9 +494,9 @@ class Verify_Generator : public AnalysisModule {
                 ThisLepPID = HCandLepLst["PID"][FreeAllRecoIdx];
                 ThisLepMass = (abs(ThisLepPID)==11) ? params.Electron_MASS : params.Muon_MASS;
                 RecoLepVec.SetPtEtaPhiM(
-                    (abs(ThisLepPID)==11) ? data.Electron_PT[FreeAllRecoIdx] : data.Muon_PT[FreeAllRecoIdx],
-                    (abs(ThisLepPID)==11) ? data.Electron_Eta[FreeAllRecoIdx] : data.Muon_Eta[FreeAllRecoIdx],
-                    (abs(ThisLepPID)==11) ? data.Electron_Phi[FreeAllRecoIdx] : data.Muon_Phi[FreeAllRecoIdx],
+                    (abs(ThisLepPID)==11) ? data.Electron_PT[HCandLepLst["Index"][FreeAllRecoIdx]] : data.Muon_PT[HCandLepLst["Index"][FreeAllRecoIdx]],
+                    (abs(ThisLepPID)==11) ? data.Electron_Eta[HCandLepLst["Index"][FreeAllRecoIdx]] : data.Muon_Eta[HCandLepLst["Index"][FreeAllRecoIdx]],
+                    (abs(ThisLepPID)==11) ? data.Electron_Phi[HCandLepLst["Index"][FreeAllRecoIdx]] : data.Muon_Phi[HCandLepLst["Index"][FreeAllRecoIdx]],
                     ThisLepMass);
                 MindR = 1e6;
                 for (auto FreeAllGenIdx=0; FreeAllGenIdx<GenLepFnLst["PID"].size(); FreeAllGenIdx++){
