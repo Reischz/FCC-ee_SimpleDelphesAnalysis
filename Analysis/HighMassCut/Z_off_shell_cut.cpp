@@ -154,14 +154,6 @@ struct HistManager {
         return h;
     }
 
-    TH1F* Book1DLogX(TString name, TString title, int nbins, double min, double max) {
-        if (dir) dir->cd();
-        TH1F* h = new TH1F(name, title, nbins, min, max);
-        h->SetDirectory(dir);
-        h1[name] = h;
-        return h;
-    }
-
     TH2F* Book2D(TString name, TString title, int nxbins, double xmin, double xmax, int nybins, double ymin, double ymax) {
         if (dir) dir->cd();
         TH2F* h = new TH2F(name, title, nxbins, xmin, xmax, nybins, ymin, ymax);
@@ -274,9 +266,9 @@ void Z_off_shell_cut(
     hm.Book2D("SFSC_dR_Heatmap", "Gen vs Reco dR", 100, 0, 10, 50, 0, 10);
     hm.Book1D("SFSC_dR_Ratio", "Reco/Gen dR Ratio", 300, 0, 3);
     hm.Book2D("Matching_ThreeLep_Opposite_Heatmap", "Matching Check", 2, 0, 2, 2, 0, 2);
-    hm.Book1DLogX("Matching_SingleLep_dRtoGen", "Single Lep dR to Gen", 200, 0, 2);
-    hm.Book1DLogX("Matching_ThreeLep_dRtoGen", "Three Lep dR to Gen", 200, 0, 2);
-    hm.Book1DLogX("FreeAllLep_dRtoGen", "All Lep dR to Gen", 200, 0, 2);
+    hm.Book1D("Matching_SingleLep_dRtoGen", "Single Lep dR to Gen", 200, 0, 2);
+    hm.Book1D("Matching_ThreeLep_dRtoGen", "Three Lep dR to Gen", 200, 0, 2);
+    hm.Book1D("FreeAllLep_dRtoGen", "All Lep dR to Gen", 200, 0, 2);
     // =========================================================================
 
     // --- Event Loop ---

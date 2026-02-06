@@ -278,8 +278,8 @@ class PairSelection_offshell : public AnalysisModule {
             TLorentzVector SgleVec, NotHLepVec;
             vector<TLorentzVector> HCandLep(2);
             vector<int> NotHLepIdxLst,HCanIdxLst;
-            vector<float> PairdR(2), PairMass(2);
-            vector<bool> PairPassStat={false, false};
+            vector<float> PairdR(2), PairMass(2), ZC_PairdR(2), ZC_PairMass(2);
+            vector<bool> PairPassStat={false, false}, ZC_PairPassStat={false, false};
             int ThisEvntIdx, OtherEvntIdx;
 
             // ========================================================Process Begin==========================
@@ -319,6 +319,23 @@ class PairSelection_offshell : public AnalysisModule {
                     if (ChangeVal){
                         data.NotZ_dR = PairdR[order];
                         data.OtherPair_Mass = PairMass[order];
+                        data.NearestZ_Mass = (NotHLepVec + HCandLep[order]).M();
+                        // The index of threelepton
+                        ThisEvntIdx = HCanIdxLst[order];
+                        OtherEvntIdx = 3-(NotHLepIdxLst[0] + ThisEvntIdx);
+                        data.Z_PairIndexes = {ThreeLepFlavour+"_"+OtherEvntIdx, ThreeLepFlavour+"_"+NotHLepIdxLst[0]};
+                        data.NotZ_PairIndexes={ThreeLepFlavour+"_"+ThisEvntIdx, SingleLepFlavour+"_"+0};
+                    }
+                }
+                // ===============================================Z as citeria indentify==========================
+                ZC_PairdR[order] = (NotHLepVec + HCandLep[order]).DeltaR(SgleVec);
+                ZC_PairMass[order] = (NotHLepVec + HCandLep[order] + SgleVec).M();
+                ZC_PairPassStat[order] = (HCandLep[order-1].Pt() > params.LFV_MinPT);
+                if (ZC_PairPassStat[order]){
+                    ChangeVal= (fabs(data.NearestZ_Mass - params.Z_MASS) < fabs(ZC_PairMass[order] - params.Z_MASS));
+                    if (ChangeVal){
+                        data.NotZ_dR = ZC_PairdR[order];
+                        data.OtherPair_Mass = ZC_PairMass[order];
                         data.NearestZ_Mass = (NotHLepVec + HCandLep[order]).M();
                         // The index of threelepton
                         ThisEvntIdx = HCanIdxLst[order];
@@ -410,7 +427,7 @@ class Verify_Generator : public AnalysisModule {
                 throw runtime_error("Lepton Number Mismatch : Gen vs Reco");
             }
             // ========================================================Verification Process==========================
-            cout << " Beginning Matching Process..." << endl;
+            // cout << " Beginning Matching Process..." << endl;
             HCandLepSize = HCandLepLst["PID"].size();
             HCandLepLst["MatchedGenIdx"].reserve(HCandLepSize);
             HCandLepLst["dRtoGen"].reserve(HCandLepSize);
@@ -419,7 +436,7 @@ class Verify_Generator : public AnalysisModule {
             ElectronDominated = (data.Electron_size > data.Muon_size);
 
             // 1st Mode, Check PID First
-            cout << " Beginning PID Matching..." << endl;
+            // cout << " Beginning PID Matching..." << endl;
             for (auto RecoID=0; RecoID<HCandLepSize; RecoID++){
                 ThisLepElec = (abs(HCandLepLst["PID"][RecoID])==11);
                 ThisLepMass = ThisLepElec ? params.Electron_MASS : params.Muon_MASS;
@@ -429,17 +446,17 @@ class Verify_Generator : public AnalysisModule {
                     ThisLepElec ? data.Electron_Phi[HCandLepLst["Index"][RecoID]] : data.Muon_Phi[HCandLepLst["Index"][RecoID]],
                     ThisLepMass);
                 MindR = 1e6;
-                cout << " Matching Reco Lepton PID: " << HCandLepLst["PID"][RecoID] << endl;
+                // cout << " Matching Reco Lepton PID: " << HCandLepLst["PID"][RecoID] << endl;
                 for (auto GenID=0; GenID<GenLepFnLst["PID"].size(); GenID++){
                     if (HCandLepLst["PID"][RecoID]==GenLepFnLst["PID"][GenID]){
-                        cout << "  Found Gen Lepton PID: " << GenLepFnLst["PID"][GenID] << endl;
+                        // cout << "  Found Gen Lepton PID: " << GenLepFnLst["PID"][GenID] << endl;
                         GenLepVec.SetPtEtaPhiM(
                             data.Particle_PT[GenLepFnLst["Index"][GenID]],
                             data.Particle_Eta[GenLepFnLst["Index"][GenID]],
                             data.Particle_Phi[GenLepFnLst["Index"][GenID]],
                             ThisLepMass);
                         ThisdR = RecoLepVec.DeltaR(GenLepVec);
-                        cout << "   Calculated dR: " << ThisdR << endl;
+                        // cout << "   Calculated dR: " << ThisdR << endl;
                         if (ThisdR<MindR){
                             MindR=ThisdR;
                             if (ElectronDominated && (abs(GenLepFnLst["PID"][GenID])==11)){
@@ -448,6 +465,7 @@ class Verify_Generator : public AnalysisModule {
                             }
                             else if ((ElectronDominated) && (abs(GenLepFnLst["PID"][GenID])==13)){
                                 data.SingleLep_dRtoGen=ThisdR;
+                                cout << "   Setting Single Lepton dR to Gen: " << ThisdR << endl;
                                 if ((ThisdR<0.1) && (abs(GenLepFnLst["MotherPID"][GenID])==25)) {data.Matching_SingleLepSide=true;}
                             }
                             else if ((!ElectronDominated) && (abs(GenLepFnLst["PID"][GenID])==13)){
@@ -456,15 +474,16 @@ class Verify_Generator : public AnalysisModule {
                             }
                             else if ((!ElectronDominated) && (abs(GenLepFnLst["PID"][GenID])==11)){
                                 data.SingleLep_dRtoGen=ThisdR;
+                                cout << "   Setting Single Lepton dR to Gen: " << ThisdR << endl;
                                 if ((ThisdR<0.1) && (abs(GenLepFnLst["MotherPID"][GenID])==25)) {data.Matching_SingleLepSide=true;}
                             }
                         }
-                        cout << "    Current MindR: " << MindR << endl;
+                        // cout << "    Current MindR: " << MindR << endl;
                     }
                 }
             }
             data.Matching_Perfect = data.Matching_ThreeLepSide && data.Matching_SingleLepSide;
-            cout << "Beginning Free For All Matching..." << endl;
+            // cout << "Beginning Free For All Matching..." << endl;
             // 2nd Mode, Free For All
             for (auto FreeAllRecoIdx=0; FreeAllRecoIdx<HCandLepSize; FreeAllRecoIdx++){
                 ThisLepPID = HCandLepLst["PID"][FreeAllRecoIdx];

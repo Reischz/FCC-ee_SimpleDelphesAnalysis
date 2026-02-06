@@ -36,14 +36,22 @@ struct EventContext {
     int CurrentCut;
     bool PassThisCut;
 
-    float NearestZ_Mass;
-    float OtherPair_Mass;
+    // High Higgs critia info
+    float HH_NotZPair_Mass;
+    float HH_Ant_NotZPair_Mass;
+    float HH_ZPair_Mass;
+    float HH_Ant_ZPair_Mass;
     int Z_PairIndexSum;
     vector<TString> Z_PairIndexes,NotZ_PairIndexes;
     float NotZ_dR;
     float NotZ_dPhi;
     float NotZ_EleMET_dPhi;
     float NotZ_MuMET_dPhi;
+
+    // Z critia matching info
+    float ZC_ZPairdR;
+    float ZC_ZPairMass;
+    float ZC_Z
 
     float Particle_PT[100]; // assuming max 100 particles
     float Particle_Eta[100];
