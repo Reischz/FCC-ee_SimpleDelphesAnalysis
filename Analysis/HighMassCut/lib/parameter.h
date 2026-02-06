@@ -42,16 +42,20 @@ struct EventContext {
     float HH_ZPair_Mass;
     float HH_Ant_ZPair_Mass;
     int Z_PairIndexSum;
-    vector<TString> Z_PairIndexes,NotZ_PairIndexes;
-    float NotZ_dR;
-    float NotZ_dPhi;
+    vector<TString> HH_ZPairIndexes,HH_NotZPairIndexes;
+    float HH_NotZ_dR;
+    float HH_NotZ_dPhi;
     float NotZ_EleMET_dPhi;
     float NotZ_MuMET_dPhi;
 
     // Z critia matching info
     float ZC_ZPairdR;
     float ZC_ZPairMass;
-    float ZC_Z
+    float ZC_Ant_ZPairMass;
+    float ZC_NotZPairMass;
+    float ZC_Ant_NotZPairMass;
+    float ZC_NotZdR;
+    vector<TString> ZC_ZPairIndexes,ZC_NotZPairIndexes;
 
     float Particle_PT[100]; // assuming max 100 particles
     float Particle_Eta[100];
@@ -84,15 +88,26 @@ struct EventContext {
         Muon_size = 0;
         CurrentCut = 0;
         PassThisCut = true;
-        NearestZ_Mass = -1.0;
-        OtherPair_Mass = -1.0;
+
+        // Reset High Higgs critia info
+        HH_ZPair_Mass = -1.0;
+        HH_NotZPair_Mass = -1.0;
         Z_PairIndexSum = -1;
-        Z_PairIndexes.clear();
-        NotZ_PairIndexes.clear();
+        HH_ZPairIndexes.clear();
+        HH_NotZPairIndexes.clear();
         NotZ_EleMET_dPhi = -1.0;
         NotZ_MuMET_dPhi = -1.0;
-        NotZ_dR = -1.0;
-        NotZ_dPhi = -1.0;
+        HH_NotZ_dR = -1.0;
+        HH_NotZ_dPhi = -1.0;
+
+        // Reset Z critia matching info
+        ZC_ZPairdR = -1.0;
+        ZC_ZPairMass = -1.0;
+        ZC_NotZPairMass = -1.0;
+        ZC_NotZdR = -1.0;
+        ZC_ZPairIndexes.clear();
+        ZC_NotZPairIndexes.clear();
+        
         for (int i = 0; i < 10; ++i) {
             CutStatus[i] = 0;
         }

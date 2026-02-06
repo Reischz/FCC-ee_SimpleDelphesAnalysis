@@ -317,14 +317,14 @@ class PairSelection_offshell : public AnalysisModule {
                 if (PairPassStat[order]){
                     ChangeVal= (data.OtherPair_Mass < PairMass[order]);
                     if (ChangeVal){
-                        data.NotZ_dR = PairdR[order];
-                        data.OtherPair_Mass = PairMass[order];
-                        data.NearestZ_Mass = (NotHLepVec + HCandLep[order]).M();
+                        data.HH_NotZ_dR = PairdR[order];
+                        data.HH_NotZPair_Mass = PairMass[order];
+                        data.HH_ZPair_Mass = (NotHLepVec + HCandLep[order]).M();
                         // The index of threelepton
                         ThisEvntIdx = HCanIdxLst[order];
                         OtherEvntIdx = 3-(NotHLepIdxLst[0] + ThisEvntIdx);
-                        data.Z_PairIndexes = {ThreeLepFlavour+"_"+OtherEvntIdx, ThreeLepFlavour+"_"+NotHLepIdxLst[0]};
-                        data.NotZ_PairIndexes={ThreeLepFlavour+"_"+ThisEvntIdx, SingleLepFlavour+"_"+0};
+                        data.HH_ZPairIndexes = {ThreeLepFlavour+"_"+OtherEvntIdx, ThreeLepFlavour+"_"+NotHLepIdxLst[0]};
+                        data.HH_NotZPairIndexes={ThreeLepFlavour+"_"+ThisEvntIdx, SingleLepFlavour+"_"+0};
                     }
                 }
                 // ===============================================Z as citeria indentify==========================
@@ -334,14 +334,14 @@ class PairSelection_offshell : public AnalysisModule {
                 if (ZC_PairPassStat[order]){
                     ChangeVal= (fabs(data.NearestZ_Mass - params.Z_MASS) < fabs(ZC_PairMass[order] - params.Z_MASS));
                     if (ChangeVal){
-                        data.NotZ_dR = ZC_PairdR[order];
-                        data.OtherPair_Mass = ZC_PairMass[order];
-                        data.NearestZ_Mass = (NotHLepVec + HCandLep[order]).M();
+                        data.ZC_NotZdR = ZC_PairdR[order];
+                        data.ZC_NotZPairMass = ZC_PairMass[order];
+                        data.ZC_ZPairMass = (NotHLepVec + HCandLep[order]).M();
                         // The index of threelepton
                         ThisEvntIdx = HCanIdxLst[order];
                         OtherEvntIdx = 3-(NotHLepIdxLst[0] + ThisEvntIdx);
-                        data.Z_PairIndexes = {ThreeLepFlavour+"_"+OtherEvntIdx, ThreeLepFlavour+"_"+NotHLepIdxLst[0]};
-                        data.NotZ_PairIndexes={ThreeLepFlavour+"_"+ThisEvntIdx, SingleLepFlavour+"_"+0};
+                        data.ZC_ZPairIndexes = {ThreeLepFlavour+"_"+OtherEvntIdx, ThreeLepFlavour+"_"+NotHLepIdxLst[0]};
+                        data.ZC_NotZPairIndexes={ThreeLepFlavour+"_"+ThisEvntIdx, SingleLepFlavour+"_"+0};
                     }
                 }
             }
