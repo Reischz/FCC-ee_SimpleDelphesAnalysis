@@ -149,19 +149,19 @@ class Z_Window : public AnalysisModule {
             if ((minIndex == -1) || (fabs(leptonPairsMass[minIndex] - params.Z_MASS) > params.Z_WINDOW)) {
                 data.PassThisCut = false;
             } else {
-                data.NearestZ_Mass = leptonPairsMass[minIndex];
+                data.HH_ZPair_Mass = leptonPairsMass[minIndex];
                 int leftindex=3-data.Z_PairIndexSum;
                 // Find the other pair mass
                 if (data.Electron_size>data.Muon_size){
                     lepton1Vector.SetPtEtaPhiM(data.Muon_PT[0], data.Muon_Eta[0], data.Muon_Phi[0], params.Muon_MASS);
                     lepton2Vector.SetPtEtaPhiM(data.Electron_PT[leftindex], data.Electron_Eta[leftindex], data.Electron_Phi[leftindex], params.Electron_MASS);
                     combinedVector = lepton1Vector + lepton2Vector;
-                    data.OtherPair_Mass = combinedVector.M();
+                    data.HH_NotZPair_Mass = combinedVector.M();
                 } else {
                     lepton1Vector.SetPtEtaPhiM(data.Electron_PT[0], data.Electron_Eta[0], data.Electron_Phi[0], params.Electron_MASS);
                     lepton2Vector.SetPtEtaPhiM(data.Muon_PT[leftindex], data.Muon_Eta[leftindex], data.Muon_Phi[leftindex], params.Muon_MASS);
                     combinedVector = lepton1Vector + lepton2Vector;
-                    data.OtherPair_Mass = combinedVector.M();
+                    data.HH_NotZPair_Mass = combinedVector.M();
                 }
             }
             return;
@@ -237,7 +237,7 @@ class NotZ_MassThreshold : public AnalysisModule {
             if (!data.CutStatus[data.CurrentCut-1]){
                 return;
             }
-            if (data.OtherPair_Mass < params.NotZ_MassCut) {
+            if (data.HH_NotZPair_Mass < params.NotZ_MassCut) {
                 data.PassThisCut = false;
             }
             return;
@@ -332,7 +332,7 @@ class PairSelection_offshell : public AnalysisModule {
                 ZC_PairMass[order] = (NotHLepVec + HCandLep[order] + SgleVec).M();
                 ZC_PairPassStat[order] = (HCandLep[order-1].Pt() > params.LFV_MinPT);
                 if (ZC_PairPassStat[order]){
-                    ChangeVal= (fabs(data.NearestZ_Mass - params.Z_MASS) < fabs(ZC_PairMass[order] - params.Z_MASS));
+                    ChangeVal= (fabs(data.HH_ZPair_Mass - params.Z_MASS) < fabs(ZC_PairMass[order] - params.Z_MASS));
                     if (ChangeVal){
                         data.ZC_NotZdR = ZC_PairdR[order];
                         data.ZC_NotZPairMass = ZC_PairMass[order];
@@ -408,7 +408,7 @@ class Verify_Generator : public AnalysisModule {
             GenLepFnLst = IdentifyImediateLepton(data);
 
             // Reco Level
-            for (auto LepRecoIdx:data.Z_PairIndexes){
+            for (auto LepRecoIdx:data.HH_ZPairIndexes){
                 UnderScorePos = LepRecoIdx.Index("_");
                 LepType = LepRecoIdx(0, UnderScorePos);
                 HCandLepLst["Index"].push_back(TString(LepRecoIdx(UnderScorePos+1, LepRecoIdx.Length()-UnderScorePos-1)).Atoi());

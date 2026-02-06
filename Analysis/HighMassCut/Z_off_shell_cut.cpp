@@ -234,8 +234,8 @@ void Z_off_shell_cut(
             dummy++;
         }
     }
-    tOut->Branch("NearestZ_Mass", &ev.NearestZ_Mass, "NearestZ_Mass/F");
-    tOut->Branch("OtherPair_Mass", &ev.OtherPair_Mass, "OtherPair_Mass/F");
+    tOut->Branch("HH_ZPair_Mass", &ev.HH_ZPair_Mass, "HH_ZPair_Mass/F");
+    tOut->Branch("HH_NotZPair_Mass", &ev.HH_NotZPair_Mass, "HH_NotZPair_Mass/F");
 
     // --- Histogram Setup ---
     TFile *fHistOut = TFile::Open(outputfile, "RECREATE");
@@ -258,7 +258,7 @@ void Z_off_shell_cut(
             hm.Book1D(prefix + "HH_NotZMass-" + stepName, "M_Z2;GeV", 100, 0, 200);
             hm.Book1D(prefix + "HH_NotZdR-" + stepName, "dR", 50, 0, 6);
             hm.Book1D(prefix + "HH_NotZdPhi-" + stepName, "dPhi", 50, 0, 3.5);
-            hm.Book2D(prefix + "MassPairHeatmap-" + stepName, "Mass Map", 200, 0, 200, 200, 0, 200);
+            hm.Book2D(prefix + "HH_MassPairHeatmap-" + stepName, "Mass Map", 200, 0, 200, 200, 0, 200);
         }
         dummy++;
     }
