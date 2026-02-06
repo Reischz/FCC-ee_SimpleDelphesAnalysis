@@ -541,7 +541,7 @@ void GenMassIDentify(EventContext &data, const defaultParameters &params){
     for (auto LepIdx=0; LepIdx<LeptonSize; LepIdx++){
         ThisLepPID = GenLepFnLst["PID"][LepIdx];
         ThisLepMass = (abs(ThisLepPID)==11) ? params.Electron_MASS : params.Muon_MASS;
-        GenLepVec.SetPtEtaPhiM(
+        GenLepVecs[LepIdx].SetPtEtaPhiM(
             data.Particle_PT[GenLepFnLst["Index"][LepIdx]],
             data.Particle_Eta[GenLepFnLst["Index"][LepIdx]],
             data.Particle_Phi[GenLepFnLst["Index"][LepIdx]],
