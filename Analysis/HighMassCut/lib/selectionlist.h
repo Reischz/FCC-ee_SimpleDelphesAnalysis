@@ -533,7 +533,8 @@ class Verify_Generator : public AnalysisModule {
 void GenMassIDentify(EventContext &data, const defaultParameters &params){
     map<string, vector<int>> GenLepFnLst = IdentifyImediateLepton(data);
     vector<TLorentzVector> GenLepVecs;
-    int LeptonSize = GenLepFnLst["Index"].size();
+    int LeptonSize = GenLepFnLst["Index"].size(), ThisLepPID;
+    float ThisLepMass;
     vector<int> HiggsIndex,Zindex;
     GenLepVecs.reserve(LeptonSize);
     // ========================================================Mass Calculation==========================
