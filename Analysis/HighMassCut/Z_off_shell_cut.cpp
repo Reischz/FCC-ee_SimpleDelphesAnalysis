@@ -301,7 +301,7 @@ void Z_off_shell_cut(
         // 3. Run Pipeline
         dummy = 0;
         
-        GenMassIDentify(ev,params);
+        if (!backgroundMode) GenMassIDentify(ev,params);
         hm.Fill2D("GenPairLepHeatmap", ev.Gen_Z_Mass, ev.Gen_Higgs_Mass);
         hm.Fill2D("GenBosonHeatmap", ev.Gen_DirectZMass, ev.Gen_DirectHMass);
         
