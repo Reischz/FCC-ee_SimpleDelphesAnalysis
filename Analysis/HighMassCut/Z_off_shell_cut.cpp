@@ -342,8 +342,11 @@ void Z_off_shell_cut(
             dummy++;
 
             if (stepName == "NotZ_MassThreshold") {
-                if (!backgroundMode) LastVerifyGen->process(ev, params);
-                GentoRecoMassIdentify(ev,params);
+                if (!backgroundMode) {
+                    LastVerifyGen->process(ev, params);
+                    GentoRecoMassIdentify(ev,params);
+                }
+                
                 hm.Fill2D("SFSC_dR_Heatmap", ev.SFSC_GendR, ev.SFSC_RecodR);
                 if (ev.SFSC_GendR > 0) hm.Fill1D("SFSC_dR_Ratio", ev.SFSC_RecodR / ev.SFSC_GendR);
                 hm.Fill2D("Matching_ThreeLep_Opposite_Heatmap", ev.Matching_ThreeLepSide, ev.Matching_OppositeLep);
