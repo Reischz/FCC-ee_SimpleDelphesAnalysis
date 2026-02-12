@@ -342,7 +342,7 @@ void Z_off_shell_cut(
             dummy++;
 
             if (stepName == "NotZ_MassThreshold") {
-                if (backgroundMode) LastVerifyGen->process(ev, params);
+                if (!backgroundMode) LastVerifyGen->process(ev, params);
                 GentoRecoMassIdentify(ev,params);
                 hm.Fill2D("SFSC_dR_Heatmap", ev.SFSC_GendR, ev.SFSC_RecodR);
                 if (ev.SFSC_GendR > 0) hm.Fill1D("SFSC_dR_Ratio", ev.SFSC_RecodR / ev.SFSC_GendR);
@@ -376,7 +376,7 @@ void Z_off_shell_cut(
     cout << " Perfect Matches: " << (float)stats_perf/selection_counts[temp]* 100 << "%" << endl;
     cout << " Free All Matches: " << (float)stats_FA/(selection_counts[temp]*2)* 100 << "%" << endl;
     for (auto& step : pipeline) delete step.first;
-    delete LastVerifyGen;
+    if (!backgroundMode) delete LastVerifyGen;
 
 
     fTreeOut->cd();
