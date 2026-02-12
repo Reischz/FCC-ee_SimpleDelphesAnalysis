@@ -195,6 +195,7 @@ std::vector<AnalysisStep> ConfigurePipeline() {
 // =========================================================================
 void Z_off_shell_cut(
     bool testMode = false,
+    bool backgroundMode = false,
     TString inputfile = "Prelim_sample/HLFV_160GeV.root", 
     TString outputfile = "Prelim_result/HLFV_160GeV_Zoff.root", 
     TString TreeOutput = "Prelim_result/HLFV_160GeV_AdditionalTree.root"
@@ -341,7 +342,7 @@ void Z_off_shell_cut(
             dummy++;
 
             if (stepName == "NotZ_MassThreshold") {
-                LastVerifyGen->process(ev, params);
+                if (backgroundMode) LastVerifyGen->process(ev, params);
                 GentoRecoMassIdentify(ev,params);
                 hm.Fill2D("SFSC_dR_Heatmap", ev.SFSC_GendR, ev.SFSC_RecodR);
                 if (ev.SFSC_GendR > 0) hm.Fill1D("SFSC_dR_Ratio", ev.SFSC_RecodR / ev.SFSC_GendR);

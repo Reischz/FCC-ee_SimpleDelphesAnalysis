@@ -1,5 +1,7 @@
 #pragma once
 #include "parameter.h"
+#include <iomanip>
+
 // ==========================================
 //  Mother of all analysis modules
 // ==========================================
@@ -371,7 +373,10 @@ map<TString, vector<int>> IdentifyImediateLepton(EventContext &data){
                 ImediateLepLst["PID"].push_back(data.Particle_PID[DaughterIdx[d]]);
                 ImediateLepLst["MotherPID"].push_back(ThisMotherPID);
                 if (abs(data.Particle_PID[DaughterIdx[d]])==11){ ImediateLepLst["EIdx"].push_back(DaughterIdx[d]); }
-                else { ImediateLepLst["MuIdx"].push_back(DaughterIdx[d]); }
+                else if (abs(data.Particle_PID[DaughterIdx[d]])==13) { ImediateLepLst["MuIdx"].push_back(DaughterIdx[d]); }
+                else { 
+                    cout << " Warning: Found Non-Lepton Daughter PID: " << data.Particle_PID[DaughterIdx[d]] << " from Mother PID: " << ThisMotherPID << endl;
+                }
             }
         }
     }
@@ -396,6 +401,39 @@ int FindMothorPID(int pid, EventContext &data, int index) {
     } else {
         return data.Particle_PID[motherIndex];
     }
+}
+
+
+void ShowGenParticleList(EventContext &data) {
+    // 1. Define column widths
+    const int wIndex = 8;
+    const int wPID   = 10;
+    const int wM1    = 10;
+    const int wM2    = 10;
+    const int wStatus= 8;
+
+    cout << "\n--- Generating Particle List ---\n" << endl;
+
+    // 2. Print Table Header
+    cout << left // Align text to the left
+         << setw(wIndex) << "Index"
+         << setw(wPID)   << "PID"
+         << setw(wM1)    << "M1 Index"
+         << setw(wM2)    << "M2 Index"
+         << setw(wStatus) << "Status" << endl;
+
+    // 3. Print a separator line
+    cout << string(wIndex + wPID + wM1 + wM2 + wStatus, '-') << endl;
+
+    // 4. Print Table Rows
+    for (int i = 0; i < data.Particle_size; i++) {
+        cout << setw(wIndex) << i
+             << setw(wPID)   << data.Particle_PID[i]
+             << setw(wM1)    << data.Particle_M1[i]
+             << setw(wM2)    << data.Particle_M2[i] 
+             << setw(wStatus) << data.Particle_Status[i] << endl;
+    }
+    cout << endl;
 }
 
 class Verify_Generator : public AnalysisModule {
@@ -430,6 +468,11 @@ class Verify_Generator : public AnalysisModule {
             }
             else if ((GenLepFnLst["EIdx"].size()!=data.Electron_size) || (GenLepFnLst["MuIdx"].size()!=data.Muon_size)){
                 data.PassThisCut = false;
+                cout << "Gen Electron Size: " << GenLepFnLst["EIdx"].size() << ", Reco Electron Size: " << data.Electron_size << endl;
+                cout << "Gen Muon Size: " << GenLepFnLst["MuIdx"].size() << ", Reco Muon Size: " << data.Muon_size << endl;
+                cout << "------------------------------------------------" << endl;
+                // Show Genparticle List
+                ShowGenParticleList(data);
                 throw runtime_error("Lepton Number Mismatch : Gen vs Reco");
             }
             // ========================================================Verification Process==========================
