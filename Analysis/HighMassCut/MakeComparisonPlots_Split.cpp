@@ -85,7 +85,8 @@ void ProcessDirectory(
     THStack* combinedStackNotZ,
     TLegend* specificLeg,
     TLegend* combinedLeg,
-    int& globalIndex // To keep colors distinct across directories
+    int& globalIndex, // To keep colors distinct across directories
+    const map<TString, double>& bg_xsec // Pass cross-sections map
 ) {
     TSystemDirectory dir(inputDir, inputDir);
     TList *files = dir.GetListOfFiles();
@@ -121,13 +122,26 @@ void ProcessDirectory(
             if (mass < minSignalMass || mass > maxSignalMass) continue;
         }
         
+        // --- WEIGHT LOGIC ---
+        double weight = 1.0;
+        if (isSignal) {
+            weight = 1e-6; // Signal scaled to 1ab^-1 from 1 million events
+        } else {
+            // Find background cross section in the map
+            if (bg_xsec.count(baseName)) {
+                weight = bg_xsec.at(baseName);
+            } else {
+                cerr << "   [!] Warning: Cross-section for " << baseName << " not found! Using 1.0." << endl;
+            }
+        }
+
         // --- NAMING LOGIC ---
         // For Backgrounds: Append suffix (e.g., "ZHTaTa_OnS")
         // For Signals: Keep original name (e.g., "HLFV_110GeV") because they are unique
         TString uniqueName = baseName;
         if (!isSignal) uniqueName += suffixLabel;
 
-        cout << "   -> Adding: " << uniqueName << endl;
+        cout << "   -> Adding: " << uniqueName << " (Weight: " << weight << ")" << endl;
 
         // --- ROOT PROCESSING ---
         TFile *fIn = TFile::Open(inputDir + fname);
@@ -150,6 +164,11 @@ void ProcessDirectory(
         // Book Histograms
         TH1F *h_Z = new TH1F(uniqueName + "_Z", uniqueName, 50, 0, 250);
         TH1F *h_NotZ = new TH1F(uniqueName + "_NotZ", uniqueName, 50, 0, 250);
+        
+        // Use Sumw2 to ensure error bars are calculated correctly after scaling
+        h_Z->Sumw2();
+        h_NotZ->Sumw2();
+        
         h_Z->SetDirectory(0);
         h_NotZ->SetDirectory(0);
 
@@ -162,6 +181,10 @@ void ProcessDirectory(
             }
         }
 
+        // --- APPLY CROSS SECTION SCALING ---
+        h_Z->Scale(weight);
+        h_NotZ->Scale(weight);
+
         // Apply Style
         StyleHistogram(h_Z, globalIndex, uniqueName);
         StyleHistogram(h_NotZ, globalIndex, uniqueName);
@@ -173,10 +196,6 @@ void ProcessDirectory(
         specificLeg->AddEntry(h_Z, uniqueName, "l");
 
         // Add to COMBINED Stack (The Big Plot)
-        // We clone to allow independent modification if needed, or just add pointer
-        // (Adding same pointer to two stacks is risky if stacks manage ownership, 
-        // but simple THStack usually doesn't delete histograms automatically unless specified.
-        // To be safe, we Clone for the second stack).
         TH1F* h_Z_Comb = (TH1F*)h_Z->Clone(uniqueName + "_Z_Comb");
         TH1F* h_NotZ_Comb = (TH1F*)h_NotZ->Clone(uniqueName + "_NotZ_Comb");
         h_Z_Comb->SetDirectory(0);
@@ -195,6 +214,14 @@ void ProcessDirectory(
 // =========================================================================
 void MakeComparisonPlots_Split(TString outputFile = "Comparison_Distributions_Full.root") { 
     
+    // Define the Cross-Section Map
+    map<TString, double> bg_xsec = {
+        {"ZHTaTa", 2.19e-5},
+        {"ZHWW",   7.84e-5},
+        {"ZZTaTa", 1.52e-4},
+        {"ZWW4l",  2.691e-6}
+    };
+
     TFile *fOut = TFile::Open(outputFile, "RECREATE");
     HistManager hm;
     hm.SetDirectory(fOut);
@@ -219,23 +246,17 @@ void MakeComparisonPlots_Split(TString outputFile = "Comparison_Distributions_Fu
     int globalIndex = 0; // Ensures colors don't reset between directories for the combined plot
 
     // --- B. Process Directory 1: On-Shell (110-145) ---
-    // Dir: SelectionResults_OnS/
-    // Suffix: _OnS
-    // Range: 0 to 145 GeV
     ProcessDirectory(
         "SelectionResults/OnShellCut/", "_OnS", 0, 145,
         hs_OnS_Z, hs_OnS_NotZ, hs_Comb_Z, hs_Comb_NotZ,
-        leg_OnS, leg_Comb, globalIndex
+        leg_OnS, leg_Comb, globalIndex, bg_xsec
     );
 
     // --- C. Process Directory 2: CombineAll (150-160) ---
-    // Dir: SelectionResults/CombineAll/
-    // Suffix: _OffS
-    // Range: 150 to 999 GeV
     ProcessDirectory(
         "SelectionResults/CombineAll/", "_OffS", 150, 999,
         hs_OffS_Z, hs_OffS_NotZ, hs_Comb_Z, hs_Comb_NotZ,
-        leg_OffS, leg_Comb, globalIndex
+        leg_OffS, leg_Comb, globalIndex, bg_xsec
     );
 
     // --- D. Write Output ---
