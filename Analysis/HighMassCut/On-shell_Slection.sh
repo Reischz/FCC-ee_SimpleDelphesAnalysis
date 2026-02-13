@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=Sel
+#SBATCH --job-name=onSel
 #SBATCH --qos=cu_hpc
 #SBATCH --partition=cpugpu
 #SBATCH --ntasks=1
@@ -28,9 +28,10 @@ FILELIST=(
     "/work/project/escience/ruttho/FCC-ee_SimpleDelphesAnalysis/EventSample/ZWWFourLepton_1M_Seed30/ZWWFourLepton_1M_Seed30.root"
     )
 NUM_FILES=${#FILELIST[@]}
-rm -rf SelectionResults_OnS
-mkdir SelectionResults_OnS
-cd SelectionResults_OnS
+
+rm -rf SelectionResults/OnShellCut
+mkdir -p SelectionResults/OnShellCut
+cd SelectionResults/OnShellCut
 RESULT_NAME=(
     "HLFV_110GeV"
     "HLFV_115GeV"
@@ -46,9 +47,24 @@ RESULT_NAME=(
     "ZWW4l"
 )
 
+IsThisBackGround=(
+    false
+    false
+    false
+    false
+    false
+    false
+    false
+    false
+    true
+    true
+    true
+    true
+)
+
 for i in "${!FILELIST[@]}"; do
     echo "Processing file ${FILELIST[$i]}"
-    root -l -b -q "../Normal_on_shell_cut.cpp(\"${FILELIST[$i]}\", \"${RESULT_NAME[$i]}_SelectionResults.root\", \"${RESULT_NAME[$i]}_AdditionalTree.root\")" &
+    root -l -b -q "../../Normal_on_shell_cut.cpp(false, ${IsThisBackGround[$i]}, \"${FILELIST[$i]}\", \"${RESULT_NAME[$i]}_SelectionResults.root\", \"${RESULT_NAME[$i]}_AdditionalTree.root\")" &
     # Limit the number of concurrent jobs to 6
     # if (( (i + 1) % 6 == 0 )); then
     #     wait

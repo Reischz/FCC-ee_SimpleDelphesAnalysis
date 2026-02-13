@@ -91,6 +91,161 @@ class Charge_Violation : public AnalysisModule {
             return;
         }
 };
+// class Z_Window : public AnalysisModule {
+//     public:
+//         Z_Window() : AnalysisModule("Z_Window") {
+//             isPairedLepton=true;
+//         }
+
+//         void process(EventContext &data, const defaultParameters &params) override {
+//             vector<float> leptonPairsMass;
+//             TLorentzVector lepton1Vector, lepton2Vector, combinedVector;
+//             vector<int> pairindexes;
+//             // 3 Muon + 1 Electron
+//             if (data.Muon_size == 3 && data.Electron_size == 1) {
+//                 // Doing Muon pairs Selection
+//                 for (int i =0; i<3;i++){
+//                     for (int j = i+1; j<3;j++){
+//                         if (data.Muon_Charge[i] * data.Muon_Charge[j] > 0) {
+//                             continue; // Same charge, skip
+//                         }
+//                         // Use TLorentzVector to calculate invariant mass
+//                         lepton1Vector.SetPtEtaPhiM(data.Muon_PT[i], data.Muon_Eta[i], data.Muon_Phi[i], params.Muon_MASS);
+//                         lepton2Vector.SetPtEtaPhiM(data.Muon_PT[j], data.Muon_Eta[j], data.Muon_Phi[j], params.Muon_MASS);
+//                         combinedVector = lepton1Vector + lepton2Vector;
+//                         float mass = combinedVector.M();
+//                         leptonPairsMass.push_back(mass);
+//                         pairindexes.push_back(i + j);
+//                     }
+//                 }
+//             }
+//             // 3 Electron + 1 Muon
+//             else if (data.Electron_size == 3 && data.Muon_size == 1) {
+//                 // Doing Electron pairs Selection
+//                 for (int i =0; i<3;i++){
+//                     for (int j = i+1; j<3;j++){
+//                         if (data.Electron_Charge[i] * data.Electron_Charge[j] > 0) {
+//                             continue; // Same charge, skip
+//                         }
+//                         // Use TLorentzVector to calculate invariant mass
+//                         lepton1Vector.SetPtEtaPhiM(data.Electron_PT[i], data.Electron_Eta[i], data.Electron_Phi[i], params.Electron_MASS);
+//                         lepton2Vector.SetPtEtaPhiM(data.Electron_PT[j], data.Electron_Eta[j], data.Electron_Phi[j], params.Electron_MASS);
+//                         combinedVector = lepton1Vector + lepton2Vector;
+//                         float mass = combinedVector.M();
+//                         leptonPairsMass.push_back(mass);
+//                         pairindexes.push_back(i + j);
+//                     }
+//                 }
+//             }
+//             // Check the Mass that Nearest to Z mass
+//             float minDiff = 1e6;
+//             int minIndex = -1;
+//             for (size_t idx = 0; idx < leptonPairsMass.size(); idx++) {
+//                 float diff = fabs(leptonPairsMass[idx] - params.Z_MASS);
+//                 if (diff < minDiff) {
+//                     minDiff = diff;
+//                     minIndex = idx;
+//                 }
+//             }
+//             data.Z_PairIndexSum = pairindexes[minIndex];
+//             if ((minIndex == -1) || (fabs(leptonPairsMass[minIndex] - params.Z_MASS) > params.Z_WINDOW)) {
+//                 data.PassThisCut = false;
+//             } else {
+//                 data.HH_ZPair_Mass = leptonPairsMass[minIndex];
+//                 int leftindex=3-data.Z_PairIndexSum;
+//                 // Find the other pair mass
+//                 if (data.Electron_size>data.Muon_size){
+//                     lepton1Vector.SetPtEtaPhiM(data.Muon_PT[0], data.Muon_Eta[0], data.Muon_Phi[0], params.Muon_MASS);
+//                     lepton2Vector.SetPtEtaPhiM(data.Electron_PT[leftindex], data.Electron_Eta[leftindex], data.Electron_Phi[leftindex], params.Electron_MASS);
+//                     combinedVector = lepton1Vector + lepton2Vector;
+//                     data.HH_NotZPair_Mass = combinedVector.M();
+//                 } else {
+//                     lepton1Vector.SetPtEtaPhiM(data.Electron_PT[0], data.Electron_Eta[0], data.Electron_Phi[0], params.Electron_MASS);
+//                     lepton2Vector.SetPtEtaPhiM(data.Muon_PT[leftindex], data.Muon_Eta[leftindex], data.Muon_Phi[leftindex], params.Muon_MASS);
+//                     combinedVector = lepton1Vector + lepton2Vector;
+//                     data.HH_NotZPair_Mass = combinedVector.M();
+//                 }
+//             }
+//             return;
+//         }
+// };
+// class NotZ_dR : public AnalysisModule {
+//     public:
+//         NotZ_dR() : AnalysisModule("NotZ_dR") {
+//             isPairedLepton=true;
+//         }
+
+//         void process(EventContext &data, const defaultParameters &params) override {
+//             if ((!data.CutStatus[data.CurrentCut-1]) && data.CurrentCut>0){
+//                 return;
+//             }
+//             // Identify the not Z pair leptons
+//             TLorentzVector MuVector, EleVector;
+//             int EleIndex=0, MuIndex=0;
+//             if (data.Electron_size > data.Muon_size) {
+//                 // 3 Electrons + 1 Muon case
+//                 EleIndex = 3-data.Z_PairIndexSum;
+//             } else {
+//                 // 3 Muons + 1 Electron case
+//                 MuIndex = 3-data.Z_PairIndexSum;
+//             }
+//             MuVector.SetPtEtaPhiM(data.Muon_PT[MuIndex], data.Muon_Eta[MuIndex], data.Muon_Phi[MuIndex], params.Muon_MASS);
+//             EleVector.SetPtEtaPhiM(data.Electron_PT[EleIndex], data.Electron_Eta[EleIndex], data.Electron_Phi[EleIndex], params.Electron_MASS);
+//             float dR = MuVector.DeltaR(EleVector);
+//             float dPhi = fabs(MuVector.DeltaPhi(EleVector));
+//             data.HH_NotZ_dR = dR;
+//             data.HH_NotZ_dPhi = dPhi;
+//             if (dR < params.dRCut) {
+//                 data.PassThisCut = false;
+//             }
+//             return;
+//         }
+// };
+// class NotZ_MET_dPhi : public AnalysisModule {
+//     public:
+//         NotZ_MET_dPhi() : AnalysisModule("NotZ_MET_dPhi") {
+//             isPairedLepton=true;
+//         }
+
+//         void process(EventContext &data, const defaultParameters &params) override {
+//             // Placeholder for future implementation
+//             if (!data.CutStatus[data.CurrentCut-1]){
+//                 return;
+//             }
+//             // Identify the not Z pair leptons
+//             int EleIndex=0, MuIndex=0;
+//             if (data.Electron_size > data.Muon_size) {
+//                 // 3 Electrons + 1 Muon case
+//                 EleIndex = 3-data.Z_PairIndexSum;
+//             } else {
+//                 // 3 Muons + 1 Electron case
+//                 MuIndex = 3-data.Z_PairIndexSum;
+//             }
+//             float METPhi=data.MET_Phi;
+//             // Calculate dPhi between Not Z lepton pair and MET
+//             // Logic: Calculate raw difference -> Normalize to [-pi, pi] -> Take absolute value
+//             data.NotZ_EleMET_dPhi = fabs(TVector2::Phi_mpi_pi(data.Electron_Phi[EleIndex] - METPhi));
+//             data.NotZ_MuMET_dPhi  = fabs(TVector2::Phi_mpi_pi(data.Muon_Phi[MuIndex] - METPhi));
+//             return;
+//         }
+// };
+// class NotZ_MassThreshold : public AnalysisModule {
+//     public:
+//         NotZ_MassThreshold() : AnalysisModule("NotZ_MassThreshold") {
+//             isPairedLepton=true;
+//         }
+
+//         void process(EventContext &data, const defaultParameters &params) override {
+//             if (!data.CutStatus[data.CurrentCut-1]){
+//                 return;
+//             }
+//             if (data.HH_NotZPair_Mass < params.NotZ_MassCut) {
+//                 data.PassThisCut = false;
+//             }
+//             return;
+//         }
+// };
+
 class Z_Window : public AnalysisModule {
     public:
         Z_Window() : AnalysisModule("Z_Window") {
@@ -98,77 +253,77 @@ class Z_Window : public AnalysisModule {
         }
 
         void process(EventContext &data, const defaultParameters &params) override {
-            vector<float> leptonPairsMass;
-            TLorentzVector lepton1Vector, lepton2Vector, combinedVector;
-            vector<int> pairindexes;
-            // 3 Muon + 1 Electron
-            if (data.Muon_size == 3 && data.Electron_size == 1) {
-                // Doing Muon pairs Selection
-                for (int i =0; i<3;i++){
-                    for (int j = i+1; j<3;j++){
-                        if (data.Muon_Charge[i] * data.Muon_Charge[j] > 0) {
-                            continue; // Same charge, skip
-                        }
-                        // Use TLorentzVector to calculate invariant mass
-                        lepton1Vector.SetPtEtaPhiM(data.Muon_PT[i], data.Muon_Eta[i], data.Muon_Phi[i], params.Muon_MASS);
-                        lepton2Vector.SetPtEtaPhiM(data.Muon_PT[j], data.Muon_Eta[j], data.Muon_Phi[j], params.Muon_MASS);
-                        combinedVector = lepton1Vector + lepton2Vector;
-                        float mass = combinedVector.M();
-                        leptonPairsMass.push_back(mass);
-                        pairindexes.push_back(i + j);
-                    }
-                }
-            }
-            // 3 Electron + 1 Muon
-            else if (data.Electron_size == 3 && data.Muon_size == 1) {
-                // Doing Electron pairs Selection
-                for (int i =0; i<3;i++){
-                    for (int j = i+1; j<3;j++){
-                        if (data.Electron_Charge[i] * data.Electron_Charge[j] > 0) {
-                            continue; // Same charge, skip
-                        }
-                        // Use TLorentzVector to calculate invariant mass
-                        lepton1Vector.SetPtEtaPhiM(data.Electron_PT[i], data.Electron_Eta[i], data.Electron_Phi[i], params.Electron_MASS);
-                        lepton2Vector.SetPtEtaPhiM(data.Electron_PT[j], data.Electron_Eta[j], data.Electron_Phi[j], params.Electron_MASS);
-                        combinedVector = lepton1Vector + lepton2Vector;
-                        float mass = combinedVector.M();
-                        leptonPairsMass.push_back(mass);
-                        pairindexes.push_back(i + j);
-                    }
-                }
-            }
-            // Check the Mass that Nearest to Z mass
+            // ========================================================Defined Variables==========================
+            bool EMore = (data.Electron_size > data.Muon_size);
+            // Pointers to the "Cluster of 3" (Potential Z pair comes from here)
+            float* ThreeLep_PT     = EMore ? data.Electron_PT : data.Muon_PT;
+            float* ThreeLep_Eta    = EMore ? data.Electron_Eta : data.Muon_Eta;
+            float* ThreeLep_Phi    = EMore ? data.Electron_Phi : data.Muon_Phi;
+            int* ThreeLep_Charge = EMore ? data.Electron_Charge : data.Muon_Charge;
+            const float& ThreeLep_MASS = EMore ? params.Electron_MASS : params.Muon_MASS;
+
+            // Pointers to the "Single" Lepton (The one that will form the Higgs candidate later)
+            float* SingleLep_PT    = EMore ? data.Muon_PT : data.Electron_PT;
+            float* SingleLep_Eta   = EMore ? data.Muon_Eta : data.Electron_Eta;
+            float* SingleLep_Phi   = EMore ? data.Muon_Phi : data.Electron_Phi;
+            const float& SingleLep_MASS = EMore ? params.Muon_MASS : params.Electron_MASS;
+
+            TLorentzVector Lep1Vec, Lep2Vec, CombinedVec;
+            TLorentzVector SingleLepVec;
+            
             float minDiff = 1e6;
-            int minIndex = -1;
-            for (size_t idx = 0; idx < leptonPairsMass.size(); idx++) {
-                float diff = fabs(leptonPairsMass[idx] - params.Z_MASS);
-                if (diff < minDiff) {
-                    minDiff = diff;
-                    minIndex = idx;
+            int bestPairIndexSum = -1;
+            float bestMass = -1.0;
+
+            // ========================================================Process Begin==========================
+            
+            // Loop over the 3 leptons to find the best Z candidate
+            for (int i = 0; i < 3; i++) {
+                for (int j = i + 1; j < 3; j++) {
+                    // Check for Opposite Charge
+                    if (ThreeLep_Charge[i] * ThreeLep_Charge[j] > 0) continue; 
+
+                    Lep1Vec.SetPtEtaPhiM(ThreeLep_PT[i], ThreeLep_Eta[i], ThreeLep_Phi[i], ThreeLep_MASS);
+                    Lep2Vec.SetPtEtaPhiM(ThreeLep_PT[j], ThreeLep_Eta[j], ThreeLep_Phi[j], ThreeLep_MASS);
+                    CombinedVec = Lep1Vec + Lep2Vec;
+                    
+                    float mass = CombinedVec.M();
+                    float diff = fabs(mass - params.Z_MASS);
+
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        bestMass = mass;
+                        bestPairIndexSum = i + j; // sum of indices (e.g., 0+1=1, 0+2=2, 1+2=3)
+                    }
                 }
             }
-            data.Z_PairIndexSum = pairindexes[minIndex];
-            if ((minIndex == -1) || (fabs(leptonPairsMass[minIndex] - params.Z_MASS) > params.Z_WINDOW)) {
+
+            // ========================================================Selection Logic==========================
+            
+            // 1. Check if a valid pair was found and if it's within the Z Window
+            if ((bestPairIndexSum == -1) || (minDiff > params.Z_WINDOW)) {
                 data.PassThisCut = false;
-            } else {
-                data.HH_ZPair_Mass = leptonPairsMass[minIndex];
-                int leftindex=3-data.Z_PairIndexSum;
-                // Find the other pair mass
-                if (data.Electron_size>data.Muon_size){
-                    lepton1Vector.SetPtEtaPhiM(data.Muon_PT[0], data.Muon_Eta[0], data.Muon_Phi[0], params.Muon_MASS);
-                    lepton2Vector.SetPtEtaPhiM(data.Electron_PT[leftindex], data.Electron_Eta[leftindex], data.Electron_Phi[leftindex], params.Electron_MASS);
-                    combinedVector = lepton1Vector + lepton2Vector;
-                    data.HH_NotZPair_Mass = combinedVector.M();
-                } else {
-                    lepton1Vector.SetPtEtaPhiM(data.Electron_PT[0], data.Electron_Eta[0], data.Electron_Phi[0], params.Electron_MASS);
-                    lepton2Vector.SetPtEtaPhiM(data.Muon_PT[leftindex], data.Muon_Eta[leftindex], data.Muon_Phi[leftindex], params.Muon_MASS);
-                    combinedVector = lepton1Vector + lepton2Vector;
-                    data.HH_NotZPair_Mass = combinedVector.M();
-                }
+                return;
             }
+
+            // 2. Save Z Pair Info
+            data.Z_PairIndexSum = bestPairIndexSum;
+            data.HH_ZPair_Mass = bestMass;
+
+            // 3. Construct the "Not Z" Pair (Higgs Candidate)
+            // The remaining lepton in the group of 3 is at index: 3 - (i+j)
+            int leftIndex = 3 - bestPairIndexSum;
+            
+            Lep1Vec.SetPtEtaPhiM(ThreeLep_PT[leftIndex], ThreeLep_Eta[leftIndex], ThreeLep_Phi[leftIndex], ThreeLep_MASS);
+            SingleLepVec.SetPtEtaPhiM(SingleLep_PT[0], SingleLep_Eta[0], SingleLep_Phi[0], SingleLep_MASS);
+            
+            CombinedVec = Lep1Vec + SingleLepVec;
+            data.HH_NotZPair_Mass = CombinedVec.M();
+
             return;
         }
 };
+
 class NotZ_dR : public AnalysisModule {
     public:
         NotZ_dR() : AnalysisModule("NotZ_dR") {
@@ -176,31 +331,49 @@ class NotZ_dR : public AnalysisModule {
         }
 
         void process(EventContext &data, const defaultParameters &params) override {
-            if ((!data.CutStatus[data.CurrentCut-1]) && data.CurrentCut>0){
-                return;
-            }
-            // Identify the not Z pair leptons
-            TLorentzVector MuVector, EleVector;
-            int EleIndex=0, MuIndex=0;
-            if (data.Electron_size > data.Muon_size) {
-                // 3 Electrons + 1 Muon case
-                EleIndex = 3-data.Z_PairIndexSum;
-            } else {
-                // 3 Muons + 1 Electron case
-                MuIndex = 3-data.Z_PairIndexSum;
-            }
-            MuVector.SetPtEtaPhiM(data.Muon_PT[MuIndex], data.Muon_Eta[MuIndex], data.Muon_Phi[MuIndex], params.Muon_MASS);
-            EleVector.SetPtEtaPhiM(data.Electron_PT[EleIndex], data.Electron_Eta[EleIndex], data.Electron_Phi[EleIndex], params.Electron_MASS);
-            float dR = MuVector.DeltaR(EleVector);
-            float dPhi = fabs(MuVector.DeltaPhi(EleVector));
+            if ((!data.CutStatus[data.CurrentCut-1]) && data.CurrentCut>0) return;
+
+            // ========================================================Defined Variables==========================
+            bool EMore = (data.Electron_size > data.Muon_size);
+            
+            // We need to form the "Not Z" pair. 
+            // One leg is the "Single" lepton (always index 0 of its type).
+            // The other leg is the "Leftover" lepton from the "Three" group (index = 3 - Z_PairIndexSum).
+            
+            float* ThreeLep_PT     = EMore ? data.Electron_PT : data.Muon_PT;
+            float* ThreeLep_Eta    = EMore ? data.Electron_Eta : data.Muon_Eta;
+            float* ThreeLep_Phi    = EMore ? data.Electron_Phi : data.Muon_Phi;
+            const float& ThreeLep_MASS = EMore ? params.Electron_MASS : params.Muon_MASS;
+
+            float* SingleLep_PT    = EMore ? data.Muon_PT : data.Electron_PT;
+            float* SingleLep_Eta   = EMore ? data.Muon_Eta : data.Electron_Eta;
+            float* SingleLep_Phi   = EMore ? data.Muon_Phi : data.Electron_Phi;
+            const float& SingleLep_MASS = EMore ? params.Muon_MASS : params.Electron_MASS;
+
+            TLorentzVector NotZ_Leg1, NotZ_Leg2; // Leg1 from group of 3, Leg2 is the single one
+
+            // ========================================================Process Begin==========================
+            
+            int NotZ_Index_In_Three = 3 - data.Z_PairIndexSum;
+
+            NotZ_Leg1.SetPtEtaPhiM(ThreeLep_PT[NotZ_Index_In_Three], ThreeLep_Eta[NotZ_Index_In_Three], ThreeLep_Phi[NotZ_Index_In_Three], ThreeLep_MASS);
+            NotZ_Leg2.SetPtEtaPhiM(SingleLep_PT[0], SingleLep_Eta[0], SingleLep_Phi[0], SingleLep_MASS);
+
+            float dR = NotZ_Leg1.DeltaR(NotZ_Leg2);
+            float dPhi = fabs(NotZ_Leg1.DeltaPhi(NotZ_Leg2));
+
+            // ========================================================Selection Logic==========================
+            
             data.HH_NotZ_dR = dR;
             data.HH_NotZ_dPhi = dPhi;
+
             if (dR < params.dRCut) {
                 data.PassThisCut = false;
             }
             return;
         }
 };
+
 class NotZ_MET_dPhi : public AnalysisModule {
     public:
         NotZ_MET_dPhi() : AnalysisModule("NotZ_MET_dPhi") {
@@ -208,27 +381,38 @@ class NotZ_MET_dPhi : public AnalysisModule {
         }
 
         void process(EventContext &data, const defaultParameters &params) override {
-            // Placeholder for future implementation
-            if (!data.CutStatus[data.CurrentCut-1]){
-                return;
-            }
-            // Identify the not Z pair leptons
-            int EleIndex=0, MuIndex=0;
-            if (data.Electron_size > data.Muon_size) {
-                // 3 Electrons + 1 Muon case
-                EleIndex = 3-data.Z_PairIndexSum;
+            if ((!data.CutStatus[data.CurrentCut-1]) && data.CurrentCut>0) return;
+
+            // ========================================================Defined Variables==========================
+            bool EMore = (data.Electron_size > data.Muon_size);
+
+            float* ThreeLep_Phi = EMore ? data.Electron_Phi : data.Muon_Phi;
+            float* SingleLep_Phi = EMore ? data.Muon_Phi : data.Electron_Phi;
+            
+            float METPhi = data.MET_Phi;
+
+            // ========================================================Process Begin==========================
+            
+            int NotZ_Index_In_Three = 3 - data.Z_PairIndexSum;
+
+            // Calculate dPhi relative to MET
+            float dPhi_Leg1 = fabs(TVector2::Phi_mpi_pi(ThreeLep_Phi[NotZ_Index_In_Three] - METPhi));
+            float dPhi_Leg2 = fabs(TVector2::Phi_mpi_pi(SingleLep_Phi[0] - METPhi));
+
+            // Assign to data structure based on flavor
+            if (EMore) {
+                // Leg1 is Electron, Leg2 is Muon
+                data.NotZ_EleMET_dPhi = dPhi_Leg1;
+                data.NotZ_MuMET_dPhi  = dPhi_Leg2;
             } else {
-                // 3 Muons + 1 Electron case
-                MuIndex = 3-data.Z_PairIndexSum;
+                // Leg1 is Muon, Leg2 is Electron
+                data.NotZ_MuMET_dPhi  = dPhi_Leg1;
+                data.NotZ_EleMET_dPhi = dPhi_Leg2;
             }
-            float METPhi=data.MET_Phi;
-            // Calculate dPhi between Not Z lepton pair and MET
-            // Logic: Calculate raw difference -> Normalize to [-pi, pi] -> Take absolute value
-            data.NotZ_EleMET_dPhi = fabs(TVector2::Phi_mpi_pi(data.Electron_Phi[EleIndex] - METPhi));
-            data.NotZ_MuMET_dPhi  = fabs(TVector2::Phi_mpi_pi(data.Muon_Phi[MuIndex] - METPhi));
             return;
         }
 };
+
 class NotZ_MassThreshold : public AnalysisModule {
     public:
         NotZ_MassThreshold() : AnalysisModule("NotZ_MassThreshold") {
@@ -236,9 +420,12 @@ class NotZ_MassThreshold : public AnalysisModule {
         }
 
         void process(EventContext &data, const defaultParameters &params) override {
-            if (!data.CutStatus[data.CurrentCut-1]){
-                return;
-            }
+            // ========================================================Defined Variables==========================
+            // No specific flavor pointers needed here, just checking mass value
+            
+            // ========================================================Process Begin==========================
+            if ((!data.CutStatus[data.CurrentCut-1]) && data.CurrentCut>0) return;
+
             if (data.HH_NotZPair_Mass < params.NotZ_MassCut) {
                 data.PassThisCut = false;
             }
