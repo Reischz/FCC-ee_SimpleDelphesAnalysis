@@ -223,7 +223,7 @@ void MakeComparisonPlots_Split(TString outputFile = "Comparison_Distributions_Fu
     // Suffix: _OnS
     // Range: 0 to 145 GeV
     ProcessDirectory(
-        "SelectionResults_OnS/", "_OnS", 0, 145,
+        "SelectionResults/OnShellCut/", "_OnS", 0, 145,
         hs_OnS_Z, hs_OnS_NotZ, hs_Comb_Z, hs_Comb_NotZ,
         leg_OnS, leg_Comb, globalIndex
     );
