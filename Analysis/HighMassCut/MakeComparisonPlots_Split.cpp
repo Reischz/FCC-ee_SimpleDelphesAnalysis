@@ -209,6 +209,55 @@ void ProcessDirectory(
     }
 }
 
+void ExportYieldsForCombine(const map<TString, double>& bg_xsec) {
+    // We only process the masses listed in your bash script
+    vector<int> masses = {110, 115, 120, 125, 130, 135, 140, 145};
+    double massWindow = 5.0; 
+
+    // Create the UpperLimit directory if it doesn't exist
+    gSystem->mkdir("UpperLimit", kTRUE);
+    
+    // Open output file
+    ofstream outFile("UpperLimit/yields_database.txt");
+    if (!outFile.is_open()) {
+        cerr << "Failed to open UpperLimit/yields_database.txt for writing!" << endl;
+        return;
+    }
+
+    cout << "Exporting yields to UpperLimit/yields_database.txt..." << endl;
+
+    for (int m : masses) {
+        // Since these are 110-145, they are in the OnShell directory
+        TString dir = "SelectionResults/OnShellCut/"; 
+        
+        // 1. Calculate Signal Yield (XXXX)
+        TString sigFile = dir + TString::Format("HLFV_%dGeV_AdditionalTree.root", m);
+        double sigYield = GetYieldForTable(sigFile, m, massWindow) * 1e-6;
+        if (sigYield <= 0.0) sigYield = 1e-12; // Prevent Combine crash
+
+        // 2. Calculate ZWW4l Yield (ZZZZ)
+        double zww4l_yield = GetYieldForTable(dir + "ZWW4l_AdditionalTree.root", m, massWindow) * bg_xsec.at("ZWW4l");
+        if (zww4l_yield <= 0.0) zww4l_yield = 1e-12; // Prevent Combine crash
+
+        // 3. Calculate HZ4l Yield (YYYY) - Summing the rest
+        double hz4l_yield = 0.0;
+        hz4l_yield += GetYieldForTable(dir + "ZHTaTa_AdditionalTree.root", m, massWindow) * bg_xsec.at("ZHTaTa");
+        hz4l_yield += GetYieldForTable(dir + "ZHWW_AdditionalTree.root", m, massWindow) * bg_xsec.at("ZHWW");
+        hz4l_yield += GetYieldForTable(dir + "ZZTaTa_AdditionalTree.root", m, massWindow) * bg_xsec.at("ZZTaTa");
+        if (hz4l_yield <= 0.0) hz4l_yield = 1e-12; // Prevent Combine crash
+
+        // Write row: Mass Signal HZ4l ZWW4l
+        // Using scientific notation ensures precision
+        outFile << m << " " 
+                << scientific << setprecision(6) << sigYield << " " 
+                << scientific << setprecision(6) << hz4l_yield << " " 
+                << scientific << setprecision(6) << zww4l_yield << "\n";
+    }
+    
+    outFile.close();
+    cout << "Export complete." << endl;
+}
+
 // =========================================================================
 // 4. MAIN MACRO
 // =========================================================================
@@ -290,6 +339,9 @@ void MakeComparisonPlots_Split(TString outputFile = "Comparison_Distributions_Fu
     hm.WriteStack(hs_OffS_NotZ, "Stack_OffS_NotZ");
     hm.WriteStack(hs_Comb_Z, "Stack_Comb_Z");
     hm.WriteStack(hs_Comb_NotZ, "Stack_Comb_NotZ");
+
+    // --- E. Export Yields for Limit Setting ---
+    ExportYieldsForCombine(bg_xsec);
 
     cout << "------------------------------------------------" << endl;
     cout << "Done. Output saved to: " << outputFile << endl;
