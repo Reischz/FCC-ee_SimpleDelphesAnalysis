@@ -241,8 +241,8 @@ void ProcessDirectory(
 }
 
 void ExportYieldsForCombine(const map<TString, double>& bg_xsec) {
-    // We only process the masses listed in your bash script
-    vector<int> masses = {110, 115, 120, 125, 130, 135, 140, 145};
+    // 1. Include all mass points, both On-Shell and Off-Shell
+    vector<int> masses = {110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160};
     double massWindow = 5.0; 
 
     // Create the UpperLimit directory if it doesn't exist
@@ -258,19 +258,19 @@ void ExportYieldsForCombine(const map<TString, double>& bg_xsec) {
     cout << "Exporting yields to UpperLimit/yields_database.txt..." << endl;
 
     for (int m : masses) {
-        // Since these are 110-145, they are in the OnShell directory
-        TString dir = "SelectionResults/OnShellCut/"; 
+        // 2. Dynamically switch directories based on the mass point
+        TString dir = (m <= 145) ? "SelectionResults/OnShellCut/" : "SelectionResults/CombineAll/"; 
         
-        // 1. Calculate Signal Yield (XXXX)
+        // Calculate Signal Yield (XXXX)
         TString sigFile = dir + TString::Format("HLFV_%dGeV_AdditionalTree.root", m);
         double sigYield = GetYieldForTable(sigFile, m, massWindow) * 1e-6;
         if (sigYield <= 0.0) sigYield = 1e-12; // Prevent Combine crash
 
-        // 2. Calculate ZWW4l Yield (ZZZZ)
+        // Calculate ZWW4l Yield (ZZZZ)
         double zww4l_yield = GetYieldForTable(dir + "ZWW4l_AdditionalTree.root", m, massWindow) * bg_xsec.at("ZWW4l");
         if (zww4l_yield <= 0.0) zww4l_yield = 1e-12; // Prevent Combine crash
 
-        // 3. Calculate HZ4l Yield (YYYY) - Summing the rest
+        // Calculate HZ4l Yield (YYYY) - Summing the rest
         double hz4l_yield = 0.0;
         hz4l_yield += GetYieldForTable(dir + "ZHTaTa_AdditionalTree.root", m, massWindow) * bg_xsec.at("ZHTaTa");
         hz4l_yield += GetYieldForTable(dir + "ZHWW_AdditionalTree.root", m, massWindow) * bg_xsec.at("ZHWW");
@@ -278,7 +278,6 @@ void ExportYieldsForCombine(const map<TString, double>& bg_xsec) {
         if (hz4l_yield <= 0.0) hz4l_yield = 1e-12; // Prevent Combine crash
 
         // Write row: Mass Signal HZ4l ZWW4l
-        // Using scientific notation ensures precision
         outFile << m << " " 
                 << scientific << setprecision(6) << sigYield << " " 
                 << scientific << setprecision(6) << hz4l_yield << " " 
