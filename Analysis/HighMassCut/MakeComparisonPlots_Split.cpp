@@ -241,7 +241,7 @@ void ProcessDirectory(
 }
 
 void ExportYieldsForCombine(const map<TString, double>& bg_xsec) {
-    // 1. Include all mass points, both On-Shell and Off-Shell
+    // Include all mass points, both On-Shell and Off-Shell
     vector<int> masses = {110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160};
     double massWindow = 5.0; 
 
@@ -258,29 +258,36 @@ void ExportYieldsForCombine(const map<TString, double>& bg_xsec) {
     cout << "Exporting yields to UpperLimit/yields_database.txt..." << endl;
 
     for (int m : masses) {
-        // 2. Dynamically switch directories based on the mass point
+        // Dynamically switch directories based on the mass point
         TString dir = (m <= 145) ? "SelectionResults/OnShellCut/" : "SelectionResults/CombineAll/"; 
         
-        // Calculate Signal Yield (XXXX)
+        // 1. Signal (XXXX)
         TString sigFile = dir + TString::Format("HLFV_%dGeV_AdditionalTree.root", m);
         double sigYield = GetYieldForTable(sigFile, m, massWindow) * 1e-6;
         if (sigYield <= 0.0) sigYield = 1e-12; // Prevent Combine crash
 
-        // Calculate ZWW4l Yield (ZZZZ)
+        // 2. ZHTaTa (YYYY)
+        double zhtata_yield = GetYieldForTable(dir + "ZHTaTa_AdditionalTree.root", m, massWindow) * bg_xsec.at("ZHTaTa");
+        if (zhtata_yield <= 0.0) zhtata_yield = 1e-12;
+
+        // 3. ZHWW (ZZZZ)
+        double zhww_yield = GetYieldForTable(dir + "ZHWW_AdditionalTree.root", m, massWindow) * bg_xsec.at("ZHWW");
+        if (zhww_yield <= 0.0) zhww_yield = 1e-12;
+
+        // 4. ZZTaTa (AAAA)
+        double zztata_yield = GetYieldForTable(dir + "ZZTaTa_AdditionalTree.root", m, massWindow) * bg_xsec.at("ZZTaTa");
+        if (zztata_yield <= 0.0) zztata_yield = 1e-12;
+
+        // 5. ZWW4l (BBBB)
         double zww4l_yield = GetYieldForTable(dir + "ZWW4l_AdditionalTree.root", m, massWindow) * bg_xsec.at("ZWW4l");
-        if (zww4l_yield <= 0.0) zww4l_yield = 1e-12; // Prevent Combine crash
+        if (zww4l_yield <= 0.0) zww4l_yield = 1e-12;
 
-        // Calculate HZ4l Yield (YYYY) - Summing the rest
-        double hz4l_yield = 0.0;
-        hz4l_yield += GetYieldForTable(dir + "ZHTaTa_AdditionalTree.root", m, massWindow) * bg_xsec.at("ZHTaTa");
-        hz4l_yield += GetYieldForTable(dir + "ZHWW_AdditionalTree.root", m, massWindow) * bg_xsec.at("ZHWW");
-        hz4l_yield += GetYieldForTable(dir + "ZZTaTa_AdditionalTree.root", m, massWindow) * bg_xsec.at("ZZTaTa");
-        if (hz4l_yield <= 0.0) hz4l_yield = 1e-12; // Prevent Combine crash
-
-        // Write row: Mass Signal HZ4l ZWW4l
+        // Write row: Mass Signal ZHTaTa ZHWW ZZTaTa ZWW4l
         outFile << m << " " 
                 << scientific << setprecision(6) << sigYield << " " 
-                << scientific << setprecision(6) << hz4l_yield << " " 
+                << scientific << setprecision(6) << zhtata_yield << " " 
+                << scientific << setprecision(6) << zhww_yield << " "
+                << scientific << setprecision(6) << zztata_yield << " "
                 << scientific << setprecision(6) << zww4l_yield << "\n";
     }
     
